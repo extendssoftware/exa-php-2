@@ -62,6 +62,11 @@
 - When an outer call spans multiple lines, keep nested calls compact when they remain short and readable.
 - When a nested call itself becomes long or complex, place it on its own indentation level.
 - Prefer vertical structure only when it improves readability; do not expand nested calls mechanically.
+- Import referenced classes, interfaces, traits, enums, functions, and constants explicitly with `use`, `use function`,
+  and `use const` statements when they are used from another namespace.
+- Do not rely on fully qualified function or constant names inline when an import keeps the code clearer.
+- Keep imports grouped by kind: classes/interfaces/traits/enums first, then functions, then constants.
+- Remove unused imports.
 
 ## Project Structure
 
