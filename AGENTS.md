@@ -198,8 +198,19 @@ public function id(): string
 - Do not use generic `Exception` or `RuntimeException` directly for component-specific failures when a more specific
   exception can be defined.
 - Exceptions should represent exceptional situations rather than normal control flow.
-- Do not silently catch exceptions.
+- Catch exceptions as narrowly as possible.
+- Do not catch `Throwable` unless errors such as `TypeError` and other engine-level failures are intentionally part of
+  the recovery or translation behavior.
+- Do not wrap an exception merely to replace it with another exception to the same meaning.
+- Wrap an exception only when the current abstraction adds meaningful context, translates a lower-level failure into the
+  component's public exception contract, or changes the semantic meaning of the failure.
 - When wrapping an exception, preserve the original exception as the previous exception.
+- A wrapping exception message must add useful context that is not already obvious from the original exception.
+- Avoid repeated wrapping across multiple layers when each layer adds no meaningful information.
+- Prefer propagating an existing component exception unchanged when it already accurately represents the failure at the
+  current abstraction level.
+- Do not expose lower-level implementation exceptions through a public component API when those exceptions are not part
+  of that API's documented contract.
 - Exception messages must be clear and useful for debugging.
 - Document publicly relevant exceptions using `@throws`.
 
