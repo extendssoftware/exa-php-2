@@ -43,9 +43,13 @@
 - Use explicit and descriptive names.
 - Name classes, interfaces, traits, and enums after their intent rather than their language construct. Do not use
   suffixes such as `Interface`; use `ServiceResolver` instead of `ServiceResolverInterface`.
-- Use a maximum line length of 120 characters.
-- Wrap lines when exceeding 120 characters, except where wrapping would reduce readability.
-- Prefer natural line breaks at logical boundaries rather than mechanically filling the available width.
+- Use 120 characters as the standard maximum line length.
+- Do not wrap lines at 80 characters.
+- Keep a line on a single line when it fits within 120 characters.
+- Wrap lines only when they would exceed 120 characters or when a logical line break clearly improves readability.
+- Prefer natural line breaks at logical boundaries rather than mechanically wrapping text to a shorter width.
+- Apply the same 120-character line-length rule to PHP, PHPDoc, Markdown, configuration files, and test code where
+  practical.
 - Keep classes focused on a single responsibility.
 - Keep methods small and focused.
 - Avoid unnecessary boolean parameters when a more expressive type, enum, or separate method can be used.
