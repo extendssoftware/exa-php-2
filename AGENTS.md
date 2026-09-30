@@ -306,6 +306,12 @@ public function id(): string
     - `Security`
 - Add only notable user-facing, API-facing, compatibility-related, architectural, or project-level changes.
 - Do not treat `CHANGELOG.md` as a replacement for Git history.
+- Describe the net change since the previous release, not the sequence of development steps or commits.
+- Before adding an entry, check whether an existing unreleased entry should be updated or consolidated.
+- Summarize a newly introduced component in one entry unless separate capabilities warrant independent mention.
+- Fold revisions to unreleased functionality into its existing entry. Use `Changed`, `Fixed`, or `Removed` when
+  describing differences from previously released behavior.
+- Do not add separate entries for tests accompanying a feature.
 - Do not add routine maintenance changes unless they materially affect users or contributors.
 - Usually do not add:
     - formatting-only changes;
