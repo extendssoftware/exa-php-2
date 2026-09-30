@@ -279,7 +279,8 @@ public function id(): string
 
 - Do not add PHPDoc to test classes or test methods.
 - Test names, setup, and assertions must make the tested behavior clear without PHPDoc.
-- Add PHPDoc in tests only when required to express type information that PHP cannot represent, such as generics, array shapes, lists, templates, callable signatures, or data-provider shapes.
+- Add PHPDoc in tests only when required to express type information that PHP cannot represent, such as generics, array
+  shapes, lists, templates, callable signatures, or data-provider shapes.
 - Apply normal PHPDoc rules to reusable test infrastructure when it is not itself a test case.
 
 ### Test Naming
@@ -365,7 +366,15 @@ unless those changes have meaningful impact outside normal repository maintenanc
 ## Documentation
 
 - Keep documentation synchronized with the implementation.
-- Update README files when installation, setup, public APIs, requirements, or usage change.
+- Update `README.md` files when installation, setup, public APIs, requirements, or usage change.
+- Keep the root `README.md` focused on project purpose, status, requirements, setup, a minimal usage example, and
+  testing.
+- Summarize available components briefly and link to their detailed documentation.
+- Place detailed component usage, configuration, extension points, exceptions, and edge cases in dedicated
+  documentation.
+- Avoid duplicating API reference material or internal architectural explanations in the root `README.md`.
+- When functionality changes, update documentation at the appropriate level; do not automatically expand the
+  `README.md`.
 - Prefer explaining intent and behavior rather than merely restating implementation details.
 - Examples must use the currently supported API.
 - Remove obsolete documentation when functionality is removed.
