@@ -376,6 +376,19 @@ unless those changes have meaningful impact outside normal repository maintenanc
 - When functionality changes, update documentation at the appropriate level; do not automatically expand the
   `README.md`.
 - Prefer explaining intent and behavior rather than merely restating implementation details.
+- Write component documentation as a usage guide with relevant constraints, not a prose copy of the source or PHPDoc.
+- Keep each paragraph useful for configuring, using, extending, or troubleshooting the component. Remove material that
+  serves none of these purposes.
+- Organize guides around user tasks: basic usage first, then relevant constraints, error handling, and extension points.
+- Explain guarantees and limitations that affect user decisions. Keep internal algorithms and architectural rationale
+  in code documentation unless users need them to extend the component.
+- Explain each behavior once in its most relevant section and link to it rather than repeating it.
+- Use small, purposeful examples. State any application-specific prerequisites and demonstrate extension points with
+  an example or a link to a complete implementation when useful.
+- Document implemented behavior only. Keep proposed designs, development history, and lists of absent internals out of
+  usage guides.
+- Review existing documentation when updating it: consolidate repetition and remove stale material rather than merely
+  appending another paragraph for each change.
 - Examples must use the currently supported API.
 - Remove obsolete documentation when functionality is removed.
 
