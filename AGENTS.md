@@ -93,6 +93,18 @@ commonly used together with HTTP.
 - Add a longer description that explains what the element does.
 - Use longer descriptions to document behavior, intent, constraints, side effects, guarantees, edge cases, or
   architectural context.
+- Document interfaces in terms of their contract, responsibilities, guarantees, inputs, outputs, failure modes, and
+  observable behavior.
+- Interface PHPDoc must describe what implementations are required to provide, not how known implementations currently
+  achieve it.
+- Keep interface PHPDoc implementation-agnostic.
+- Do not mention concrete implementations, implementation strategies, internal algorithms, storage mechanisms,
+  infrastructure choices, or currently known subclasses in interface PHPDoc unless they are explicitly part of the
+  public contract.
+- Do not turn behavior observed in existing implementations into an interface requirement unless that behavior is
+  intentionally part of the contract.
+- Place implementation-specific behavior, constraints, algorithms, and architectural details on the concrete
+  implementation that owns them.
 - Document every parameter using `@param`.
 - Document every return value using `@return`, including `void`.
 - Document relevant exceptions using `@throws`.
