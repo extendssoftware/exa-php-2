@@ -147,6 +147,10 @@ commonly used together with HTTP.
 - Keep PHPDoc synchronized with the implementation.
 - Update PHPDoc whenever related behavior changes.
 - Do not leave outdated or inaccurate documentation.
+- Do not add inline PHPDoc blocks to promoted constructor properties.
+- Document promoted properties through the constructor PHPDoc using `@param`.
+- Add separate property PHPDoc only for non-promoted properties or when PHPDoc provides type information that cannot be
+  expressed through the constructor parameter alone.
 
 Example:
 
