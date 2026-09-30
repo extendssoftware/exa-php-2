@@ -230,14 +230,55 @@ public function id(): string
 
 ## Testing
 
+### General
+
 - Add or update tests for observable behavior changed by an implementation.
 - Prefer testing public behavior over implementation details.
-- Keep tests deterministic.
+- Keep tests deterministic and independent.
 - Tests must not depend on execution order.
-- Use data providers when they improve readability.
-- Prefer small real implementations or purpose-built test doubles over excessive mocking.
 - Keep test names descriptive and behavior-focused.
+- Use data providers when they improve readability or reduce meaningful duplication.
+- Prefer small real implementations or purpose-built test doubles over excessive mocking.
 - Update tests together with implementation changes.
+- Add regression tests for bug fixes when practical.
+- Test exceptional behavior explicitly when exceptions are part of the public contract.
+
+### Unit Tests
+
+- Use unit tests for isolated behavior of individual classes, value objects, services, and other small units.
+- Unit tests must not require databases, HTTP servers, filesystems, containers, or other external infrastructure.
+- Prefer real collaborators when they are small, deterministic, and inexpensive to construct.
+- Use test doubles only when isolation is necessary or a real collaborator would make the test unnecessarily complex.
+- Do not mock the class under test.
+- Do not test private or protected methods directly.
+- Test behavior through the public API.
+
+### Integration Tests
+
+- Use integration tests to verify collaboration between multiple components or infrastructure adapters.
+- Integration tests may use real infrastructure such as databases, filesystems, containers, or framework wiring when
+  that infrastructure is part of the behavior being tested.
+- Keep the scope of an integration test focused on a specific integration boundary.
+- Do not use integration tests where a unit test provides the same confidence with less complexity.
+
+### End-to-End Tests
+
+- Use end-to-end tests to verify complete externally observable flows through the application or framework.
+- Exercise the system through its public entry points, such as HTTP or CLI interfaces.
+- Keep end-to-end tests focused on critical behavior and integration paths.
+- Do not duplicate every unit- or integration-level scenario as an end-to-end test.
+
+### Test PHPDoc
+
+- Test classes and test methods are exempt from the requirement for complete PHPDoc when their names, setup, and
+  assertions clearly describe the behavior being tested.
+- Do not add boilerplate PHPDoc to tests merely to repeat the test name, parameter types, or `void` return type.
+- Add PHPDoc to tests only when it documents non-obvious intent, setup constraints, regression context, data shapes,
+  templates, or other information that materially improves understanding.
+- Use PHPDoc where required to express types that PHP cannot represent, such as data-provider shapes, generics, lists,
+  or callable signatures.
+- Apply the normal PHPDoc rules to reusable test utilities, fixtures, test doubles, and support classes when they form
+  part of the test infrastructure rather than an individual test case.
 
 ## CHANGELOG.md
 
