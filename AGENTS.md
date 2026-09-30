@@ -136,12 +136,21 @@ public function id(): string
 
 ## Error Handling
 
-- Prefer specific exception types over generic exceptions.
+- Each component must define its own root exception interface.
+- The root exception interface must extend `Throwable`.
+- Name the root exception interface after the component, for example `ServiceLocatorException`.
+- Every component-specific exception must implement the component root exception interface.
+- Specific exceptions should extend the most appropriate SPL exception type, such as `InvalidArgumentException`,
+  `LogicException`, or `RuntimeException`, while also implementing the component root exception interface.
+- Use specific exception types for distinct failure conditions.
+- Callers must be able to catch either a specific exception or the component root exception.
+- Do not use generic `Exception` or `RuntimeException` directly for component-specific failures when a more specific
+  exception can be defined.
 - Exceptions should represent exceptional situations rather than normal control flow.
 - Do not silently catch exceptions.
 - When wrapping an exception, preserve the original exception as the previous exception.
 - Exception messages must be clear and useful for debugging.
-- Publicly relevant exceptions should be documented using `@throws`.
+- Document publicly relevant exceptions using `@throws`.
 
 ## Testing
 
