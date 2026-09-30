@@ -282,6 +282,17 @@ public function id(): string
 - Apply the normal PHPDoc rules to reusable test utilities, fixtures, test doubles, and support classes when they form
   part of the test infrastructure rather than an individual test case.
 
+### Test Naming
+
+- Name unit test classes after the class or behavior under test using the `Test` suffix, for example
+  `ServiceLocatorTest`.
+- Name integration test classes using the `IntegrationTest` suffix, for example `ServiceLocatorIntegrationTest`.
+- Name end-to-end test classes using the `E2ETest` suffix, for example `HttpApplicationE2ETest`.
+- Do not use prefixes such as `Integration` or `E2E` in test class names.
+- Keep the subject under test at the beginning of the class name.
+- Use descriptive test method names that state the behavior or expected outcome.
+- Do not encode implementation details in test names unless those details are part of the behavior being verified.
+
 ## CHANGELOG.md
 
 - Maintain `CHANGELOG.md` for notable changes.
