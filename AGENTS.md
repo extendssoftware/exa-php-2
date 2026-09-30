@@ -114,12 +114,16 @@ commonly used together with HTTP.
 - Add complete PHPDoc to all public classes, interfaces, traits, enums, methods, properties, and constants.
 - Add PHPDoc to non-public members when it improves clarity or documents behavior that is not obvious from the
   implementation.
-- PHPDoc may intentionally repeat information already expressed by PHP types.
-- Repetition is acceptable when it provides a compact and complete overview of the API.
+- PHPDoc may intentionally repeat information already expressed by PHP types when this provides a compact and complete
+  API overview.
 - Every PHPDoc block must start with a concise summary.
-- Add a longer description that explains what the element does.
-- Use longer descriptions to document behavior, intent, constraints, side effects, guarantees, edge cases, or
-  architectural context.
+- Keep summaries short and factual.
+- Add a longer description only when it adds meaningful information beyond the summary and signature.
+- Keep longer descriptions concise. Prefer one short paragraph unless additional detail is necessary to explain
+  behavior, intent, constraints, side effects, guarantees, edge cases, or architectural context.
+- Do not add hypothetical behavior, speculative nuances, or implementation possibilities merely to make PHPDoc more
+  comprehensive.
+- Document only behavior that is intentionally part of the documented contract.
 - Document interfaces in terms of their contract, responsibilities, guarantees, inputs, outputs, failure modes, and
   observable behavior.
 - Interface PHPDoc must describe what implementations are required to provide, not how known implementations currently
@@ -128,8 +132,12 @@ commonly used together with HTTP.
 - Do not mention concrete implementations, implementation strategies, internal algorithms, storage mechanisms,
   infrastructure choices, or currently known subclasses in interface PHPDoc unless they are explicitly part of the
   public contract.
+- Do not use examples of possible implementations to explain an interface unless those examples are necessary to define
+  the contract.
 - Do not turn behavior observed in existing implementations into an interface requirement unless that behavior is
   intentionally part of the contract.
+- Do not document possible implementation-dependent behavior unless callers need to rely on that possibility as part of
+  the public contract.
 - Place implementation-specific behavior, constraints, algorithms, and architectural details on the concrete
   implementation that owns them.
 - Document every parameter using `@param`.
