@@ -158,7 +158,7 @@ Example:
  * resolving the requested service is found. The current resolution context
  * is reused for nested resolutions so circular dependencies can be detected.
  *
- * @param string $id The service identifier.
+ * @param non-empty-string $id The service identifier.
  *
  * @return object The resolved service instance.
  *
@@ -177,7 +177,7 @@ Example:
 /**
  * Returns the service identifier.
  *
- * @return string The service identifier.
+ * @return non-empty-string The service identifier.
  */
 public function id(): string
 {
