@@ -141,7 +141,7 @@ commonly used together with HTTP.
 - Place implementation-specific behavior, constraints, algorithms, and architectural details on the concrete
   implementation that owns them.
 - Document every parameter using `@param`.
-- Document every return value using `@return`, including `void`.
+- Document every return value using `@return`, including `void`, except constructors.
 - Document relevant exceptions using `@throws`.
 - Document generic types, array shapes, lists, refined scalar types, templates, and callable signatures where useful.
 - Keep PHPDoc synchronized with the implementation.
