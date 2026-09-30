@@ -57,6 +57,9 @@
 - Do not suppress errors, warnings, or static-analysis findings without a documented reason.
 - Prefer explicit behavior over clever or overly compact code.
 - Remove dead code instead of commenting it out.
+- When a function or constructor call spans multiple lines, place the opening parenthesis after the call and indent each
+  nested call on its own level.
+- Prefer vertically structured nested calls over compact multi-line nesting when this improves readability.
 
 ## Project Structure
 
