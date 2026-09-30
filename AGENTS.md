@@ -57,9 +57,11 @@
 - Do not suppress errors, warnings, or static-analysis findings without a documented reason.
 - Prefer explicit behavior over clever or overly compact code.
 - Remove dead code instead of commenting it out.
-- When a function or constructor call spans multiple lines, place the opening parenthesis after the call and indent each
-  nested call on its own level.
-- Prefer vertically structured nested calls over compact multi-line nesting when this improves readability.
+- Keep nested function and constructor calls on a single line when the complete expression fits within 120 characters
+  and remains easy to read.
+- When an outer call spans multiple lines, keep nested calls compact when they remain short and readable.
+- When a nested call itself becomes long or complex, place it on its own indentation level.
+- Prefer vertical structure only when it improves readability; do not expand nested calls mechanically.
 
 ## Project Structure
 
