@@ -58,6 +58,33 @@
 - Prefer explicit behavior over clever or overly compact code.
 - Remove dead code instead of commenting it out.
 
+## Project Structure
+
+- Organize directories and namespaces by domain or framework concept rather than by PHP language construct.
+- Nest by concept, not by class.
+- Keep only the primary component contract and types that belong directly to the component at the component root.
+- Place contracts for nested concepts inside the namespace of the concept they define.
+- Do not place a type at the component root merely because it is an interface, abstraction, or shared contract.
+- An interface and the implementations intrinsic to that interface should normally share the same conceptual namespace.
+- For example, `ServiceLocator` belongs to `ServiceLocator`, while `ServiceResolver`, `FactoryServiceResolver`, and
+  `InvokableServiceResolver` belong to `ServiceLocator\Resolver`.
+- Group related secondary concepts under descriptive namespaces such as `Resolver`, `Exception`, `Factory`,
+  `Middleware`, or `Attribute`.
+- Create a nested namespace only when it represents a meaningful sub-concept with multiple related types or a clear
+  expectation of growth.
+- Do not create a directory merely because a class name contains multiple words.
+- Prefer shallow structures initially and introduce additional namespace levels only when they clarify ownership or
+  separate a meaningful sub-concept.
+- Keep interfaces together with the concept they define. Do not create generic `Interface`, `Contract`, or
+  `Implementation` directories solely to separate language constructs.
+- Keep implementations close to their abstraction when those implementations are intrinsic to the same component or
+  concept.
+- Use namespaces to communicate conceptual ownership. A type placed within a namespace must clearly belong to that
+  concept.
+- Avoid catch-all namespaces or directories such as `Util`, `Helper`, `Common`, or `Misc`.
+- Directory structure must correspond exactly to the PSR-4 namespace structure.
+- Do not introduce additional namespace levels that provide no meaningful architectural distinction.
+
 ## Classes and Immutability
 
 - Classes must be `final` unless inheritance is an intentional part of the public API.
