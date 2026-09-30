@@ -161,8 +161,7 @@ commonly used together with HTTP.
 - Document promoted properties through the constructor PHPDoc using `@param`.
 - Add separate property PHPDoc only for non-promoted properties or when PHPDoc provides type information that cannot be
   expressed through the constructor parameter alone.
-- Test code follows the PHPDoc rules defined under `## Testing` and is exempt from mandatory complete PHPDoc where
-  specified there.
+- Test code is exempt from the mandatory PHPDoc rules; follow the rules under `## Testing` instead.
 
 Example:
 
