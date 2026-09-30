@@ -41,6 +41,11 @@
 - Follow PSR-12 unless this document defines a stricter rule.
 - Use one class, interface, trait, or enum per file.
 - Use explicit and descriptive names.
+- Name classes, interfaces, traits, and enums after their intent rather than their language construct. Do not use
+  suffixes such as `Interface`; use `ServiceResolver` instead of `ServiceResolverInterface`.
+- Use a maximum line length of 120 characters.
+- Wrap lines when exceeding 120 characters, except where wrapping would reduce readability.
+- Prefer natural line breaks at logical boundaries rather than mechanically filling the available width.
 - Keep classes focused on a single responsibility.
 - Keep methods small and focused.
 - Avoid unnecessary boolean parameters when a more expressive type, enum, or separate method can be used.
