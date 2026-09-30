@@ -244,6 +244,12 @@ public function id(): string
 - Update tests together with implementation changes.
 - Add regression tests for bug fixes when practical.
 - Test exceptional behavior explicitly when exceptions are part of the public contract.
+- Use PHPUnit 13 APIs and conventions.
+- Do not use deprecated PHPUnit methods, attributes, assertions, configuration options, or other APIs.
+- Before using an unfamiliar PHPUnit API, verify that it is available and not deprecated in the minimum supported
+  PHPUnit version.
+- Prefer the current documented PHPUnit API over legacy equivalents.
+- Treat PHPUnit deprecation warnings as issues that must be fixed rather than ignored.
 
 ### Unit Tests
 
