@@ -278,15 +278,10 @@ public function id(): string
 
 ### Test PHPDoc
 
-- Test classes and test methods are exempt from the requirement for complete PHPDoc when their names, setup, and
-  assertions clearly describe the behavior being tested.
-- Do not add boilerplate PHPDoc to tests merely to repeat the test name, parameter types, or `void` return type.
-- Add PHPDoc to tests only when it documents non-obvious intent, setup constraints, regression context, data shapes,
-  templates, or other information that materially improves understanding.
-- Use PHPDoc where required to express types that PHP cannot represent, such as data-provider shapes, generics, lists,
-  or callable signatures.
-- Apply the normal PHPDoc rules to reusable test utilities, fixtures, test doubles, and support classes when they form
-  part of the test infrastructure rather than an individual test case.
+- Do not add PHPDoc to test classes or test methods.
+- Test names, setup, and assertions must make the tested behavior clear without PHPDoc.
+- Add PHPDoc in tests only when required to express type information that PHP cannot represent, such as generics, array shapes, lists, templates, callable signatures, or data-provider shapes.
+- Apply normal PHPDoc rules to reusable test infrastructure when it is not itself a test case.
 
 ### Test Naming
 
