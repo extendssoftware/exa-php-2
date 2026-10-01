@@ -69,6 +69,10 @@ vendor/bin/phpunit
 
 PHPUnit loads `phpunit.xml.dist` automatically.
 
+GitHub Actions runs `just install` and `just test` on pushes and pull requests using the same recipes and PHP container
+as local development.
+All test categories run in one job.
+
 ### Container workflow
 
 With Docker Compose and [just](https://just.systems/) installed, run Composer and PHPUnit in the PHP 8.5 CLI container:
