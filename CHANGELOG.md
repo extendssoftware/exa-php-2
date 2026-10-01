@@ -10,8 +10,8 @@ All notable changes to ExaPHP will be documented in this file.
   registrations, and component exceptions.
 - PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.
 - GitHub Actions workflow running the full test suite through the shared just recipes on pushes and pull requests.
-- Integration component with a CQRS module providing default bus services, configuration-driven command and query
-  factories, and a root exception contract.
+- Integration component with CQRS and Event modules providing default bus and dispatcher services, configuration-driven
+  factories, mergeable keyed listener registrations, and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler
   registrations, and component exceptions.
 - Application bootstrap with explicit module registration, optional module configuration, read-only configuration with

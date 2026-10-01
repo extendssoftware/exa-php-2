@@ -59,10 +59,12 @@ return [
 ];
 ```
 
-Each factory creates a new synchronous bus and resolves all handlers in its map immediately. The service locator controls
+Each factory creates a new synchronous bus and resolves all handlers in its map immediately. The service locator
+controls
 sharing of handler and bus services. Missing `cqrs` or the relevant handler map produces an empty bus.
 
-A present `cqrs` section and each consumed map must be arrays. Map keys and service identifiers must be non-empty strings.
+A present `cqrs` section and each consumed map must be arrays. Map keys and service identifiers must be non-empty
+strings.
 Invalid configuration, including an incorrect configuration service type, raises
 `Integration\Cqrs\Exception\InvalidCqrsConfigurationException`, which implements `IntegrationException`.
 The buses validate message classes and resolved handler contracts using the
@@ -74,3 +76,71 @@ Direct factory calls propagate service-resolution and CQRS registration exceptio
 
 Override either bus definition in an application `/config/*.global.php` file when a different implementation is needed.
 See [application configuration](../application/configuration.md) for merge and override rules.
+
+## Register the Event module
+
+Register `ExtendsSoftware\ExaPHP\Integration\Event\EventModule` before bootstrap to make
+`ExtendsSoftware\ExaPHP\Event\EventDispatcher` available as a shared service. The module's service configuration uses
+`EventDispatcherFactory::create()` to construct a `SynchronousEventDispatcher`. Without an `events` section, it creates
+an empty dispatcher.
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Event\EventDispatcher;
+use ExtendsSoftware\ExaPHP\Integration\Event\EventModule;
+
+$application = new Application(__DIR__ . '/config');
+$application->registerModule(EventModule::class);
+$services = $application->bootstrap();
+$dispatcher = $services->get(EventDispatcher::class);
+```
+
+The application configuration directory must exist. Business modules contribute keyed listener maps under `events`.
+For example, assuming the application classes below are autoloadable and the listener needs no constructor arguments:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Article\ArticleCreated;
+use App\Search\UpdateArticleIndex;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
+
+return [
+    'events' => [
+        ArticleCreated::class => [
+            UpdateArticleIndex::class => UpdateArticleIndex::class,
+        ],
+    ],
+    'services' => [
+        UpdateArticleIndex::class => new InvokableDefinition(UpdateArticleIndex::class),
+    ],
+];
+```
+
+Another module can add a different listener key for the same event. Associative maps merge, retaining both
+registrations.
+Use the listener's service FQCN as both key and value by convention; other non-empty string keys and service IDs are
+also
+accepted. Numeric listener lists are rejected. Each event may have an empty map.
+
+Keys identify registrations; values identify services to resolve. Reusing a key replaces its value according to the
+[configuration merge rules](../application/configuration.md). Distinct keys pointing to the same service cause repeated
+invocations. Listener order follows merged map iteration order: new keys append, and replacement of an existing key
+retains its position. Application configuration can replace a registration by key or clear an event's map with `[]`.
+
+`EventDispatcherFactory` resolves listener services eagerly and converts each map into a listener list. The dispatcher
+then applies its [registration validation and dispatch
+rules](../event/README.md#register-listeners-for-synchronous-dispatch).
+The factory does not invoke listeners while constructing the dispatcher.
+
+Malformed configuration raises `Integration\Event\Exception\InvalidEventConfigurationException`, implementing
+`IntegrationException`. Direct factory calls preserve service-resolution and Event exceptions unchanged. Resolution
+through `FactoryDefinition` wraps non-ServiceLocator exceptions in `ServiceResolutionException`, preserving the cause.
+
+Override the `EventDispatcher` service in application configuration to select a different implementation.

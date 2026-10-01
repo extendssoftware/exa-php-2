@@ -20,7 +20,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
-- [Integration](docs/integration/README.md): application integration modules and configuration-driven CQRS bus factories.
+- [Integration](docs/integration/README.md): application modules and configuration-driven CQRS buses and event dispatch.
 - [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, and component exceptions.

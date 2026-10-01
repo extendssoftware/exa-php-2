@@ -95,3 +95,6 @@ dispatch.
 Dispatch does not guarantee rollback of work already performed by listeners.
 
 Document specific failures on concrete listeners so callers can handle relevant application errors.
+
+To collect listeners from application modules, use the
+[Event integration module](../integration/README.md#register-the-event-module).
