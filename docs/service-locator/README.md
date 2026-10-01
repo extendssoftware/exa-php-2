@@ -209,8 +209,8 @@ contract.
 ## Extend service resolution
 
 For another way to describe a service, implement the marker interface
-[`ServiceDefinition`](../src/ServiceLocator/Definition/ServiceDefinition.php) and pair it with a
-[`ServiceResolver`](../src/ServiceLocator/Resolver/ServiceResolver.php). Keep configuration in the definition and
+[`ServiceDefinition`](../../src/ServiceLocator/Definition/ServiceDefinition.php) and pair it with a
+[`ServiceResolver`](../../src/ServiceLocator/Resolver/ServiceResolver.php). Keep configuration in the definition and
 resolution
 behavior in the resolver. Prefer an immutable definition and inject any collaborators into the resolver's constructor.
 
@@ -221,8 +221,8 @@ Implement these methods:
   supplied locator for dependencies or alias targets. Report unsupported definitions and resolution failures through
   `ServiceLocatorException` implementations.
 
-The built-in [alias definition](../src/ServiceLocator/Definition/AliasDefinition.php) and
-[alias resolver](../src/ServiceLocator/Resolver/AliasServiceResolver.php) provide a complete, small example of this
+The built-in [alias definition](../../src/ServiceLocator/Definition/AliasDefinition.php) and
+[alias resolver](../../src/ServiceLocator/Resolver/AliasServiceResolver.php) provide a complete, small example of this
 pair.
 Register your definition under a service identifier and include your resolver in the locator's resolver list. Place it
 before another resolver if both support the same definition and yours should take precedence. Instance sharing remains
@@ -230,7 +230,7 @@ the locator's responsibility.
 
 For a different locator implementation, implement `ServiceLocator` directly. Its contract provides object lookup and
 availability checks; the fixed registrations and caching behavior described here belong to `DefinitionServiceLocator`.
-The public [`ResolutionContext`](../src/ServiceLocator/ResolutionContext.php) can track synchronous nested resolutions:
+The public [`ResolutionContext`](../../src/ServiceLocator/ResolutionContext.php) tracks synchronous nested resolutions:
 give each independent locator its own context and call `resolve($id, $callback)` around resolution. The callback must
 return an object. The context detects repeated active identifiers, returns the callback result, and cleans up after all
 outcomes without caching results or translating callback failures.

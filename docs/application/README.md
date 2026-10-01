@@ -93,4 +93,4 @@ without an additional bootstrap wrapper; see [configuration failures](configurat
 
 Other autoloading failures during registration and exceptions or errors from a module's `configDirectory()` method
 propagate unchanged. Exceptions during later service lookup follow the [service locator
-contract](service-locator.md#handle-failures).
+contract](../service-locator/README.md#handle-failures).

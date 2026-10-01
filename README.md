@@ -20,10 +20,10 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
-- [Application](docs/application.md): register modules, load and merge configuration, and create a service locator.
-  See the guides for [modules](docs/modules.md) and [configuration](docs/configuration.md).
-- [Service locator](docs/service-locator.md): resolve shared object services from instance, alias, factory, and class
-  definitions, with constructor injection and extensible resolvers.
+- [Application](docs/application/README.md): module registration, configuration loading, and service locator creation.
+  See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
+- [Service locator](docs/service-locator/README.md): shared object services and constructor injection,
+  with extensible resolvers.
 
 ## Basic usage
 
@@ -50,7 +50,8 @@ assert($application->config() === $services->get(Configuration::class));
 ```
 
 Place this script in the project root. Register module classes before calling `bootstrap()` as shown in the
-[application guide](docs/application.md). The [service locator](docs/service-locator.md) can also be used independently.
+[application guide](docs/application/README.md).
+The [service locator](docs/service-locator/README.md) can also be used independently.
 
 ## Testing
 

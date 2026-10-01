@@ -6,7 +6,7 @@ live in `ExtendsSoftware\ExaPHP\Application\Configuration`.
 
 ## Read configuration
 
-After [bootstrap](application.md), use `$application->config()` or retrieve `Configuration::class` from the locator. You
+After [bootstrap](README.md), use `$application->config()` or retrieve `Configuration::class` from the locator. You
 can also create configuration directly:
 
 ```php
@@ -208,11 +208,11 @@ assert($configuration === $services->get(Configuration::class));
 An omitted or empty `services` map is valid. Each supplied entry must implement `ServiceDefinition`; raw class names,
 objects, arrays, and callables must be expressed through the appropriate definition. The factory installs instance,
 alias, factory, invokable, and reflection resolvers and registers the exact configuration object as an instance service.
-See the [service locator guide](service-locator.md) for these definitions and constructor injection rules.
+See the [service locator guide](../service-locator/README.md) for these definitions and constructor injection rules.
 
 Creation is lazy: it does not instantiate configured classes, invoke service factories, or validate dependency graphs.
 Each factory call creates a separate locator without modifying the configuration. For custom resolvers, construct
-`DefinitionServiceLocator` directly using its [extension API](service-locator.md#extend-service-resolution).
+`DefinitionServiceLocator` directly using its [extension API](../service-locator/README.md#extend-service-resolution).
 
 ## Handle configuration failures
 
@@ -235,4 +235,4 @@ warnings (`E_WARNING` and `E_USER_WARNING`) become `ErrorException` and are wrap
 handler is restored after file execution. Failures from `configDirectory()` propagate unchanged.
 
 Once bootstrap succeeds, later service lookup failures follow the [service locator
-contract](service-locator.md#handle-failures).
+contract](../service-locator/README.md#handle-failures).

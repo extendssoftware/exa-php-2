@@ -51,7 +51,7 @@ final readonly class BlogModule implements Module, ConfigurableModule
 `Module` is a marker with no methods. `ConfigurableModule` does not extend it; it adds `configDirectory(): string`.
 Return a non-empty absolute path to an existing configuration directory. The directory may be empty.
 
-Register `BlogModule::class` with [Application](application.md) before bootstrap. Module constructors must have no
+Register `BlogModule::class` with [Application](README.md) before bootstrap. Module constructors must have no
 required arguments and should remain lightweight. Put service construction in configuration factories, as shown in the
 [configuration guide](configuration.md#provide-services).
 
