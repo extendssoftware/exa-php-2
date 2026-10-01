@@ -4,13 +4,20 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Command;
 
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\ClosureCommandExecution;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandExecution;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
+use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
+use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidCommandMiddlewareException;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\CommandHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\DuplicateCommandHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidCommandRegistrationException;
 use ReflectionClass;
 use Throwable;
 
+use function array_is_list;
 use function array_key_exists;
+use function array_reverse;
 use function get_debug_type;
 use function is_string;
 use function sprintf;
@@ -31,19 +38,28 @@ final readonly class SynchronousCommandBus implements CommandBus
     private array $handlers;
 
     /**
+     * Fixed execution chain, reused without retaining per-dispatch context.
+     */
+    private CommandExecution $execution;
+
+    /**
      * Creates a bus with validated command handler registrations.
      *
      * @param array<class-string<Command>, CommandHandler> $handlers Handlers indexed by concrete command class.
+     * @param list<CommandMiddleware> $middleware Middleware in execution order, first entry outermost.
      *
      * @throws InvalidCommandRegistrationException When a key is not a concrete Command class or a handler is invalid.
      * @throws DuplicateCommandHandlerException When multiple keys identify the same canonical command class.
+     * @throws InvalidCommandMiddlewareException When middleware is not a list of CommandMiddleware instances.
      */
-    public function __construct(array $handlers)
+    public function __construct(array $handlers, array $middleware = [])
     {
         $registrations = [];
         foreach ($handlers as $commandClass => $handler) {
             if (!is_string($commandClass) || $commandClass === '') {
-                throw new InvalidCommandRegistrationException('Command registration keys must be non-empty class names.');
+                throw new InvalidCommandRegistrationException(
+                    'Command registration keys must be non-empty class names.',
+                );
             }
 
             try {
@@ -83,28 +99,54 @@ final readonly class SynchronousCommandBus implements CommandBus
         }
 
         $this->handlers = $registrations;
+        if (!array_is_list($middleware)) {
+            throw new InvalidCommandMiddlewareException('Command middleware must be a list.');
+        }
+        foreach ($middleware as $entry) {
+            if (!$entry instanceof CommandMiddleware) {
+                throw new InvalidCommandMiddlewareException(
+                    'Each command middleware must implement CommandMiddleware.',
+                );
+            }
+        }
+
+        $execution = new ClosureCommandExecution(function (Command $command, DispatchContext $context): void {
+            $class = $command::class;
+            if (!isset($this->handlers[$class])) {
+                throw new CommandHandlerNotFoundException(
+                    sprintf('No handler is registered for command "%s".', $class),
+                );
+            }
+            $this->handlers[$class]->handle($command);
+        });
+        foreach (array_reverse($middleware) as $entry) {
+            $next = $execution;
+            $execution = new ClosureCommandExecution(
+                static function (Command $command, DispatchContext $context) use ($entry, $next): void {
+                    $entry->process($command, $context, $next);
+                },
+            );
+        }
+        $this->execution = $execution;
     }
 
     /**
-     * Invokes the handler for the command's exact class and waits for it to complete.
+     * Executes middleware followed by the handler for the command's exact class.
      *
-     * Parent classes and interfaces are not considered. The original command object is passed to the handler.
-     * Handler exceptions and engine errors propagate unchanged.
+     * Middleware may short-circuit or forward a replacement command and context. Handler lookup occurs only at the
+     * end of the chain. Each call starts with its supplied context or a fresh empty context.
+     * Nested calls are independent.
      *
      * @param Command $command The command to dispatch.
+     * @param DispatchContext $context The application-defined execution metadata.
      *
      * @return void
      *
-     * @throws CommandHandlerNotFoundException When the exact command class has no registered handler.
-     * @throws Throwable When the handler fails, propagated unchanged.
+     * @throws CommandHandlerNotFoundException When the command reaching the handler stage has no registration.
+     * @throws Throwable When execution fails, propagated unchanged unless intercepted by middleware.
      */
-    public function dispatch(Command $command): void
+    public function dispatch(Command $command, DispatchContext $context = new DispatchContext()): void
     {
-        $class = $command::class;
-        if (!isset($this->handlers[$class])) {
-            throw new CommandHandlerNotFoundException(sprintf('No handler is registered for command "%s".', $class));
-        }
-
-        $this->handlers[$class]->handle($command);
+        $this->execution->execute($command, $context);
     }
 }

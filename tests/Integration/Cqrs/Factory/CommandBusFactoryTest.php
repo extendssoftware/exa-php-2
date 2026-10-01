@@ -7,6 +7,7 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Cqrs\Factory;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\CommandHandler;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidCommandRegistrationException;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Exception\InvalidCqrsConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Factory\CommandBusFactory;
@@ -27,7 +28,7 @@ final class CommandBusFactoryTest extends TestCase
         $handler = $this->createMock(CommandHandler::class);
         $handler->expects(self::once())->method('handle')->with(self::identicalTo($message));
         $configuration = new Configuration([
-            'cqrs' => ['commands' => [ParentCommand::class => 'handler']],
+            'cqrs' => ['command' => ['handlers' => [ParentCommand::class => 'handler']]],
             'services' => [
                 'handler' => new InstanceDefinition($handler),
                 'bus' => new FactoryDefinition(new CommandBusFactory()->create(...)),
@@ -36,6 +37,17 @@ final class CommandBusFactoryTest extends TestCase
         $locator = new ServiceLocatorFactory()->create($configuration);
 
         $locator->get('bus')->dispatch($message);
+    }
+
+    public function testResolvesConfiguredMiddlewareBeforeDispatch(): void
+    {
+        $middleware = $this->createMock(CommandMiddleware::class);
+        $middleware->expects(self::once())->method('process');
+        $locator = new ServiceLocatorFactory()->create(new Configuration([
+            'cqrs' => ['command' => ['middleware' => ['authorization']]],
+            'services' => ['authorization' => new InstanceDefinition($middleware)],
+        ]));
+        new CommandBusFactory()->create($locator)->dispatch(new ParentCommand());
     }
 
     #[DataProvider('emptyConfigurations')]
@@ -54,7 +66,9 @@ final class CommandBusFactoryTest extends TestCase
     {
         yield [[]];
         yield [['cqrs' => []]];
-        yield [['cqrs' => ['commands' => []]]];
+        yield [['cqrs' => ['command' => []]]];
+        yield [['cqrs' => ['command' => ['middleware' => []]]]];
+        yield [['cqrs' => ['command' => ['handlers' => []]]]];
     }
 
     #[DataProvider('invalidConfigurations')]
@@ -70,14 +84,20 @@ final class CommandBusFactoryTest extends TestCase
      */
     public static function invalidConfigurations(): iterable
     {
+        yield [['cqrs' => ['command' => ['middleware' => null]]]];
+        yield [['cqrs' => ['command' => ['middleware' => ['named' => 'middleware']]]]];
+        yield [['cqrs' => ['command' => ['middleware' => ['']]]]];
+        yield [['cqrs' => ['command' => ['middleware' => [new stdClass()]]]]];
+        yield [['cqrs' => ['command' => null]]];
+        yield [['cqrs' => ['command' => 'invalid']]];
         yield [['cqrs' => null]];
         yield [['cqrs' => 'invalid']];
-        yield [['cqrs' => ['commands' => null]]];
-        yield [['cqrs' => ['commands' => 'invalid']]];
-        yield [['cqrs' => ['commands' => ['handler']]]];
-        yield [['cqrs' => ['commands' => ['' => 'handler']]]];
-        yield [['cqrs' => ['commands' => [ParentCommand::class => '']]]];
-        yield [['cqrs' => ['commands' => [ParentCommand::class => new stdClass()]]]];
+        yield [['cqrs' => ['command' => ['handlers' => null]]]];
+        yield [['cqrs' => ['command' => ['handlers' => 'invalid']]]];
+        yield [['cqrs' => ['command' => ['handlers' => ['handler']]]]];
+        yield [['cqrs' => ['command' => ['handlers' => ['' => 'handler']]]]];
+        yield [['cqrs' => ['command' => ['handlers' => [ParentCommand::class => '']]]]];
+        yield [['cqrs' => ['command' => ['handlers' => [ParentCommand::class => new stdClass()]]]]];
     }
 
     public function testRejectsAnIncorrectConfigurationService(): void
@@ -95,7 +115,9 @@ final class CommandBusFactoryTest extends TestCase
         $locator->expects(self::exactly(2))->method('get')->willReturnCallback(
             static function (string $id) use ($failure): object {
                 if ($id === Configuration::class) {
-                    return new Configuration(['cqrs' => ['commands' => [ParentCommand::class => 'missing']]]);
+                    return new Configuration([
+                        'cqrs' => ['command' => ['handlers' => [ParentCommand::class => 'missing']]],
+                    ]);
                 }
 
                 throw $failure;
@@ -113,7 +135,7 @@ final class CommandBusFactoryTest extends TestCase
     public function testBusRejectsAnInvalidResolvedHandler(): void
     {
         $locator = new ServiceLocatorFactory()->create(new Configuration([
-            'cqrs' => ['commands' => [ParentCommand::class => 'handler']],
+            'cqrs' => ['command' => ['handlers' => [ParentCommand::class => 'handler']]],
             'services' => ['handler' => new InstanceDefinition(new stdClass())],
         ]));
         $this->expectException(InvalidCommandRegistrationException::class);

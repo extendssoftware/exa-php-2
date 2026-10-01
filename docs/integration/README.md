@@ -28,7 +28,8 @@ See the [CQRS guide](../cqrs/README.md) for constructing and using the buses dir
 ## Configure handlers
 
 `CommandBusFactory::create()` and `QueryBusFactory::create()` receive a `ServiceLocator` and read its `Configuration`
-service. Configure `cqrs.commands` and `cqrs.queries` as maps from message class names to handler service identifiers.
+service. Configure `cqrs.command.handlers` and `cqrs.queries` as maps from message class names to handler service
+identifiers.
 The identifiers may be class names or application-defined strings.
 
 With `CqrsModule` registered, a business module or application configuration file can contain the following.
@@ -49,7 +50,9 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 
 return [
     'cqrs' => [
-        'commands' => [CreateArticle::class => CreateArticleHandler::class],
+        'command' => [
+            'handlers' => [CreateArticle::class => CreateArticleHandler::class],
+        ],
         'queries' => [FindArticleTitle::class => FindArticleTitleHandler::class],
     ],
     'services' => [
@@ -144,3 +147,26 @@ Malformed configuration raises `Integration\Event\Exception\InvalidEventConfigur
 through `FactoryDefinition` wraps non-ServiceLocator exceptions in `ServiceResolutionException`, preserving the cause.
 
 Override the `EventDispatcher` service in application configuration to select a different implementation.
+
+## Configure command middleware
+
+Set `cqrs.command.middleware` to an ordered list of middleware service identifiers. Register those services under
+`services` using the existing service definitions. For example, when `AuditCommand` and `AuthorizeCommand` are
+registered:
+
+```php
+'cqrs' => [
+    'command' => [
+        'middleware' => [AuditCommand::class, AuthorizeCommand::class],
+    ],
+],
+```
+
+The command bus factory resolves these services eagerly and passes them to the bus in list order. The first entry wraps
+all subsequent entries and the handler. A missing list means no middleware. Invalid configuration uses
+`InvalidCqrsConfigurationException`; a resolved object that does not implement `CommandMiddleware` is rejected by the
+bus
+with `InvalidCommandMiddlewareException`. As with other factory failures, service resolution may wrap that exception.
+
+Configure the pipeline at application level: numeric lists replace earlier lists during merging, rather than append.
+See [command middleware](../cqrs/README.md#command-middleware) for execution and context semantics.
