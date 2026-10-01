@@ -69,6 +69,26 @@ vendor/bin/phpunit
 
 PHPUnit loads `phpunit.xml.dist` automatically.
 
+### Container workflow
+
+With Docker Compose and [just](https://just.systems/) installed, run Composer and PHPUnit in the PHP 8.5 CLI container:
+
+```sh
+just install
+just test
+just test tests/Integration/Cqrs/CqrsModuleIntegrationTest.php
+just test --filter 'testApplicationBootstrapsWithTheCqrsModule'
+```
+
+`just test` forwards all arguments to PHPUnit, including quoted filters. Run `just` to list recipes or `just build`
+to build the image explicitly. Install and test recipes build the image as needed and remove their containers afterward.
+The repository, including `vendor/`, is mounted into the container. Recipes use your host user and group IDs so generated
+files retain your ownership. The native PHP workflow remains available.
+
+Without just, use `docker compose run --build --rm php composer install` and
+`docker compose run --build --rm php vendor/bin/phpunit`. Compose defaults to UID/GID 1000; set `LOCAL_UID` and `LOCAL_GID`
+to your user and group IDs if needed. On Windows, use these commands through WSL for the same ownership behavior.
+
 ## Changelog
 
 See [CHANGELOG.md](CHANGELOG.md) for notable changes.

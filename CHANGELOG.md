@@ -6,6 +6,7 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.
 - Integration component with a CQRS module providing default bus services, configuration-driven command and query
   factories, and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler
