@@ -94,7 +94,7 @@ Depend on `ExtendsSoftware\ExaPHP\Cqrs\Command\CommandBus` to dispatch commands 
 `ExtendsSoftware\ExaPHP\Cqrs\Query\QueryBus` to request query results. Inject implementations through constructors.
 
 - `CommandBus::dispatch()` accepts a command and optional dispatch context, without returning a result.
-- `QueryBus::ask(Query $query): mixed` returns the result produced by the query's handler.
+- `QueryBus::ask()` accepts a query and optional dispatch context, returning the query result.
 
 `ask()` declares `TResult` per call and connects its `Query<TResult>` parameter to its result. Generic-aware tooling can
 infer `string|null` for `ask(new FindArticleTitle($id))` from the query example, even when the caller only knows
@@ -102,7 +102,7 @@ infer `string|null` for `ask(new FindArticleTitle($id))` from the query example,
 This is static type information, not runtime result validation.
 
 The contracts describe dispatch and results independently of handler lookup or storage. Dispatch failures use
-`CqrsException`; unhandled exceptions and errors propagate unchanged. Command middleware may intercept failures.
+`CqrsException`; unhandled exceptions and errors propagate unchanged. Middleware may intercept failures.
 
 ## Register and dispatch commands synchronously
 
@@ -149,9 +149,10 @@ $bus = new SynchronousQueryBus([
 $title = $bus->ask(new FindArticleTitle('article-1'));
 ```
 
-`ask()` passes the original query object to its handler and returns the handler's result unchanged, including null.
-Objects retain their identity. The method's `TResult` generic preserves the query-to-result relationship for tooling;
-the bus does not validate result types at runtime. Handler exceptions and errors propagate unchanged.
+`ask()` runs its middleware chain before invoking the handler. Without middleware, it passes the original query object
+and returns the handler's result unchanged, including null. Objects retain their identity. The method's `TResult`
+generic
+preserves the query-to-result relationship for tooling; the bus does not validate result types at runtime.
 
 ## Synchronous registration rules
 
@@ -190,7 +191,7 @@ Application-domain exceptions do not need to implement this contract merely beca
 Handler contracts allow exceptions and errors to propagate; they do not require translating domain failures into CQRS
 exceptions.
 Concrete handlers should document their specific relevant exceptions. The shared handler contracts use `Throwable` so
-domain exceptions remain independent of the framework. Unhandled failures propagate unchanged; command middleware
+domain exceptions remain independent of the framework. Unhandled failures propagate unchanged; middleware
 may intercept them.
 
 ## Command middleware
@@ -267,7 +268,54 @@ context. Middleware and handlers are reused across calls; keep per-dispatch stat
 Nested dispatch starts a new chain and does not inherit context unless the caller passes it explicitly. Unhandled
 middleware and handler exceptions propagate unchanged; middleware can deliberately catch or translate downstream errors.
 
-### Dispatch metadata
+## Query middleware
+
+Implement `Cqrs\Query\Middleware\QueryMiddleware` to wrap query execution. Its `process()` method receives a query,
+the shared `DispatchContext`, and a `QueryExecution` continuation. Return `$next->execute($query, $context)` to continue
+and preserve the downstream result. Middleware can return its own result without invoking the continuation, for example
+on a cache hit. It must return the result type declared by the query, including when replacing or transforming a result.
+
+Both `process()` and `execute()` declare `TResult` per call, connecting `Query<TResult>` to the return value. A
+middleware
+implementation should repeat those method PHPDoc generics. Native return types remain `mixed`; result types are not
+validated at runtime. For example, inside a middleware with an injected application authorization service:
+
+```php
+/**
+ * Authorizes a query before executing it.
+ *
+ * @template TResult
+ *
+ * @param Query<TResult> $query The query to execute.
+ * @param DispatchContext $context The execution metadata.
+ * @param QueryExecution $next The remaining pipeline.
+ *
+ * @return TResult The query result.
+ *
+ * @throws Throwable When authorization or query execution fails.
+ */
+public function process(Query $query, DispatchContext $context, QueryExecution $next): mixed
+{
+    $this->authorization->assertAllowed($query, $context);
+
+    return $next->execute($query, $context);
+}
+```
+
+Import `Cqrs\Query\Query`, `Cqrs\DispatchContext`, `Cqrs\Query\Middleware\QueryExecution`, and `Throwable` in the
+implementation. The application defines the authorization service and its policy; the framework supplies no user model.
+
+Pass middleware instances as the second constructor argument to `SynchronousQueryBus`. The first entry is outermost;
+handler lookup occurs only if execution reaches the end of the chain. Invalid lists or entries raise
+`InvalidQueryMiddlewareException`. Calling the continuation more than once repeats downstream execution.
+
+Query middleware follows the command pipeline's context and exception behavior: each call starts a fresh execution,
+objects are reused, and nested calls inherit no context implicitly. Middleware can forward a new context or a
+replacement
+query with a compatible result type. Unhandled exceptions and errors propagate unchanged. Handlers still receive only
+the query through `handle(Query): mixed`.
+
+## Dispatch metadata
 
 `DispatchContext` stores application-defined objects indexed by their exact concrete class names. There is no framework
 user or actor model. For an application-defined immutable `ActorContext`, an entry point can call:
@@ -288,5 +336,5 @@ unchanged. Stored objects are not cloned or made immutable; prefer immutable met
 to a fresh empty context on each call. Middleware decides which metadata it requires; missing identity grants no
 implicit access.
 
-Custom `CommandBus` implementations must now accept the optional `DispatchContext` argument. Existing one-argument
-calls remain supported. Query buses are unchanged.
+Custom `CommandBus` and `QueryBus` implementations must accept the optional `DispatchContext` argument. Existing
+one-argument calls remain supported.

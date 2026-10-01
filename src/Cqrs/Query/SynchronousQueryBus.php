@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Query;
 
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\ClosureQueryExecution;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
+use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
+use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Exception\QueryHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\DuplicateQueryHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryRegistrationException;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\QueryHandlerNotFoundException;
 use ReflectionClass;
 use Throwable;
 
+use function array_is_list;
 use function array_key_exists;
+use function array_reverse;
 use function get_debug_type;
 use function is_string;
 use function sprintf;
 
 /**
- * Answers queries immediately using handlers registered for their exact class.
+ * Answers queries immediately to handlers registered for their exact class.
  *
  * Registrations are fixed after construction and handler instances are reused. Class aliases and differently cased
  * names are normalized. Registration validates the runtime contracts, not handler PHPDoc generic bindings.
@@ -31,19 +38,28 @@ final readonly class SynchronousQueryBus implements QueryBus
     private array $handlers;
 
     /**
+     * Fixed execution chain, reused without retaining per-dispatch context.
+     */
+    private QueryExecution $execution;
+
+    /**
      * Creates a bus with validated query handler registrations.
      *
      * @param array<class-string<Query>, QueryHandler> $handlers Handlers indexed by concrete query class.
+     * @param list<QueryMiddleware> $middleware Middleware in execution order, first entry outermost.
      *
      * @throws InvalidQueryRegistrationException When a key is not a concrete Query class or a handler is invalid.
      * @throws DuplicateQueryHandlerException When multiple keys identify the same canonical query class.
+     * @throws InvalidQueryMiddlewareException When middleware is not a list of QueryMiddleware instances.
      */
-    public function __construct(array $handlers)
+    public function __construct(array $handlers, array $middleware = [])
     {
         $registrations = [];
         foreach ($handlers as $queryClass => $handler) {
             if (!is_string($queryClass) || $queryClass === '') {
-                throw new InvalidQueryRegistrationException('Query registration keys must be non-empty class names.');
+                throw new InvalidQueryRegistrationException(
+                    'Query registration keys must be non-empty class names.',
+                );
             }
 
             try {
@@ -83,30 +99,56 @@ final readonly class SynchronousQueryBus implements QueryBus
         }
 
         $this->handlers = $registrations;
+        if (!array_is_list($middleware)) {
+            throw new InvalidQueryMiddlewareException('Query middleware must be a list.');
+        }
+        foreach ($middleware as $entry) {
+            if (!$entry instanceof QueryMiddleware) {
+                throw new InvalidQueryMiddlewareException(
+                    'Each query middleware must implement QueryMiddleware.',
+                );
+            }
+        }
+
+        $execution = new ClosureQueryExecution(function (Query $query, DispatchContext $context): mixed {
+            $class = $query::class;
+            if (!isset($this->handlers[$class])) {
+                throw new QueryHandlerNotFoundException(
+                    sprintf('No handler is registered for query "%s".', $class),
+                );
+            }
+            return $this->handlers[$class]->handle($query);
+        });
+        foreach (array_reverse($middleware) as $entry) {
+            $next = $execution;
+            $execution = new ClosureQueryExecution(
+                static function (Query $query, DispatchContext $context) use ($entry, $next): mixed {
+                    return $entry->process($query, $context, $next);
+                },
+            );
+        }
+        $this->execution = $execution;
     }
 
     /**
-     * Invokes the handler for the query's exact class and waits for it to complete.
+     * Executes middleware followed by the handler for the query's exact class.
      *
-     * Parent classes and interfaces are not considered. The original query object is passed to the handler.
-     * Handler exceptions and engine errors propagate unchanged.
+     * Middleware may short-circuit or forward a replacement query and context. Handler lookup occurs only at the
+     * end of the chain. Each call starts with its supplied context or a fresh empty context.
+     * Nested calls are independent.
      *
      * @template TResult
      *
      * @param Query<TResult> $query The query to answer.
+     * @param DispatchContext $context The application-defined execution metadata.
      *
-     * @return TResult The unchanged handler result.
+     * @return TResult The query result.
      *
-     * @throws QueryHandlerNotFoundException When the exact query class has no registered handler.
-     * @throws Throwable When the handler fails, propagated unchanged.
+     * @throws QueryHandlerNotFoundException When the query reaching the handler stage has no registration.
+     * @throws Throwable When execution fails, propagated unchanged unless intercepted by middleware.
      */
-    public function ask(Query $query): mixed
+    public function ask(Query $query, DispatchContext $context = new DispatchContext()): mixed
     {
-        $class = $query::class;
-        if (!isset($this->handlers[$class])) {
-            throw new QueryHandlerNotFoundException(sprintf('No handler is registered for query "%s".', $class));
-        }
-
-        return $this->handlers[$class]->handle($query);
+        return $this->execution->execute($query, $context);
     }
 }

@@ -28,7 +28,7 @@ See the [CQRS guide](../cqrs/README.md) for constructing and using the buses dir
 ## Configure handlers
 
 `CommandBusFactory::create()` and `QueryBusFactory::create()` receive a `ServiceLocator` and read its `Configuration`
-service. Configure `cqrs.command.handlers` and `cqrs.queries` as maps from message class names to handler service
+service. Configure `cqrs.command.handlers` and `cqrs.query.handlers` as maps from message class names to handler service
 identifiers.
 The identifiers may be class names or application-defined strings.
 
@@ -53,7 +53,9 @@ return [
         'command' => [
             'handlers' => [CreateArticle::class => CreateArticleHandler::class],
         ],
-        'queries' => [FindArticleTitle::class => FindArticleTitleHandler::class],
+        'query' => [
+            'handlers' => [FindArticleTitle::class => FindArticleTitleHandler::class],
+        ],
     ],
     'services' => [
         CreateArticleHandler::class => new InvokableDefinition(CreateArticleHandler::class),
@@ -170,3 +172,27 @@ with `InvalidCommandMiddlewareException`. As with other factory failures, servic
 
 Configure the pipeline at application level: numeric lists replace earlier lists during merging, rather than append.
 See [command middleware](../cqrs/README.md#command-middleware) for execution and context semantics.
+
+## Configure query middleware
+
+Set `cqrs.query.middleware` to an ordered list of query middleware service identifiers. Register the referenced services
+under `services`; they must implement `QueryMiddleware`. For example, with the application services below registered:
+
+```php
+'cqrs' => [
+    'query' => [
+        'handlers' => [FindArticleTitle::class => FindArticleTitleHandler::class],
+        'middleware' => [AuthorizeQuery::class, CacheQuery::class],
+    ],
+],
+```
+
+The factory resolves handlers and middleware eagerly. Middleware runs in list order, with the first entry outermost.
+A missing query section, handler map, or middleware list defaults to empty. Present sections must be arrays, and
+middleware
+must be a list of non-empty service identifiers. Malformed configuration raises `InvalidCqrsConfigurationException`;
+invalid resolved middleware raises `InvalidQueryMiddlewareException` when the bus is constructed.
+
+As with command middleware, configure the ordered pipeline at application level because lists replace earlier lists.
+The handler map now lives at `cqrs.query.handlers`; move registrations previously stored under `cqrs.queries` there.
+See [query middleware](../cqrs/README.md#query-middleware) for result and context semantics.

@@ -7,7 +7,9 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Cqrs\Factory;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\QueryHandler;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryMiddlewareException;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Exception\InvalidCqrsConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Factory\QueryBusFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
@@ -27,7 +29,7 @@ final class QueryBusFactoryTest extends TestCase
         $handler = $this->createMock(QueryHandler::class);
         $handler->expects(self::once())->method('handle')->with(self::identicalTo($message))->willReturn('title');
         $configuration = new Configuration([
-            'cqrs' => ['queries' => [ParentQuery::class => 'handler']],
+            'cqrs' => ['query' => ['handlers' => [ParentQuery::class => 'handler']]],
             'services' => [
                 'handler' => new InstanceDefinition($handler),
                 'bus' => new FactoryDefinition(new QueryBusFactory()->create(...)),
@@ -36,6 +38,27 @@ final class QueryBusFactoryTest extends TestCase
         $locator = new ServiceLocatorFactory()->create($configuration);
 
         self::assertSame('title', $locator->get('bus')->ask($message));
+    }
+
+    public function testResolvesConfiguredMiddlewareBeforeDispatch(): void
+    {
+        $middleware = $this->createMock(QueryMiddleware::class);
+        $middleware->expects(self::once())->method('process')->willReturn('cached');
+        $locator = new ServiceLocatorFactory()->create(new Configuration([
+            'cqrs' => ['query' => ['middleware' => ['authorization']]],
+            'services' => ['authorization' => new InstanceDefinition($middleware)],
+        ]));
+        self::assertSame('cached', new QueryBusFactory()->create($locator)->ask(new ParentQuery()));
+    }
+
+    public function testRejectsAResolvedServiceThatIsNotQueryMiddleware(): void
+    {
+        $locator = new ServiceLocatorFactory()->create(new Configuration([
+            'cqrs' => ['query' => ['middleware' => ['invalid']]],
+            'services' => ['invalid' => new InstanceDefinition(new stdClass())],
+        ]));
+        $this->expectException(InvalidQueryMiddlewareException::class);
+        new QueryBusFactory()->create($locator);
     }
 
     #[DataProvider('emptyConfigurations')]
@@ -54,7 +77,9 @@ final class QueryBusFactoryTest extends TestCase
     {
         yield [[]];
         yield [['cqrs' => []]];
-        yield [['cqrs' => ['queries' => []]]];
+        yield [['cqrs' => ['query' => []]]];
+        yield [['cqrs' => ['query' => ['middleware' => []]]]];
+        yield [['cqrs' => ['query' => ['handlers' => []]]]];
     }
 
     #[DataProvider('invalidConfigurations')]
@@ -70,14 +95,20 @@ final class QueryBusFactoryTest extends TestCase
      */
     public static function invalidConfigurations(): iterable
     {
+        yield [['cqrs' => ['query' => ['middleware' => null]]]];
+        yield [['cqrs' => ['query' => ['middleware' => ['named' => 'middleware']]]]];
+        yield [['cqrs' => ['query' => ['middleware' => ['']]]]];
+        yield [['cqrs' => ['query' => ['middleware' => [new stdClass()]]]]];
+        yield [['cqrs' => ['query' => null]]];
+        yield [['cqrs' => ['query' => 'invalid']]];
         yield [['cqrs' => null]];
         yield [['cqrs' => 'invalid']];
-        yield [['cqrs' => ['queries' => null]]];
-        yield [['cqrs' => ['queries' => 'invalid']]];
-        yield [['cqrs' => ['queries' => ['handler']]]];
-        yield [['cqrs' => ['queries' => ['' => 'handler']]]];
-        yield [['cqrs' => ['queries' => [ParentQuery::class => '']]]];
-        yield [['cqrs' => ['queries' => [ParentQuery::class => new stdClass()]]]];
+        yield [['cqrs' => ['query' => ['handlers' => null]]]];
+        yield [['cqrs' => ['query' => ['handlers' => 'invalid']]]];
+        yield [['cqrs' => ['query' => ['handlers' => ['handler']]]]];
+        yield [['cqrs' => ['query' => ['handlers' => ['' => 'handler']]]]];
+        yield [['cqrs' => ['query' => ['handlers' => [ParentQuery::class => '']]]]];
+        yield [['cqrs' => ['query' => ['handlers' => [ParentQuery::class => new stdClass()]]]]];
     }
 
     public function testRejectsAnIncorrectConfigurationService(): void
@@ -95,7 +126,9 @@ final class QueryBusFactoryTest extends TestCase
         $locator->expects(self::exactly(2))->method('get')->willReturnCallback(
             static function (string $id) use ($failure): object {
                 if ($id === Configuration::class) {
-                    return new Configuration(['cqrs' => ['queries' => [ParentQuery::class => 'missing']]]);
+                    return new Configuration([
+                        'cqrs' => ['query' => ['handlers' => [ParentQuery::class => 'missing']]],
+                    ]);
                 }
 
                 throw $failure;
@@ -113,7 +146,7 @@ final class QueryBusFactoryTest extends TestCase
     public function testBusRejectsAnInvalidResolvedHandler(): void
     {
         $locator = new ServiceLocatorFactory()->create(new Configuration([
-            'cqrs' => ['queries' => [ParentQuery::class => 'handler']],
+            'cqrs' => ['query' => ['handlers' => [ParentQuery::class => 'handler']]],
             'services' => ['handler' => new InstanceDefinition(new stdClass())],
         ]));
         $this->expectException(InvalidQueryRegistrationException::class);
