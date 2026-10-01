@@ -20,35 +20,37 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
+- [Application](docs/application.md): register modules, load and merge configuration, and create a service locator.
+  See the guides for [modules](docs/modules.md) and [configuration](docs/configuration.md).
 - [Service locator](docs/service-locator.md): resolve shared object services from instance, alias, factory, and class
   definitions, with constructor injection and extensible resolvers.
 
 ## Basic usage
 
-Register definitions and their resolvers explicitly. Services are resolved on first request and shared by identifier:
+Bootstrap an application using an existing configuration directory. An empty directory is sufficient to get started:
+
+```sh
+mkdir -p config
+```
 
 ```php
 <?php
 
 declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
-use ExtendsSoftware\ExaPHP\ServiceLocator\DefinitionServiceLocator;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Resolver\InvokableServiceResolver;
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 
 require 'vendor/autoload.php';
 
-$locator = new DefinitionServiceLocator(
-    ['cache' => new InvokableDefinition(ArrayObject::class)],
-    [new InvokableServiceResolver()],
-);
+$application = new Application(__DIR__ . '/config');
+$services = $application->bootstrap();
 
-$cache = $locator->get('cache');
-assert($cache === $locator->get('cache'));
+assert($application->config() === $services->get(Configuration::class));
 ```
 
-See the [service locator guide](docs/service-locator.md) for configuration, dependencies, exceptions, and extension
-points.
+Place this script in the project root. Register module classes before calling `bootstrap()` as shown in the
+[application guide](docs/application.md). The [service locator](docs/service-locator.md) can also be used independently.
 
 ## Testing
 
