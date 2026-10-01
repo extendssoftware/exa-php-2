@@ -11,6 +11,8 @@ use ExtendsSoftware\ExaPHP\Integration\Event\Exception\InvalidEventConfiguration
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
 
+use function array_map;
+use function array_values;
 use function is_array;
 use function is_string;
 use function sprintf;
@@ -68,10 +70,7 @@ final readonly class EventDispatcherFactory
 
         $listeners = [];
         foreach ($registrations as $eventClass => $listenerServices) {
-            $listeners[$eventClass] = [];
-            foreach ($listenerServices as $serviceId) {
-                $listeners[$eventClass][] = $serviceLocator->get($serviceId);
-            }
+            $listeners[$eventClass] = array_values(array_map($serviceLocator->get(...), $listenerServices));
         }
 
         return new SynchronousEventDispatcher($listeners);

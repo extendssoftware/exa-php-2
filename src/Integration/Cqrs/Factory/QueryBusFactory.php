@@ -12,6 +12,7 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
 
 use function array_key_exists;
+use function array_map;
 use function is_array;
 use function is_string;
 use function sprintf;
@@ -64,10 +65,7 @@ final readonly class QueryBusFactory
             }
         }
 
-        $handlers = [];
-        foreach ($registrations as $messageClass => $serviceId) {
-            $handlers[$messageClass] = $serviceLocator->get($serviceId);
-        }
+        $handlers = array_map($serviceLocator->get(...), $registrations);
 
         return new SynchronousQueryBus($handlers);
     }
