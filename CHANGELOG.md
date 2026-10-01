@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- CQRS component with command and generic query contracts, synchronous command and query buses with validated handler
+  registrations, and component exceptions.
 - Application bootstrap with explicit module registration, optional module configuration, read-only configuration with
   dot-path lookup, application global and local overrides, service conflict detection, and service locator creation with
   configuration injection. Optional module bootstrap and shutdown hooks support ordered startup, reverse-order cleanup,
