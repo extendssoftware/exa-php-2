@@ -10,15 +10,20 @@ use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationMerger;
 use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
 use ExtendsSoftware\ExaPHP\Application\Exception\DuplicateModuleException;
 use ExtendsSoftware\ExaPHP\Application\Exception\InvalidModuleException;
+use ExtendsSoftware\ExaPHP\Application\Exception\ModuleBootstrapException;
 use ExtendsSoftware\ExaPHP\Application\Exception\ModuleInstantiationException;
+use ExtendsSoftware\ExaPHP\Application\Exception\ModuleShutdownException;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
+use ExtendsSoftware\ExaPHP\Application\Module\BootstrapModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
+use ExtendsSoftware\ExaPHP\Application\Module\ShutdownModule;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
 
 use function array_key_exists;
+use function array_pop;
 use function sprintf;
 
 /**
@@ -34,11 +39,16 @@ final class Application
     private array $modules = [];
 
     /**
-     * Whether bootstrap has started, permanently closing registration and preventing new bootstrap attempts.
-     *
-     * @var bool
+     * The current application lifecycle phase.
      */
-    private bool $bootstrapStarted = false;
+    private ApplicationState $state = ApplicationState::Configuring;
+
+    /**
+     * Module instances that completed startup, retained in registration order until shutdown.
+     *
+     * @var list<Module>
+     */
+    private array $startedModules = [];
 
     /**
      * The application configuration, available only after successful bootstrap.
@@ -87,7 +97,7 @@ final class Application
      */
     public function registerModule(string $moduleClass): void
     {
-        if ($this->bootstrapStarted) {
+        if ($this->state !== ApplicationState::Configuring) {
             throw new ApplicationStateException('Modules cannot be registered after bootstrap has started.');
         }
 
@@ -116,38 +126,76 @@ final class Application
     }
 
     /**
-     * Instantiates modules, loads configuration, and creates the application service locator.
+     * Creates application services and runs module bootstrap hooks in registration order.
      *
-     * Successful repeat calls return the same locator. Registration closes when bootstrap starts. Failed or reentrant
-     * bootstrap calls cannot be retried on this instance; create a new application after correcting a failure.
-     * Configuration is exposed only after every bootstrap step succeeds.
+     * Repeated calls while running return the same locator. Configuration is exposed after all hooks succeed.
+     * Hook failure triggers reverse-order cleanup of modules that completed startup, preserving all failures.
+     * Failed or stopped applications cannot restart, and registration closes when bootstrap begins.
      *
      * @return ServiceLocator The application service locator.
      *
-     * @throws ApplicationStateException When bootstrap is already in progress or a previous attempt failed.
+     * @throws ApplicationStateException When bootstrap is in progress, previously failed, or shutdown has started.
+     * @throws ModuleBootstrapException When a module bootstrap hook fails.
      * @throws ModuleInstantiationException When module construction raises a non-application exception or error.
      * @throws ApplicationException When module construction, configuration loading, or locator creation fails.
      * @throws Throwable When a module's configuration directory method fails, propagated unchanged.
      */
     public function bootstrap(): ServiceLocator
     {
-        if ($this->serviceLocator !== null) {
+        if ($this->state === ApplicationState::Running) {
             return $this->serviceLocator;
         }
 
-        if ($this->bootstrapStarted) {
-            throw new ApplicationStateException('Application bootstrap is already in progress or previously failed.');
+        if ($this->state !== ApplicationState::Configuring) {
+            throw new ApplicationStateException('Application bootstrap is not allowed in the current lifecycle phase.');
         }
 
-        $this->bootstrapStarted = true;
-        $modules = $this->instantiateModules();
-        $configuration = $this->configurationLoader->load($modules, $this->configDirectory);
-        $serviceLocator = $this->serviceLocatorFactory->create($configuration);
+        $this->state = ApplicationState::Bootstrapping;
+        try {
+            $modules = $this->instantiateModules();
+            $configuration = $this->configurationLoader->load($modules, $this->configDirectory);
+            $serviceLocator = $this->serviceLocatorFactory->create($configuration);
+            $this->bootstrapModules($modules, $serviceLocator);
+        } catch (Throwable $exception) {
+            $this->state = ApplicationState::Failed;
+            throw $exception;
+        }
 
         $this->configuration = $configuration;
         $this->serviceLocator = $serviceLocator;
+        $this->state = ApplicationState::Running;
 
         return $serviceLocator;
+    }
+
+    /**
+     * Runs eligible module shutdown hooks once in reverse registration order.
+     *
+     * Every hook is attempted even after exceptions or engine errors. Repeated calls after shutdown or failed
+     * bootstrap do nothing. Configuration remains available after a successfully bootstrapped application stops.
+     *
+     * @return void
+     *
+     * @throws ApplicationStateException When bootstrap has not started or a lifecycle operation is in progress.
+     * @throws ModuleShutdownException When one or more shutdown hooks fail, after all hooks have been attempted.
+     */
+    public function shutdown(): void
+    {
+        if ($this->state === ApplicationState::Stopped || $this->state === ApplicationState::Failed) {
+            return;
+        }
+
+        if ($this->state !== ApplicationState::Running) {
+            throw new ApplicationStateException('Application shutdown requires completed bootstrap.');
+        }
+
+        $this->state = ApplicationState::ShuttingDown;
+        $failures = $this->shutdownModules($this->serviceLocator);
+        $this->state = ApplicationState::Stopped;
+
+        if ($failures !== []) {
+            throw new ModuleShutdownException($failures);
+        }
     }
 
     /**
@@ -166,6 +214,61 @@ final class Application
         }
 
         return $this->configuration;
+    }
+
+    /**
+     * Starts modules and records those eligible for shutdown.
+     *
+     * Modules without a bootstrap hook complete startup when reached. A failing module is responsible for its own
+     * partially acquired resources; only previously completed modules are shut down automatically.
+     *
+     * @param list<Module> $modules The constructed modules in registration order.
+     * @param ServiceLocator $services The application service locator.
+     *
+     * @return void
+     *
+     * @throws ModuleBootstrapException When a hook fails, with its original cause and any cleanup failures.
+     */
+    private function bootstrapModules(array $modules, ServiceLocator $services): void
+    {
+        foreach ($modules as $module) {
+            if ($module instanceof BootstrapModule) {
+                try {
+                    $module->bootstrap($services);
+                } catch (Throwable $exception) {
+                    $this->state = ApplicationState::ShuttingDown;
+                    $failures = $this->shutdownModules($services);
+                    throw new ModuleBootstrapException($module::class, $exception, $failures);
+                }
+            }
+
+            $this->startedModules[] = $module;
+        }
+    }
+
+    /**
+     * Attempts every eligible shutdown hook and collects its failure without interrupting cleanup.
+     *
+     * @param ServiceLocator $services The application service locator.
+     *
+     * @return array<class-string<Module>, Throwable> Hook failures indexed by module class in shutdown order.
+     */
+    private function shutdownModules(ServiceLocator $services): array
+    {
+        $failures = [];
+        while (($module = array_pop($this->startedModules)) !== null) {
+            if (!$module instanceof ShutdownModule) {
+                continue;
+            }
+
+            try {
+                $module->shutdown($services);
+            } catch (Throwable $exception) {
+                $failures[$module::class] = $exception;
+            }
+        }
+
+        return $failures;
     }
 
     /**

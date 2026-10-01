@@ -17,6 +17,13 @@ use function strtolower;
 
 final class ApplicationTest extends TestCase
 {
+    public function testRejectsShutdownBeforeBootstrap(): void
+    {
+        $this->expectException(ApplicationStateException::class);
+
+        new Application('/unused')->shutdown();
+    }
+
     public function testConfigurationIsUnavailableBeforeBootstrap(): void
     {
         $this->expectException(ApplicationStateException::class);

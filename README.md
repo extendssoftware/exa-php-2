@@ -20,7 +20,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
-- [Application](docs/application/README.md): module registration, configuration loading, and service locator creation.
+- [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
 - [Service locator](docs/service-locator/README.md): shared object services and constructor injection,
   with extensible resolvers.
@@ -46,7 +46,11 @@ require 'vendor/autoload.php';
 $application = new Application(__DIR__ . '/config');
 $services = $application->bootstrap();
 
-assert($application->config() === $services->get(Configuration::class));
+try {
+    assert($application->config() === $services->get(Configuration::class));
+} finally {
+    $application->shutdown();
+}
 ```
 
 Place this script in the project root. Register module classes before calling `bootstrap()` as shown in the

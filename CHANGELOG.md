@@ -8,7 +8,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 - Application bootstrap with explicit module registration, optional module configuration, read-only configuration with
   dot-path lookup, application global and local overrides, service conflict detection, and service locator creation with
-  configuration injection. Successful bootstrap is shared; distribution templates are excluded from loading.
+  configuration injection. Optional module bootstrap and shutdown hooks support ordered startup, reverse-order cleanup,
+  and preservation of hook failures. Successful bootstrap is shared while running; distribution templates are excluded.
 - Service locator component with immutable definitions for instances, aliases, factories, and class construction;
   extensible resolvers; constructor injection; shared service instances; circular dependency detection; and a
   component-specific exception contract.

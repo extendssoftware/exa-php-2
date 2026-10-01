@@ -8,7 +8,9 @@ use ExtendsSoftware\ExaPHP\Application\Application;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
 use ExtendsSoftware\ExaPHP\Application\Exception\InvalidServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Exception\ModuleBootstrapException;
 use ExtendsSoftware\ExaPHP\Application\Exception\ModuleInstantiationException;
+use ExtendsSoftware\ExaPHP\Application\Exception\ModuleShutdownException;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
 use Fiber;
 use FilesystemIterator;
@@ -16,7 +18,9 @@ use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
+use TypeError;
 
+use function array_keys;
 use function bin2hex;
 use function file_exists;
 use function file_get_contents;
@@ -100,6 +104,8 @@ PHP);
         $application = new Application($this->directory . '/config');
         $locator = $application->bootstrap();
         self::assertSame($application->config(), $locator->get(Configuration::class));
+        $application->shutdown();
+        $application->shutdown();
         $module = new class implements Module {};
         $this->expectException(ApplicationStateException::class);
 
@@ -110,12 +116,16 @@ PHP);
     {
         $this->write('config/test.global.php', "return ['services' => ['invalid' => false]];");
         $application = new Application($this->directory . '/config');
+        $application->registerModule($this->module('NotStarted', shutdown: $this->event('must-not-stop')));
         try {
             $application->bootstrap();
             self::fail('Expected invalid service configuration.');
         } catch (InvalidServiceDefinitionException $exception) {
             self::assertStringContainsString('invalid', $exception->getMessage());
         }
+
+        $application->shutdown();
+        self::assertFalse(file_exists($this->directory . '/events'));
 
         foreach (['config', 'bootstrap'] as $method) {
             try {
@@ -157,7 +167,7 @@ PHP);
         $fiber = new Fiber($application->bootstrap(...));
         $fiber->start();
 
-        foreach (['bootstrap', 'config', 'registerModule'] as $method) {
+        foreach (['bootstrap', 'config', 'registerModule', 'shutdown'] as $method) {
             try {
                 if ($method === 'registerModule') {
                     $application->registerModule($module);
@@ -174,26 +184,248 @@ PHP);
         self::assertSame($fiber->getReturn(), $application->bootstrap());
     }
 
+    public function testHooksUseTheSameModulesAndLocatorInForwardAndReverseOrder(): void
+    {
+        $first = $this->module(
+            'First',
+            bootstrap: '$this->hookServices = $services; ' . $this->event('start-first'),
+            shutdown: <<<'PHP'
+if ($this->hookServices !== $services) {
+    throw new RuntimeException('Module or locator changed.');
+}
+PHP . $this->event('stop-first'),
+        );
+        $second = $this->module(
+            'Second',
+            bootstrap: $this->event('start-second'),
+            shutdown: $this->event('stop-second'),
+        );
+        $shutdownOnly = $this->module('ShutdownOnly', shutdown: $this->event('stop-only'));
+        $application = new Application($this->directory . '/config');
+        foreach ([$first, $this->module('Plain'), $second, $shutdownOnly] as $module) {
+            $application->registerModule($module);
+        }
+
+        $services = $application->bootstrap();
+        self::assertSame('start-first;start-second;', file_get_contents($this->directory . '/events'));
+        self::assertSame($services, $application->bootstrap());
+        $application->shutdown();
+        $application->shutdown();
+
+        self::assertSame(
+            'start-first;start-second;stop-only;stop-second;stop-first;',
+            file_get_contents($this->directory . '/events'),
+        );
+        self::assertSame($services->get(Configuration::class), $application->config());
+        $this->expectException(ApplicationStateException::class);
+        $application->bootstrap();
+    }
+
+    public function testBootstrapHooksCanResolveConfiguredServices(): void
+    {
+        $this->write('config/services.global.php', <<<'PHP'
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+
+return ['services' => ['ready' => new InstanceDefinition((object) ['value' => 'available'])]];
+PHP);
+        $module = $this->module('Reader', bootstrap: <<<'PHP'
+file_put_contents(__DIR__ . '/../events', $services->get('ready')->value);
+PHP);
+        $application = new Application($this->directory . '/config');
+        $application->registerModule($module);
+        $application->bootstrap();
+
+        self::assertSame('available', file_get_contents($this->directory . '/events'));
+        $application->shutdown();
+    }
+
+    public function testBootstrapFailureCleansCompletedModulesAndPreservesCleanupFailures(): void
+    {
+        $first = $this->module('First', shutdown: $this->event('stop-first') . 'strlen([]);');
+        $second = $this->module(
+            'Second',
+            bootstrap: $this->event('start-second'),
+            shutdown: $this->event('stop-second') . "throw new RuntimeException('Cleanup failed');",
+        );
+        $broken = $this->module(
+            'Broken',
+            bootstrap: $this->event('start-broken') . "throw new RuntimeException('Startup failed');",
+            shutdown: $this->event('must-not-stop-broken'),
+        );
+        $later = $this->module(
+            'Later',
+            bootstrap: $this->event('must-not-start'),
+            shutdown: $this->event('must-not-stop'),
+        );
+        $application = new Application($this->directory . '/config');
+        foreach ([$first, $second, $broken, $later] as $module) {
+            $application->registerModule($module);
+        }
+
+        try {
+            $application->bootstrap();
+            self::fail('Expected a bootstrap hook failure.');
+        } catch (ModuleBootstrapException $exception) {
+            self::assertSame($broken, $exception->module);
+            self::assertSame('Startup failed', $exception->getPrevious()->getMessage());
+            self::assertSame([$second, $first], array_keys($exception->shutdownFailures));
+            self::assertSame('Cleanup failed', $exception->shutdownFailures[$second]->getMessage());
+            self::assertInstanceOf(TypeError::class, $exception->shutdownFailures[$first]);
+        }
+
+        $application->shutdown();
+        self::assertSame(
+            'start-second;start-broken;stop-second;stop-first;',
+            file_get_contents($this->directory . '/events'),
+        );
+        $this->expectException(ApplicationStateException::class);
+        $application->config();
+    }
+
+    public function testShutdownAttemptsEveryHookBeforeReportingAllFailures(): void
+    {
+        $first = $this->module('First', shutdown: $this->event('first'));
+        $second = $this->module(
+            'Second',
+            shutdown: $this->event('second') . "throw new RuntimeException('Second failed');",
+        );
+        $third = $this->module('Third', shutdown: $this->event('third') . 'strlen([]);');
+        $application = new Application($this->directory . '/config');
+        foreach ([$first, $second, $third] as $module) {
+            $application->registerModule($module);
+        }
+        $application->bootstrap();
+
+        try {
+            $application->shutdown();
+            self::fail('Expected aggregated shutdown failures.');
+        } catch (ModuleShutdownException $exception) {
+            self::assertSame([$third, $second], array_keys($exception->failures));
+            self::assertSame($exception->failures[$third], $exception->getPrevious());
+            self::assertInstanceOf(TypeError::class, $exception->getPrevious());
+            self::assertSame('Second failed', $exception->failures[$second]->getMessage());
+        }
+
+        $application->shutdown();
+        self::assertSame('third;second;first;', file_get_contents($this->directory . '/events'));
+    }
+
+    public function testBootstrapEngineErrorsTriggerCleanupWithoutReplacingTheirCause(): void
+    {
+        $application = new Application($this->directory . '/config');
+        $application->registerModule($this->module('Ready', shutdown: $this->event('cleaned')));
+        $broken = $this->module('BrokenHook', bootstrap: 'strlen([]);');
+        $application->registerModule($broken);
+
+        try {
+            $application->bootstrap();
+            self::fail('Expected the bootstrap engine error to be translated.');
+        } catch (ModuleBootstrapException $exception) {
+            self::assertSame($broken, $exception->module);
+            self::assertInstanceOf(TypeError::class, $exception->getPrevious());
+            self::assertSame([], $exception->shutdownFailures);
+        }
+
+        self::assertSame('cleaned;', file_get_contents($this->directory . '/events'));
+        $application->shutdown();
+        $this->expectException(ApplicationStateException::class);
+        $application->bootstrap();
+    }
+
+    public function testRejectsReentrantLifecycleCallsFromBootstrapAndShutdownHooks(): void
+    {
+        $application = new Application($this->directory . '/config');
+        $module = $this->module('SuspendedHooks', bootstrap: 'Fiber::suspend();', shutdown: 'Fiber::suspend();');
+        $application->registerModule($module);
+        $bootstrap = new Fiber($application->bootstrap(...));
+        $bootstrap->start();
+
+        foreach (['bootstrap', 'shutdown', 'config'] as $method) {
+            try {
+                $application->$method();
+                self::fail('Expected the bootstrap hook to keep the application unavailable.');
+            } catch (ApplicationStateException $exception) {
+                self::assertNotSame('', $exception->getMessage());
+            }
+        }
+
+        $bootstrap->resume();
+        $shutdown = new Fiber($application->shutdown(...));
+        $shutdown->start();
+        foreach (['bootstrap', 'shutdown'] as $method) {
+            try {
+                $application->$method();
+                self::fail('Expected the shutdown hook to prevent reentrant lifecycle calls.');
+            } catch (ApplicationStateException $exception) {
+                self::assertNotSame('', $exception->getMessage());
+            }
+        }
+        $shutdown->resume();
+        $application->shutdown();
+    }
+
+    private function event(string $message): string
+    {
+        return 'file_put_contents(__DIR__ . "/../events", ' . var_export($message . ';', true) . ', FILE_APPEND);';
+    }
+
     private function write(string $path, string $body): void
     {
         file_put_contents($this->directory . '/' . $path, "<?php\n\ndeclare(strict_types=1);\n\n" . $body);
     }
 
     /** @return class-string<Module> */
-    private function module(string $name, string $constructor = ''): string
+    private function module(
+        string $name,
+        string $constructor = '',
+        ?string $bootstrap = null,
+        ?string $shutdown = null,
+    ): string
     {
         mkdir($this->directory . '/' . $name);
         mkdir($this->directory . '/' . $name . '/config');
         $class = 'ApplicationTestModule' . bin2hex(random_bytes(8));
         $label = var_export($name, true);
         $log = var_export($this->directory . '/constructed', true);
+        $capabilities = '';
+        $imports = '';
+        $hooks = '';
+        foreach (['bootstrap' => $bootstrap, 'shutdown' => $shutdown] as $method => $body) {
+            if ($body === null) {
+                continue;
+            }
+            $capability = $method === 'bootstrap' ? 'BootstrapModule' : 'ShutdownModule';
+            $capabilities .= ', ' . $capability;
+            $imports .= 'use ExtendsSoftware\\ExaPHP\\Application\\Module\\' . $capability . ";\n";
+            $hooks .= <<<PHP
+
+    /**
+     * Executes the test lifecycle operation.
+     *
+     * @param ServiceLocator \$services The application services.
+     *
+     * @return void
+     */
+    public function $method(ServiceLocator \$services): void
+    {
+        $body
+    }
+
+PHP;
+        }
         $this->write($name . '/Module.php', <<<PHP
 use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
+$imports
+use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 
 /** Provides configuration for an application integration test. */
-final readonly class $class implements Module, ConfigurableModule
+final class $class implements Module, ConfigurableModule$capabilities
 {
+    /** The locator retained by a lifecycle hook for identity checks. */
+    private ?ServiceLocator \$hookServices = null;
+
+$hooks
     /** Records module construction. */
     public function __construct()
     {
