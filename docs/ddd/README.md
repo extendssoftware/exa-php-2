@@ -135,6 +135,74 @@ strategy such as a transactional outbox.
 Register listeners through the [Event integration module](../integration/README.md#register-the-event-module).
 The dispatcher matches concrete event classes, so register `ArticleCreated::class` rather than `DomainEvent::class`.
 
+## Compose domain specifications
+
+Implement `Ddd\Specification\Specification<T>` to test a domain condition without changing the candidate. Extend
+`AbstractSpecification<T>` when fluent `and()`, `or()`, and `not()` composition is useful. Concrete business rules
+belong
+in your application. For the article example above:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\Article;
+
+use ExtendsSoftware\ExaPHP\Ddd\Specification\AbstractSpecification;
+
+/**
+ * Checks that an article has a non-empty title.
+ *
+ * @extends AbstractSpecification<Article>
+ */
+final class HasTitle extends AbstractSpecification
+{
+    /**
+     * Checks the article title.
+     *
+     * @param Article $candidate The article to evaluate.
+     *
+     * @return bool Whether the title is non-empty.
+     */
+    public function isSatisfiedBy(object $candidate): bool
+    {
+        return $candidate->title !== '';
+    }
+}
+```
+
+Usage with the application classes above:
+
+```php
+$hasTitle = new HasTitle();
+$untitled = $hasTitle->not();
+$article = Article::create('article-1', 'Hello');
+
+$hasTitle->isSatisfiedBy($article); // true
+$untitled->isSatisfiedBy($article); // false
+```
+
+`$first->and($second)` requires both rules to pass; `$first->or($second)` requires either to pass. Composing creates new
+specifications without evaluating candidates or modifying the original specifications. Operands are retained by
+reference,
+so keep rule inputs immutable when stable results are required. Inject time cutoffs explicitly rather than reading the
+clock during evaluation.
+
+`AndSpecification`, `OrSpecification`, and `NotSpecification` can also be constructed directly with implementations of
+`Specification`, without requiring those implementations to extend the abstract class. Composite specifications support
+further fluent composition. Chaining nests expressions left to right: `$a->or($b)->and($c)` means `(a OR b) AND c`.
+Use `$a->or($b->and($c))` for `a OR (b AND c)`.
+
+AND and OR evaluate the left operand first and skip the right operand once the result is determined. NOT evaluates its
+operand once. Every evaluated operand receives the original candidate. Exceptions and errors propagate unchanged.
+The `T` generic describes the candidate type for tooling; PHP still accepts any object, so callers must supply a
+candidate
+of the supported domain type. Combine rules for the same candidate type.
+
+Specifications evaluate objects in memory; they do not translate into database queries or enforce aggregate invariants.
+Domain operations must still enforce their business rules when called.
+
 ## Exceptions
 
 `DddException` extends `Throwable` as the component's root exception contract. Recording and releasing valid domain
