@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Integration component with a CQRS module providing default bus services, configuration-driven command and query
+  factories, and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler
   registrations, and component exceptions.
 - Application bootstrap with explicit module registration, optional module configuration, read-only configuration with
