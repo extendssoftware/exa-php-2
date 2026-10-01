@@ -122,8 +122,9 @@ commonly used together with HTTP.
 ## PHPDoc
 
 - Add complete PHPDoc to all public classes, interfaces, traits, enums, methods, properties, and constants.
-- Add PHPDoc to non-public members when it improves clarity or documents behavior that is not obvious from the
-  implementation.
+- Add PHPDoc to every non-promoted property, regardless of visibility.
+- Add PHPDoc to non-public methods and constants when it improves clarity or documents behavior that is not obvious
+  from the implementation.
 - PHPDoc may intentionally repeat information already expressed by PHP types when this provides a compact and complete
   API overview.
 - Every PHPDoc block must start with a concise summary.
