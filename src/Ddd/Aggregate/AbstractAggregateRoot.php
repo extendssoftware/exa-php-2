@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ExtendsSoftware\ExaPHP\Ddd\Aggregate;
+
+use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Ddd\Event\RecordedEvents;
+
+/**
+ * Provides event recording for aggregate roots through inheritance.
+ *
+ * Subclasses record events from domain behavior. No parent constructor call is required.
+ */
+abstract class AbstractAggregateRoot implements AggregateRoot
+{
+    /**
+     * Lazily initialized collection of pending domain events.
+     */
+    private ?RecordedEvents $events = null;
+
+    /**
+     * Gives the cloned aggregate an independent pending-event collection.
+     *
+     * Event objects retain their identity. Subclasses overriding this method must call parent::__clone().
+     *
+     * @return void
+     */
+    public function __clone(): void
+    {
+        if ($this->events !== null) {
+            $this->events = clone $this->events;
+        }
+    }
+
+    /**
+     * Records an event without publishing it.
+     *
+     * @param DomainEvent $event The event that occurred.
+     *
+     * @return void
+     */
+    final protected function recordEvent(DomainEvent $event): void
+    {
+        ($this->events ??= new RecordedEvents())->record($event);
+    }
+
+    /**
+     * Returns recorded events in order and clears the pending events.
+     *
+     * Event identity and repeated occurrences are preserved. Releasing events does not publish them.
+     *
+     * @return list<DomainEvent> The recorded events, or an empty list when none are pending.
+     */
+    final public function releaseEvents(): array
+    {
+        return $this->events?->release() ?? [];
+    }
+}

@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- DDD component with aggregate and domain event contracts, optional abstract aggregate roots, a reusable recorded-event
+  collection, and an article example.
 - Event component with event and listener contracts, synchronous dispatch to ordered listener lists, validated
   registrations, and component exceptions.
 - PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.
