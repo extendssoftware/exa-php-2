@@ -196,3 +196,52 @@ invalid resolved middleware raises `InvalidQueryMiddlewareException` when the bu
 As with command middleware, configure the ordered pipeline at application level because lists replace earlier lists.
 The handler map now lives at `cqrs.query.handlers`; move registrations previously stored under `cqrs.queries` there.
 See [query middleware](../cqrs/README.md#query-middleware) for result and context semantics.
+
+## Register the Logging module
+
+Register `Integration\Logging\LoggingModule` before bootstrap. The application configuration directory must exist:
+
+```php
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Integration\Logging\LoggingModule;
+use ExtendsSoftware\ExaPHP\Logging\Logger;
+
+$application = new Application(__DIR__ . '/config');
+$application->registerModule(LoggingModule::class);
+$services = $application->bootstrap();
+$logger = $services->get(Logger::class);
+```
+
+The module registers shared `Logger` and `Logging\Writer\LogWriter` services. `LoggerFactory` resolves `LogWriter`
+and creates a `WriterLogger`. The default writer is a `StreamLogWriter` targeting `php://stderr` with NDJSON formatting.
+Resolving these services does not write a record or open the destination.
+
+Override `LogWriter::class` in an application file such as `/config/logging.global.php` to configure the destination:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
+use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
+
+return [
+    'services' => [
+        LogWriter::class => new FactoryDefinition(
+            static fn(): LogWriter => new StreamLogWriter(__DIR__ . '/../var/application.ndjson'),
+        ),
+    ],
+];
+```
+
+Create the `var` directory before logging. Writer factories can construct `FilteringLogWriter` and `CompositeLogWriter`
+combinations or resolve other registered writers. See the [logging guide](../logging/README.md) for composition and
+failure behavior. No separate logging configuration schema is required. Override `Logger::class` itself to use a
+different logger implementation.
+
+A writer service that does not implement `LogWriter` causes
+`Integration\Logging\Exception\InvalidLoggingConfigurationException`, which implements `IntegrationException`.
+Direct `LoggerFactory::create()` calls preserve service-resolution exceptions unchanged. Resolution through
+`FactoryDefinition` wraps non-ServiceLocator exceptions in `ServiceResolutionException`, preserving the cause.

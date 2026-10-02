@@ -6,6 +6,10 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Logging component with logger, writer, and formatter contracts, stream output, predicate filtering, multi-destination
+  delivery with aggregated failures, immutable log records, and NDJSON formatting with UTC timestamps and inline
+  exception details, severity enum, component exceptions, and application integration with configurable writer services,
+  without PSR dependencies.
 - DDD component with aggregate and domain event contracts, optional abstract aggregate roots, a reusable recorded-event
   collection, composable generic specifications, and an article example.
 - Event component with event and listener contracts, synchronous dispatch to ordered listener lists, validated
