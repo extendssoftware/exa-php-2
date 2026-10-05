@@ -1,6 +1,6 @@
 # Integration
 
-The `ExtendsSoftware\ExaPHP\Integration` namespace contains application modules that connect framework components.
+The `ExtendsSoftware\ExaPHP\Integration` namespace contains application modules and adapters that connect framework components.
 `IntegrationException` is the root exception contract for integration failures.
 
 ## Register the CQRS module
@@ -245,3 +245,109 @@ A writer service that does not implement `LogWriter` causes
 `Integration\Logging\Exception\InvalidLoggingConfigurationException`, which implements `IntegrationException`.
 Direct `LoggerFactory::create()` calls preserve service-resolution exceptions unchanged. Resolution through
 `FactoryDefinition` wraps non-ServiceLocator exceptions in `ServiceResolutionException`, preserving the cause.
+
+## Register the HTTP module
+
+Register `HttpModule` before modules that contribute HTTP middleware, so its default exception boundary is outermost.
+The application configuration directory must exist:
+
+```php
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Integration\Http\HttpModule;
+
+$application = new Application(__DIR__ . '/config');
+$application->registerModule(HttpModule::class);
+// Register your business modules here.
+$serviceLocator = $application->bootstrap();
+```
+
+The module supplies these shared services:
+
+| Service identifier | Default implementation |
+| --- | --- |
+| `Http\Handler\RequestHandler` | `MiddlewarePipeline` wrapping the routing handler |
+| `Http\Routing\Router` | `SimpleRouter` using `http.routes` |
+| `Http\Handler\HandlerResolver` | `ServiceLocatorHandlerResolver` |
+| `Http\Routing\RoutingRequestHandler` | Routing and lazy handler dispatch |
+| `Http\Middleware\ExceptionHandlingMiddleware` | Configured exception response factory |
+| `Http\ExceptionHandling\ExceptionResponseFactory` | `DefaultExceptionResponseFactory` |
+| `Http\Server\ServerRequestFactory` | `PhpServerRequestFactory` |
+| `Http\Server\ResponseEmitter` | `PhpResponseEmitter` |
+
+Identifiers above are relative to `ExtendsSoftware\ExaPHP`. Override service definitions in application configuration
+for custom routers, exception responses, or server adapters. Resolving the pipeline validates configuration and resolves
+middleware eagerly; handler services are resolved only after a route matches. An empty router returns 404.
+
+### Configure routes and middleware
+
+Each module can contribute a configuration file under its own configuration directory. Application overrides belong
+in `/config/*.global.php` or `*.local.php`. For an autoloadable, constructorless application `ArticleHandler` implementing
+`RequestHandler`, a configuration file can contain:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\Method;
+use ExtendsSoftware\ExaPHP\Http\Routing\Route;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
+
+return [
+    'http' => [
+        'routes' => [
+            'articles.show' => new Route(Method::Get, '/articles/{id}', ArticleHandler::class),
+        ],
+    ],
+    'services' => [
+        ArticleHandler::class => new InvokableDefinition(ArticleHandler::class),
+    ],
+];
+```
+
+Use `FactoryDefinition` for handlers with dependencies. Route names are configuration identifiers only; they do not
+provide URL generation or become route-match names. The router receives the values in registration order and applies
+its normal [matching rules](../http/README.md#path-patterns-and-precedence). Duplicate method/path structures still fail,
+even when their configuration names differ.
+
+`http.middleware` is an ordered map from non-empty registration names to non-empty service identifiers. The module
+provides `['exceptions' => ExceptionHandlingMiddleware::class]`. Business modules can append entries such as
+`['audit' => AuditMiddleware::class]` and register those services. Middleware must implement the HTTP `Middleware` contract.
+The first registration runs outermost. Reusing a service under multiple names runs it multiple times.
+
+Associative configuration merges by name. Replacing an existing route or middleware entry retains its position;
+new names append in source order. An explicit empty array replaces the section and clears registrations, including the
+default exception middleware when applied to `http.middleware`. To rebuild an order entirely, clear the section in an
+earlier application configuration file and supply the replacement map in a later file.
+
+Do not use a numeric list for routes or middleware. Factories reject malformed sections or entries with
+`InvalidHttpConfigurationException`, which implements `IntegrationException`. They propagate HTTP registration errors
+and service resolution failures unchanged. When invoked through the service locator, non-locator factory failures
+are wrapped in `ServiceResolutionException`, with the original cause available through `getPrevious()`. Failures
+constructing the pipeline occur before its exception middleware can run.
+
+### Run the configured pipeline
+
+After the bootstrap shown above, a front controller can execute:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
+use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
+use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
+
+try {
+    $request = $serviceLocator->get(ServerRequestFactory::class)->create();
+    $response = $serviceLocator->get(RequestHandler::class)->handle($request);
+    $serviceLocator->get(ResponseEmitter::class)->emit($response, $request->method);
+} finally {
+    $application->shutdown();
+}
+```
+
+The default exception boundary converts downstream failures to a generic 500. Request creation, pipeline construction,
+emission, and application shutdown remain front-controller concerns. See the
+[HTTP server guide](../http/README.md#serve-a-request-through-php) for stream ownership and emission limitations.
+
+### Resolve HTTP handlers
+
+For manual wiring without `HttpModule`, construct `Http\Resolver\ServiceLocatorHandlerResolver` from this Integration
+namespace with the application's service locator and pass it to `RoutingRequestHandler` alongside a router.
+The adapter checks that resolved services implement `RequestHandler`. A wrong type or service locator failure produces
+HTTP `HandlerResolutionException`, preserving the locator failure as the previous exception. Service definitions control
+handler sharing and construction; neither matching nor 404/405 responses resolve handlers.

@@ -6,6 +6,12 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- HTTP component with immutable request, response, header, and URI values, named method and status enums, repeatable
+  string bodies, body and handler contracts, ordered middleware execution, and method/path routing with typed matches,
+  immutable request attributes, lazy handler resolution with a service locator adapter, and 404/405 responses.
+  Includes single-use stream bodies, PHP request creation and response emission adapters, and exception-handling
+  middleware with customizable response factories and a generic 500 default.
+  Requires PHP’s native `ext-uri` extension.
 - Processing component with transformation, validation, and pipeline contracts, sequential execution with unambiguous
   step roles, immutable shared violations and results, null, string, pattern, strict-membership, and integer-range
   validators, collecting `AllOf` validation, string trimming and integer conversion, and nested object/array shapes and
@@ -20,7 +26,8 @@ All notable changes to ExaPHP will be documented in this file.
   registrations, and component exceptions.
 - PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.
 - GitHub Actions workflow running the full test suite through the shared just recipes on pushes and pull requests.
-- Integration component with CQRS and Event modules providing default bus and dispatcher services, configuration-driven
+- Integration component with CQRS, Event, and HTTP modules providing default bus, dispatcher, and server services,
+  named HTTP route and middleware configuration with lazy handler resolution, configuration-driven
   factories, handler and middleware configuration under `cqrs.command` and `cqrs.query`, keyed listener registrations,
   and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler
