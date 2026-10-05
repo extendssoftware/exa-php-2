@@ -12,6 +12,7 @@ All notable changes to ExaPHP will be documented in this file.
   Includes single-use stream bodies, PHP request creation and response emission adapters, and exception-handling
   middleware with customizable response factories and a generic 500 default. Content negotiation selects registered
   response factories using Accept preferences, with JSON as the configurable default and 406 for unsupported formats.
+  Content-type-selected request decoding supports bounded JSON input and maps decoding failures to 400, 413, and 415.
   Requires PHP’s native `ext-uri` extension.
 - Processing component with transformation, validation, and pipeline contracts, sequential execution with unambiguous
   step roles, immutable shared violations and results, null, string, pattern, strict-membership, and integer-range

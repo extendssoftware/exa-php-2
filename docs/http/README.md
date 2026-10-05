@@ -277,6 +277,48 @@ On dispatch, the routing handler attaches a fresh `RouteMatch`, replacing any pr
 metadata. The original request remains unchanged. The match reflects the routing decision; changing a request's URI
 later does not automatically recompute its attributes.
 
+## Decode JSON request bodies
+
+Inject `RequestBody\RequestBodyDecoder` into handlers that need request data. With `HttpModule`, this service selects
+from registered decoders using `Content-Type`; it does not use `Accept` or guess a missing content type.
+For direct construction:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\RequestBody\ContentTypeRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\RequestBody\JsonRequestBodyDecoder;
+
+$decoder = new ContentTypeRequestBodyDecoder([
+    'application/json' => new JsonRequestBodyDecoder(maxBytes: 1048576),
+]);
+$data = $decoder->decode($request);
+// Validate $data with your application's processing rules before dispatching a command.
+```
+
+Decoding is explicit and may consume the body. Decode once and retain the result; a stream body cannot be replayed.
+JSON objects become `stdClass`, arrays remain arrays, scalars retain their JSON meaning, and JSON `null` is valid.
+Integers outside PHP's integer range become strings to avoid precision loss. Empty bodies, malformed syntax, invalid
+UTF-8, and nesting beyond the decoder's depth limit of 512 produce `MalformedRequestBodyException`.
+
+The JSON decoder buffers at most its configured byte limit, defaulting to one MiB. It counts actual chunks and stops
+before appending a chunk that exceeds the remaining allowance; Content-Length does not bypass enforcement. A producer
+may already have allocated a larger chunk. The limit bounds encoded input, not the memory used by the decoded structure.
+Zero is permitted as a limit, but no valid JSON document fits. Stream failures propagate unchanged.
+
+The dispatcher requires one syntactically valid Content-Type. Matching ignores media-type case and parameters, so
+`application/json; charset=utf-8` selects JSON. The JSON decoder always expects UTF-8 and performs no charset conversion.
+Vendor types such as `application/vnd.example+json` require explicit registration. Missing, repeated, malformed, or
+unsupported content types produce `UnsupportedRequestMediaTypeException` before body consumption. Non-identity
+Content-Encoding is also rejected; compressed bodies require a separate decompression boundary.
+
+`RequestBodyExceptionResponseFactory` maps malformed input to 400, an exceeded limit to 413, and unsupported metadata
+to 415. It returns generic non-cacheable plain-text messages and delegates unrelated exceptions to its fallback.
+`HttpModule` installs this policy around `DefaultExceptionResponseFactory`, retaining generic 500 responses for other
+failures. Application overrides of `ExceptionResponseFactory` should preserve these mappings if desired. Neither
+representation decoding nor HTTP error mapping validates domain fields.
+
+See [request decoder configuration](../integration/README.md#configure-request-body-decoding) for byte limits and custom
+decoders. Direct `JsonRequestBodyDecoder` calls assume JSON selection was already performed by the caller.
+
 ## Negotiate response representations
 
 Use `ResponseFactory\ContentNegotiatingResponseFactory` in HTTP handlers to encode public representation data according
@@ -432,6 +474,9 @@ Use [exception-handling middleware](#convert-application-failures-into-responses
 
 - `InvalidHeaderException` for invalid field names, value types, or control bytes.
 - `InvalidResponseFactoryException` for invalid representation registrations or an unavailable default media type.
+- `InvalidRequestBodyDecoderException` for invalid decoder registrations or limits.
+- `UnsupportedRequestMediaTypeException`, `MalformedRequestBodyException`, and `RequestBodyTooLargeException`
+  for request decoding failures.
 - `ResponseEncodingException` for JSON encoding failures.
 - `InvalidBodyStreamException` for invalid streams and `BodyReadException` for unsupported or failed stream reads.
 - `RequestCreationException` for missing or unsupported server metadata and request input opening failures.

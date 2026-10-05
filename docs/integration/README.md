@@ -270,7 +270,7 @@ The module supplies these shared services:
 | `Http\Handler\HandlerResolver` | `ServiceLocatorHandlerResolver` |
 | `Http\Routing\RoutingRequestHandler` | Routing and lazy handler dispatch |
 | `Http\Middleware\ExceptionHandlingMiddleware` | Configured exception response factory |
-| `Http\ExceptionHandling\ExceptionResponseFactory` | `DefaultExceptionResponseFactory` |
+| `Http\ExceptionHandling\ExceptionResponseFactory` | Request decoding error policy with a generic 500 fallback |
 | `Http\Server\ServerRequestFactory` | `PhpServerRequestFactory` |
 | `Http\Server\ResponseEmitter` | `PhpResponseEmitter` |
 
@@ -321,6 +321,34 @@ Do not use a numeric list for routes or middleware. Factories reject malformed s
 and service resolution failures unchanged. When invoked through the service locator, non-locator factory failures
 are wrapped in `ServiceResolutionException`, with the original cause available through `getPrevious()`. Failures
 constructing the pipeline occur before its exception middleware can run.
+
+### Configure request body decoding
+
+`HttpModule` registers `Http\RequestBody\RequestBodyDecoder` as a `ContentTypeRequestBodyDecoder`, and registers
+`JsonRequestBodyDecoder` with a one-MiB default input limit. Inject the decoder into handlers and call `decode($request)`
+only when their request body is needed. A configuration override can set:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\RequestBody\JsonRequestBodyDecoder;
+
+return [
+    'http' => [
+        'request' => [
+            'decoders' => ['application/json' => JsonRequestBodyDecoder::class],
+            'json' => ['maxBytes' => 2097152],
+        ],
+    ],
+];
+```
+
+`maxBytes` must be a non-negative integer and applies to the JSON decoder. Other decoders own their limits and decoding
+policies. Add exact media-type-to-service mappings to `http.request.decoders` to support additional formats; each service
+must implement `RequestBodyDecoder`. Parameters are not permitted in registration keys. Services are resolved when the
+dispatcher is constructed; bodies are read only when `decode()` is called. An empty map supports no input formats.
+
+The default exception response service maps decoding failures to 400, 413, and 415, and delegates all others to the
+plain-text 500 factory. Overriding that service replaces this policy. See the
+[request decoding guide](../http/README.md#decode-json-request-bodies) for body consumption and format limitations.
 
 ### Configure response representations
 
@@ -404,7 +432,7 @@ fails. Bootstrap failures retain Application's own cleanup behavior. A single ex
 unchanged. If both fail, `HttpRunException` preserves the execution failure as `getPrevious()` and the shutdown failure
 as `shutdownFailure`. The latter can contain aggregated module cleanup failures.
 
-The default exception middleware covers downstream handling. Failures outside that boundary still reach the caller of
+The default exception middleware covers downstream handling, including request decoding invoked by handlers. Failures outside that boundary still reach the caller of
 `run()`, and an emitted response cannot be retracted. See the
 [HTTP server guide](../http/README.md#serve-a-request-through-php) for stream ownership and emission limitations.
 Applications needing a different lifecycle can still invoke the request factory, handler, and emitter directly.
