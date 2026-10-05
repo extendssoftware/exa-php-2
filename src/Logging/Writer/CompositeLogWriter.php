@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
@@ -46,6 +47,7 @@ final readonly class CompositeLogWriter implements LogWriter
      * @throws CompositeLogWriteException When any writers report logging failures.
      * @throws Throwable When a writer throws a failure outside LoggingException.
      */
+    #[Override]
     public function write(LogRecord $record): void
     {
         $failures = [];

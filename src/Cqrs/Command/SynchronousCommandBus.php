@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Command;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\ClosureCommandExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
@@ -145,6 +146,7 @@ final readonly class SynchronousCommandBus implements CommandBus
      * @throws CommandHandlerNotFoundException When the command reaching the handler stage has no registration.
      * @throws Throwable When execution fails, propagated unchanged unless intercepted by middleware.
      */
+    #[Override]
     public function dispatch(Command $command, DispatchContext $context = new DispatchContext()): void
     {
         $this->execution->execute($command, $context);

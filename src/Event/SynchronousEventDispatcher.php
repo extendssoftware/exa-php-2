@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Event;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Event\Exception\DuplicateEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Exception\InvalidEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Listener\EventListener;
@@ -112,6 +113,7 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
      *
      * @throws Throwable When the listener fails, propagated unchanged.
      */
+    #[Override]
     public function dispatch(Event $event): void
     {
         foreach ($this->listeners[$event::class] ?? [] as $listener) {

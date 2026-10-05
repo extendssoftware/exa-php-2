@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Collection;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
@@ -66,6 +67,7 @@ final readonly class EachItem implements Transformer
      *
      * @throws Throwable When item execution fails, propagated unchanged without continuing.
      */
+    #[Override]
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_array($value)) {

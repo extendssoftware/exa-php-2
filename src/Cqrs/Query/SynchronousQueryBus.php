@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Query;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\ClosureQueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
@@ -147,6 +148,7 @@ final readonly class SynchronousQueryBus implements QueryBus
      * @throws QueryHandlerNotFoundException When the query reaching the handler stage has no registration.
      * @throws Throwable When execution fails, propagated unchanged unless intercepted by middleware.
      */
+    #[Override]
     public function ask(Query $query, DispatchContext $context = new DispatchContext()): mixed
     {
         return $this->execution->execute($query, $context);

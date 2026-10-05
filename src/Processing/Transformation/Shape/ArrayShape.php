@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Shape;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
@@ -64,6 +65,7 @@ final readonly class ArrayShape implements Transformer
      *
      * @throws Throwable When field execution fails, propagated unchanged without continuing.
      */
+    #[Override]
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_array($value)) {

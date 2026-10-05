@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\Number;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
@@ -50,6 +51,7 @@ final readonly class IntegerRange implements Validator
      *
      * @return ValidationResult The outcome, with not_integer or integer_out_of_range violations on failure.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         if (!is_int($value)) {

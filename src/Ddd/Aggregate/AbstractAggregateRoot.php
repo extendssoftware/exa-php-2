@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Ddd\Aggregate;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
 use ExtendsSoftware\ExaPHP\Ddd\Event\RecordedEvents;
 
@@ -52,6 +53,7 @@ abstract class AbstractAggregateRoot implements AggregateRoot
      *
      * @return list<DomainEvent> The recorded events, or an empty list when none are pending.
      */
+    #[Override]
     final public function releaseEvents(): array
     {
         return $this->events?->release() ?? [];

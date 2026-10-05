@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Message\Body;
 
+use Override;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Http\Message\Exception\BodyReadException;
 use ExtendsSoftware\ExaPHP\Http\Message\Exception\InvalidBodyStreamException;
@@ -57,6 +58,7 @@ final class StreamBody implements Body
      *
      * @throws BodyReadException When iteration is repeated, the stream is closed, or reading fails to make progress.
      */
+    #[Override]
     public function chunks(): iterable
     {
         if ($this->started) {
@@ -77,6 +79,7 @@ final class StreamBody implements Body
      *
      * @return null Stream body lengths are not inferred.
      */
+    #[Override]
     public function size(): ?int
     {
         return null;

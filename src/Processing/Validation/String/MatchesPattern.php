@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
@@ -77,6 +78,7 @@ final readonly class MatchesPattern implements Validator
      *
      * @throws PatternExecutionException When matching cannot complete, including regex resource limits.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         if (!is_string($value)) {

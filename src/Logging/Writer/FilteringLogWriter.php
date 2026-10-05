@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
+use Override;
 use Closure;
 use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
@@ -44,6 +45,7 @@ final readonly class FilteringLogWriter implements LogWriter
      * @throws LoggingException When the wrapped writer fails.
      * @throws Throwable When the application-provided predicate fails.
      */
+    #[Override]
     public function write(LogRecord $record): void
     {
         if (!($this->predicate)($record)) {

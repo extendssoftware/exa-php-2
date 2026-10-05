@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Message\Body;
 
+use Override;
 use function strlen;
 
 /**
@@ -35,6 +36,7 @@ final readonly class StringBody implements Body
      *
      * @return iterable<string> The stored content as a byte chunk.
      */
+    #[Override]
     public function chunks(): iterable
     {
         if ($this->content !== '') {
@@ -47,6 +49,7 @@ final readonly class StringBody implements Body
      *
      * @return int<0, max> The byte length.
      */
+    #[Override]
     public function size(): int
     {
         return strlen($this->content);

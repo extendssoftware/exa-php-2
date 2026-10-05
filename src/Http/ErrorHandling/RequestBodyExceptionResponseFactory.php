@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\ErrorHandling;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
@@ -38,6 +39,7 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
      *
      * @throws Throwable When the fallback fails, propagated unchanged.
      */
+    #[Override]
     public function create(Throwable $exception, Request $request): Response
     {
         [$status, $message] = match (true) {

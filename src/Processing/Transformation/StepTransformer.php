@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
@@ -43,6 +44,7 @@ final readonly class StepTransformer implements Transformer
      *
      * @throws Throwable When execution fails, propagated unchanged.
      */
+    #[Override]
     public function transform(mixed $value): ProcessingResult
     {
         if ($this->step instanceof Transformer) {

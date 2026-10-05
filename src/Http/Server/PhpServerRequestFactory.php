@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
+use Override;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\StreamBody;
@@ -43,6 +44,7 @@ final readonly class PhpServerRequestFactory implements ServerRequestFactory
      *
      * @throws HttpException When server metadata is invalid or the input stream cannot be opened.
      */
+    #[Override]
     public function create(): Request
     {
         set_error_handler(static function (int $severity, string $message, string $file, int $line): never {

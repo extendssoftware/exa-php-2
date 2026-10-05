@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
 
 /**
@@ -25,6 +26,7 @@ final readonly class NotNull implements Validator
      *
      * @return ValidationResult The outcome, with a null_value violation for null.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         return $value === null

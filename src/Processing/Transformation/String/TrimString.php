@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\String;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
@@ -30,6 +31,7 @@ final readonly class TrimString implements Transformer
      *
      * @return ProcessingResult<string> The trimmed string, or a not_string violation.
      */
+    #[Override]
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_string($value)) {

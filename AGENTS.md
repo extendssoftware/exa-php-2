@@ -32,6 +32,10 @@
   an API accepting additional application-defined scalar values does not require a constants class.
 - Keep class constants for implementation settings, bit flags, or unrelated constants that do not form an enum.
 - Prefer attributes to annotation-based metadata where PHP provides native attribute support.
+- Add `#[Override]` to every class or enum method that implements an interface method or overrides an inherited
+  non-private method in production code. Import `Override` explicitly.
+- Test code, including test doubles, fixtures, and lifecycle methods, is exempt from the `#[Override]` requirement.
+- Do not add `#[Override]` to constructors, new methods, or interface declarations introducing methods.
 - Prefer `match` expressions over complex `switch` statements when appropriate.
 - Prefer first-class callables over equivalent closures when no additional closure logic is required.
 - Prefer early returns over deeply nested conditionals.

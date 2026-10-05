@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Shape;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
@@ -74,6 +75,7 @@ final readonly class ObjectShape implements Transformer
      *
      * @throws Throwable When property extraction or field execution fails, propagated unchanged.
      */
+    #[Override]
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_object($value)) {

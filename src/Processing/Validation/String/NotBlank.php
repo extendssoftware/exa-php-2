@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
@@ -35,6 +36,7 @@ final readonly class NotBlank implements Validator
      *
      * @return ValidationResult The outcome, with not_string or blank_string violations on failure.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         if (!is_string($value)) {

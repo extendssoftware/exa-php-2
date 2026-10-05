@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
@@ -35,6 +36,7 @@ final readonly class MiddlewareRequestHandler implements RequestHandler
      *
      * @throws Throwable When execution fails, propagated unchanged.
      */
+    #[Override]
     public function handle(Request $request): Response
     {
         return $this->middleware->process($request, $this->next);

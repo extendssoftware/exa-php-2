@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\InvalidMiddlewareException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
@@ -61,6 +62,7 @@ final readonly class MiddlewarePipeline implements RequestHandler
      *
      * @throws Throwable When execution fails without interception, propagated unchanged.
      */
+    #[Override]
     public function handle(Request $request): Response
     {
         return $this->handler->handle($request);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware;
 
+use Override;
 use Closure;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
@@ -37,6 +38,7 @@ final readonly class ClosureQueryExecution implements QueryExecution
      *
      * @throws Throwable When the step fails, propagated unchanged.
      */
+    #[Override]
     public function execute(Query $query, DispatchContext $context): mixed
     {
         return ($this->execution)($query, $context);

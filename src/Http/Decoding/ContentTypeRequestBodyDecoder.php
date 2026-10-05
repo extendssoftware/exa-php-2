@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Decoding;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
@@ -66,6 +67,7 @@ final readonly class ContentTypeRequestBodyDecoder implements RequestBodyDecoder
      * @throws UnsupportedRequestMediaTypeException When content type or content encoding is unsupported or malformed.
      * @throws HttpException When the selected decoder fails, propagated unchanged.
      */
+    #[Override]
     public function decode(Request $request): mixed
     {
         $types = $request->headers->get('Content-Type');

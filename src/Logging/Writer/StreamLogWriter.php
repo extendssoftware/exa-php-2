@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
+use Override;
 use Closure;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\InvalidLogStreamException;
@@ -85,6 +86,7 @@ final readonly class StreamLogWriter implements LogWriter
      * @throws LogStreamWriteException When writing, locking, flushing, or cleanup fails.
      * @throws LoggingException When formatting fails, propagated unchanged.
      */
+    #[Override]
     public function write(LogRecord $record): void
     {
         $data = $this->formatter->format($record);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator\Resolver;
 
+use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ReflectionDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceResolutionException;
@@ -36,6 +37,7 @@ final readonly class ReflectionServiceResolver implements ServiceResolver
      *
      * @return bool Whether the definition describes a reflection-based service.
      */
+    #[Override]
     public function supports(ServiceDefinition $definition): bool
     {
         return $definition instanceof ReflectionDefinition;
@@ -54,6 +56,7 @@ final readonly class ReflectionServiceResolver implements ServiceResolver
      * @throws ServiceResolutionException When loading, reflection, or construction fails.
      * @throws ServiceLocatorException When dependency resolution or construction reports a component failure.
      */
+    #[Override]
     public function resolve(ServiceDefinition $definition, ServiceLocator $serviceLocator): object
     {
         if (!$definition instanceof ReflectionDefinition) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
@@ -63,6 +64,7 @@ final readonly class StringLength implements Validator
      *
      * @throws PatternExecutionException When the counting expression cannot execute.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         if (!is_string($value)) {

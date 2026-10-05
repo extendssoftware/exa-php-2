@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator;
 
+use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\CircularDependencyException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceNotFoundException;
@@ -61,6 +62,7 @@ final class DefinitionServiceLocator implements ServiceLocator
      * @throws ServiceLocatorException When a resolver cannot determine support or resolve the service.
      * @throws Throwable When a resolver throws another exception or error, propagated unchanged.
      */
+    #[Override]
     public function get(string $id): object
     {
         if (isset($this->services[$id])) {
@@ -84,6 +86,7 @@ final class DefinitionServiceLocator implements ServiceLocator
      *
      * @return bool Whether the identifier is registered, regardless of whether resolution can succeed.
      */
+    #[Override]
     public function has(string $id): bool
     {
         return array_key_exists($id, $this->definitions);

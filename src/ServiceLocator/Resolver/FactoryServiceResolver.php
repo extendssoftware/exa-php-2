@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator\Resolver;
 
+use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceResolutionException;
@@ -32,6 +33,7 @@ final readonly class FactoryServiceResolver implements ServiceResolver
      *
      * @return bool Whether the definition is supported.
      */
+    #[Override]
     public function supports(ServiceDefinition $definition): bool
     {
         return $definition instanceof FactoryDefinition;
@@ -49,6 +51,7 @@ final readonly class FactoryServiceResolver implements ServiceResolver
      * @throws ServiceResolutionException When the factory fails or returns a non-object value.
      * @throws ServiceLocatorException When the factory propagates a component failure.
      */
+    #[Override]
     public function resolve(ServiceDefinition $definition, ServiceLocator $serviceLocator): object
     {
         if (!$definition instanceof FactoryDefinition) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingException;
 use Throwable;
 
@@ -47,6 +48,7 @@ final readonly class AllOf implements Validator
      * @throws ProcessingException When a validator reports a configuration or execution failure.
      * @throws Throwable When a validator throws an unexpected exception or error.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         $violations = [];

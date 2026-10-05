@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Decoding;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
@@ -52,6 +53,7 @@ final readonly class JsonRequestBodyDecoder implements RequestBodyDecoder
      * @throws RequestBodyTooLargeException When the body exceeds the byte limit.
      * @throws HttpException When reading fails, propagated unchanged.
      */
+    #[Override]
     public function decode(Request $request): mixed
     {
         $content = '';

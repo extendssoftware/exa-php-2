@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Routing\Exception\DuplicateRouteException;
 use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
@@ -64,6 +65,7 @@ final readonly class SimpleRouter implements Router
      *
      * @return RouteMatch|null The route match, or null for an unknown path or unsupported method.
      */
+    #[Override]
     public function match(Request $request): ?RouteMatch
     {
         foreach ($this->matchingRoutes($request) as $candidate) {
@@ -82,6 +84,7 @@ final readonly class SimpleRouter implements Router
      *
      * @return list<Method> The supported methods, or an empty list for an unrouted target.
      */
+    #[Override]
     public function allowedMethods(Request $request): array
     {
         return array_map(

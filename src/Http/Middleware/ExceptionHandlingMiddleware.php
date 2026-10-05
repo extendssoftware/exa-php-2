@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
@@ -37,6 +38,7 @@ final readonly class ExceptionHandlingMiddleware implements Middleware
      *
      * @throws Throwable When the exception response factory fails, propagated unchanged.
      */
+    #[Override]
     public function process(Request $request, RequestHandler $next): Response
     {
         try {

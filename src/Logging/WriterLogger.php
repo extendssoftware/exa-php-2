@@ -7,6 +7,7 @@ namespace ExtendsSoftware\ExaPHP\Logging;
 use DateTimeImmutable;
 use DateTimeZone;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
+use Override;
 
 /**
  * Creates a timestamped record for each message and submits it to a writer.
@@ -33,6 +34,7 @@ final readonly class WriterLogger implements Logger
      *
      * @throws LoggingException When the writer fails, propagated unchanged.
      */
+    #[Override]
     public function log(LogLevel $level, string $message, array $context = []): void
     {
         $timestamp = new DateTimeImmutable('now', new DateTimeZone('UTC'));

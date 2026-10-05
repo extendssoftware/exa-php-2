@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Formatter;
 
+use Override;
 use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -66,6 +67,7 @@ final readonly class JsonLogFormatter implements LogFormatter
      *
      * @throws LogFormattingException When normalization, JSON encoding, or the output size limit prevents formatting.
      */
+    #[Override]
     public function format(LogRecord $record): string
     {
         $data = [

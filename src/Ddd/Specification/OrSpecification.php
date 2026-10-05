@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Ddd\Specification;
 
+use Override;
 use Throwable;
 
 /**
@@ -33,6 +34,7 @@ final class OrSpecification extends AbstractSpecification
      *
      * @throws Throwable When an evaluated operand fails, propagated unchanged.
      */
+    #[Override]
     public function isSatisfiedBy(object $candidate): bool
     {
         return $this->left->isSatisfiedBy($candidate) || $this->right->isSatisfiedBy($candidate);

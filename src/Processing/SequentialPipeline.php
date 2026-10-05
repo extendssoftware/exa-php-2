@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Exception\AmbiguousPipelineStepException;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
@@ -30,6 +31,7 @@ final class SequentialPipeline implements Pipeline
      *
      * @throws AmbiguousPipelineStepException When the step implements both contracts; registration is unchanged.
      */
+    #[Override]
     public function append(Transformer|Validator $step): void
     {
         if ($step instanceof Transformer && $step instanceof Validator) {
@@ -54,6 +56,7 @@ final class SequentialPipeline implements Pipeline
      * @throws ProcessingException When a step reports a configuration or execution failure, propagated unchanged.
      * @throws Throwable When a step throws an unexpected exception or error, propagated unchanged.
      */
+    #[Override]
     public function process(mixed $value): ProcessingResult
     {
         foreach ($this->steps as $step) {

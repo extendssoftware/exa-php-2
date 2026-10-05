@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
+use Override;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
@@ -43,6 +44,7 @@ final readonly class PhpResponseEmitter implements ResponseEmitter
      * @throws ResponseEmissionException When headers were sent or the response cannot be emitted by this adapter.
      * @throws HttpException When reading the response body fails, propagated unchanged.
      */
+    #[Override]
     public function emit(Response $response, Method $requestMethod): void
     {
         $status = $response->statusCode->value;

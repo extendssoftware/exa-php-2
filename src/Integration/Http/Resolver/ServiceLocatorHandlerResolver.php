@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Resolver;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Handler\Exception\HandlerResolutionException;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
@@ -35,6 +36,7 @@ final readonly class ServiceLocatorHandlerResolver implements HandlerResolver
      *
      * @throws HandlerResolutionException When service resolution fails or the service is not a request handler.
      */
+    #[Override]
     public function resolve(string $id): RequestHandler
     {
         try {

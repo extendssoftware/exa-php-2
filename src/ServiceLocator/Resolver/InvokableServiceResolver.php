@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator\Resolver;
 
+use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceResolutionException;
@@ -28,6 +29,7 @@ final readonly class InvokableServiceResolver implements ServiceResolver
      *
      * @return bool Whether the definition is supported.
      */
+    #[Override]
     public function supports(ServiceDefinition $definition): bool
     {
         return $definition instanceof InvokableDefinition;
@@ -44,6 +46,7 @@ final readonly class InvokableServiceResolver implements ServiceResolver
      * @throws UnsupportedDefinitionException When the definition is unsupported.
      * @throws ServiceResolutionException When loading or construction fails.
      */
+    #[Override]
     public function resolve(ServiceDefinition $definition, ServiceLocator $serviceLocator): object
     {
         if (!$definition instanceof InvokableDefinition) {

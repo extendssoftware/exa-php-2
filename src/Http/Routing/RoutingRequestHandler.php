@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
@@ -44,6 +45,7 @@ final readonly class RoutingRequestHandler implements RequestHandler
      *
      * @throws Throwable When routing, handler resolution, or execution fails, propagated unchanged.
      */
+    #[Override]
     public function handle(Request $request): Response
     {
         $match = $this->router->match($request);

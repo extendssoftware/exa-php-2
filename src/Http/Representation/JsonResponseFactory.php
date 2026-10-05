@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Representation;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
@@ -33,6 +34,7 @@ final readonly class JsonResponseFactory implements ResponseFactory
      * @throws ResponseEncodingException When JSON encoding fails, preserving the JsonException as its cause.
      * @throws Throwable When application serialization callbacks fail, propagated unchanged.
      */
+    #[Override]
     public function create(
         mixed $data,
         StatusCode $statusCode = StatusCode::Ok,

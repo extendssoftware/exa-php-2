@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\ErrorHandling;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
@@ -26,6 +27,7 @@ final readonly class DefaultExceptionResponseFactory implements ExceptionRespons
      *
      * @return Response A generic Internal Server Error response.
      */
+    #[Override]
     public function create(Throwable $exception, Request $request): Response
     {
         return new Response(

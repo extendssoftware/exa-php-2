@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation;
 
+use Override;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
 
 use function array_values;
@@ -45,6 +46,7 @@ final readonly class OneOf implements Validator
      *
      * @return ValidationResult A not_one_of violation or a valid result.
      */
+    #[Override]
     public function validate(mixed $value): ValidationResult
     {
         return in_array($value, $this->values, true)
