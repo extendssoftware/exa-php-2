@@ -444,3 +444,139 @@ namespace with the application's service locator and pass it to `RoutingRequestH
 The adapter checks that resolved services implement `RequestHandler`. A wrong type or service locator failure produces
 HTTP `HandlerResolutionException`, preserving the locator failure as the previous exception. Service definitions control
 handler sharing and construction; neither matching nor 404/405 responses resolve handlers.
+
+## Register and run CLI commands
+
+Register `Integration\Cli\CliModule` before bootstrap. It provides shared `CommandRegistry`, `InputParser`,
+`HandlerResolver`, `CommandDispatcher`, `HelpRenderer`, and `Output` services. The default registry is empty, parsing uses
+`ArgvInputParser`, and `StreamOutput` borrows PHP's `STDOUT` and `STDERR`. Override the `Output` service for other
+streams or environments where those runtime constants are unavailable.
+
+Modules register named definitions under `cli.commands` and supply their handler services:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\GreetingHandler;
+use ExtendsSoftware\ExaPHP\Cli\Definition\ArgumentDefinition;
+use ExtendsSoftware\ExaPHP\Cli\Definition\CommandDefinition;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
+
+return [
+    'cli' => [
+        'commands' => [
+            'greet' => new CommandDefinition('greet', GreetingHandler::class, arguments: [
+                new ArgumentDefinition('name'),
+            ]),
+        ],
+    ],
+    'services' => [
+        GreetingHandler::class => new InvokableDefinition(GreetingHandler::class),
+    ],
+];
+```
+
+`App\GreetingHandler` must implement the [CLI handler contract](../cli/README.md#handle-parsed-input).
+Configuration keys identify registrations for merging and application overrides; the definition's `name` is the actual
+command name. Distinct registration keys with duplicate command names are rejected. Handlers are resolved only after
+command lookup and parsing succeed. The locator adapter translates locator failures and incompatible handler services
+into `Cli\Handler\Exception\HandlerResolutionException`, preserving locator failures as the previous exception.
+
+Create `config/application.php` to register `CliModule` and your business modules and return an unbootstrapped
+`Application`, as in the HTTP setup above. A shared application configuration can register both HTTP and CLI modules.
+Then `bin/console.php` runs one command:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Integration\Cli\CliRunner;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+$application = require dirname(__DIR__) . '/config/application.php';
+
+exit(new CliRunner()->run($application, $argv));
+```
+
+Invoke it as `php bin/console.php greet World`. Pass the complete argument list, including the script path and command
+name when executing a command. `CliRunner` validates this structure before bootstrap, dispatches the selected command,
+attempts application shutdown, and returns the handler's integer exit code. The entry point owns process termination. The runner neither
+registers modules nor prints failures or converts them into exit codes; handle exceptions in your entry point if needed.
+Malformed argument lists or missing script paths raise `Integration\Cli\Exception\InvalidCliArgumentsException`.
+With only a script path, the runner displays the command listing.
+
+After successful bootstrap, shutdown is attempted even after lookup, parsing, resolution, output, or handler failures.
+Bootstrap failure cleanup belongs to `Application`. A single execution or shutdown failure propagates unchanged. If both
+fail, `CliRunException` preserves execution failure as `getPrevious()` and shutdown failure as `shutdownFailure`.
+A stopped application cannot run again; create a new application for another lifecycle.
+
+Malformed CLI configuration or incompatible integration collaborators raise `InvalidCliConfigurationException` from
+factories, implementing `IntegrationException`. Factories invoked by the service locator follow its exception contract:
+factory failures are wrapped in `ServiceResolutionException` with the original failure retained. Direct runner service
+type checks raise `InvalidCliConfigurationException` without wrapping. See the [CLI guide](../cli/README.md) for command
+syntax, parsing exceptions, and stream behavior.
+
+### Display CLI help
+
+The runner supports these invocations without resolving a dispatcher, parser, or command handler:
+
+```sh
+php bin/console.php
+php bin/console.php --list
+php bin/console.php --help
+php bin/console.php -h
+php bin/console.php greet --help
+php bin/console.php greet -h
+```
+
+Global help lists registered commands in configuration order with their descriptions. Command help shows usage,
+required and optional positional arguments, flags, aliases, and required option values. Both write plain text to stdout,
+return `ExitCode::Success->value`, and run application shutdown. Help requires only the `CommandRegistry`, `HelpRenderer`,
+and `Output` services. Unknown commands requested through help raise `CommandNotFoundException`.
+
+Command help is recognized only when `--help` or `-h` is the sole token after the command name. These two forms are
+reserved by the runner, including for commands defining their own help option. Other token combinations go through
+ordinary parsing. Tokens after `--` retain their normal positional meaning. Global `--list`, `--help`, and `-h` are
+recognized only when supplied alone; command names such as `list` and `help` remain available to applications.
+
+### Present CLI failures
+
+Use `ExceptionHandlingCliRunner` at the entry point when failures should become terminal messages and exit codes:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
+use ExtendsSoftware\ExaPHP\Integration\Cli\ExceptionHandlingCliRunner;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+$application = require dirname(__DIR__) . '/config/application.php';
+$errorOutput = new StreamOutput(STDOUT, STDERR);
+
+exit(new ExceptionHandlingCliRunner()->run($application, $argv, $errorOutput));
+```
+
+Supply error output independently of application services so bootstrap failures can be presented. Normal command
+output still uses the application's `Output` service. Successful command exit codes are unchanged. The wrapper handles
+failures from its `CliRunner::run()` call; errors loading autoloading or application configuration in the entry point are
+outside this boundary.
+
+The default presenter writes one line to stderr. Unknown commands, parser errors, and malformed process arguments
+implement `Cli\ErrorHandling\UsageException`: their messages are shown with exit code `InvalidUsage` (2). Carriage
+returns, newlines, and escape bytes in those messages are replaced with spaces. Other failures return `Failure` (1)
+with `Error: Command execution failed.`; exception details and traces are hidden. A combined execution and shutdown
+failure also returns 1 rather than a usage code, even when its execution cause was invalid usage.
+
+Presentation runs after the underlying runner's cleanup attempts. Output or presenter failures propagate unchanged,
+without recursive presentation. Neither the wrapper nor the presenter calls `exit()`. Direct `CliRunner` usage continues
+to propagate failures without printing them.
+
+For application-specific messages or logging, implement `Cli\ErrorHandling\ExceptionPresenter` and pass it through
+`new ExceptionHandlingCliRunner(presenter: $presenter)`. The presenter receives the original exception and the error
+output and returns a nonzero integer exit code. For `CliRunException`, both execution and shutdown failures remain
+available. The default presenter performs no logging and adds no dependency on the Logging component.

@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- CLI component with command definitions, argument and option parsing, lazy handler dispatch, stream output, named exit
+  codes, command listings, definition-based usage help, and customizable error presentation with usage and failure codes.
 - HTTP component with immutable request, response, header, and URI values, named method and status enums, repeatable
   string bodies, body and handler contracts, ordered middleware execution, and method/path routing with typed matches,
   immutable request attributes, lazy handler resolution with a service locator adapter, and 404/405 responses.
@@ -28,9 +30,10 @@ All notable changes to ExaPHP will be documented in this file.
   registrations, and component exceptions.
 - PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.
 - GitHub Actions workflow running the full test suite through the shared just recipes on pushes and pull requests.
-- Integration component with CQRS, Event, and HTTP modules providing default bus, dispatcher, and server services,
+- Integration component with CQRS, Event, HTTP, and CLI modules providing default bus, dispatcher, and server services,
   named HTTP route and middleware configuration with lazy handler resolution, an HTTP application runner with shutdown
-  and preservation of execution and cleanup failures, configuration-driven
+  and preservation of execution and cleanup failures, a CLI runner with command help, dispatch, shutdown, and an optional exception-handling boundary,
+  configuration-driven
   factories, handler and middleware configuration under `cqrs.command` and `cqrs.query`, keyed listener registrations,
   and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler

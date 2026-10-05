@@ -20,11 +20,12 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
+- [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.
 - [HTTP](docs/http/README.md): immutable messages, stream bodies, middleware, routing, JSON request decoding and response negotiation, and PHP server adapters.
 - [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array processing.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
 - [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
-- [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, and configured HTTP pipelines.
+- [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI command execution.
 - [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, middleware, and dispatch metadata.
