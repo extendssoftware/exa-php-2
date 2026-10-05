@@ -27,7 +27,10 @@
 - Prefer constructor injection for dependencies.
 - Prefer composition to inheritance.
 - Use interfaces when an explicit abstraction boundary or multiple implementations are required.
-- Prefer enums for finite sets of meaningful values.
+- Prefer enums over classes containing constants when representing a finite set of meaningful values.
+- Use backed enums when those values have a string or integer representation. Use `->value` at scalar boundaries;
+  an API accepting additional application-defined scalar values does not require a constants class.
+- Keep class constants for implementation settings, bit flags, or unrelated constants that do not form an enum.
 - Prefer attributes to annotation-based metadata where PHP provides native attribute support.
 - Prefer `match` expressions over complex `switch` statements when appropriate.
 - Prefer first-class callables over equivalent closures when no additional closure logic is required.
