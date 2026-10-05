@@ -359,27 +359,55 @@ services are resolved when the negotiator is constructed; encoding occurs only f
 An empty factory map or a default without a registered factory is invalid. No XML encoder is supplied by the framework.
 See [negotiation behavior](../http/README.md#negotiate-response-representations) for quality weights and 406 responses.
 
-### Run the configured pipeline
+### Run the application through HTTP
 
-After the bootstrap shown above, a front controller can execute:
+Keep module selection in application-owned setup, for example `config/application.php`. This filename is not a
+`*.global.php` or `*.local.php` configuration source, so it is not loaded by configuration discovery:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
-use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
+<?php
 
-try {
-    $request = $serviceLocator->get(ServerRequestFactory::class)->create();
-    $response = $serviceLocator->get(RequestHandler::class)->handle($request);
-    $serviceLocator->get(ResponseEmitter::class)->emit($response, $request->method);
-} finally {
-    $application->shutdown();
-}
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Integration\Http\HttpModule;
+
+$application = new Application(__DIR__);
+$application->registerModule(HttpModule::class);
+// Register your business and other integration modules here.
+
+return $application;
 ```
 
-The default exception boundary converts downstream failures to a generic 500. Request creation, pipeline construction,
-emission, and application shutdown remain front-controller concerns. See the
+Then `public/index.php` can delegate execution to `Integration\Http\HttpRunner`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Integration\Http\HttpRunner;
+
+require dirname(__DIR__) . '/vendor/autoload.php';
+$application = require dirname(__DIR__) . '/config/application.php';
+
+new HttpRunner()->run($application);
+```
+
+The runner bootstraps the application, resolves and validates `ServerRequestFactory`, `RequestHandler`, and
+`ResponseEmitter`, creates one request, passes it through the pipeline, and emits the response with the original request
+method. It then shuts down the application. It never registers modules automatically, emits fallback responses, or
+terminates the process. A stopped application cannot be run again; construct a new application for another lifecycle.
+
+After successful bootstrap, shutdown is attempted even if service resolution, request creation, handling, or emission
+fails. Bootstrap failures retain Application's own cleanup behavior. A single execution or shutdown failure propagates
+unchanged. If both fail, `HttpRunException` preserves the execution failure as `getPrevious()` and the shutdown failure
+as `shutdownFailure`. The latter can contain aggregated module cleanup failures.
+
+The default exception middleware covers downstream handling. Failures outside that boundary still reach the caller of
+`run()`, and an emitted response cannot be retracted. See the
 [HTTP server guide](../http/README.md#serve-a-request-through-php) for stream ownership and emission limitations.
+Applications needing a different lifecycle can still invoke the request factory, handler, and emitter directly.
 
 ### Resolve HTTP handlers
 

@@ -28,7 +28,8 @@ All notable changes to ExaPHP will be documented in this file.
 - PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.
 - GitHub Actions workflow running the full test suite through the shared just recipes on pushes and pull requests.
 - Integration component with CQRS, Event, and HTTP modules providing default bus, dispatcher, and server services,
-  named HTTP route and middleware configuration with lazy handler resolution, configuration-driven
+  named HTTP route and middleware configuration with lazy handler resolution, an HTTP application runner with shutdown
+  and preservation of execution and cleanup failures, configuration-driven
   factories, handler and middleware configuration under `cqrs.command` and `cqrs.query`, keyed listener registrations,
   and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler

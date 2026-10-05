@@ -380,6 +380,9 @@ reads and response emission happen afterward. Handle those failures at the front
 
 ## Serve a request through PHP
 
+With Application and HttpModule, use [HttpRunner](../integration/README.md#run-the-application-through-http) to own
+bootstrap, execution, and shutdown. The following shows the server adapters directly.
+
 Use the server boundary contracts `Server\ServerRequestFactory` and `Server\ResponseEmitter` to isolate the host
 runtime. Their PHP adapters can drive the routing or middleware handler assembled above from a front controller:
 
