@@ -26,7 +26,8 @@ final readonly class StepTransformer implements Transformer
      */
     public function __construct(private Transformer|Validator|Pipeline $step)
     {
-        $roles = (int) ($step instanceof Transformer) + (int) ($step instanceof Validator)
+        $roles = (int) ($step instanceof Transformer)
+            + (int) ($step instanceof Validator)
             + (int) ($step instanceof Pipeline);
         if ($roles !== 1) {
             throw new AmbiguousProcessingStepException('A nested processing step must implement exactly one role.');
