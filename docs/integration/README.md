@@ -580,3 +580,11 @@ For application-specific messages or logging, implement `Cli\ErrorHandling\Excep
 `new ExceptionHandlingCliRunner(presenter: $presenter)`. The presenter receives the original exception and the error
 output and returns a nonzero integer exit code. For `CliRunException`, both execution and shutdown failures remain
 available. The default presenter performs no logging and adds no dependency on the Logging component.
+
+## Wrap commands in transactions
+
+`Integration\Transaction\Middleware\TransactionalCommandMiddleware` accepts an application-provided
+`TransactionManager` adapter and wraps the remaining command pipeline. Register it as a service and include its
+identifier in `cqrs.command.middleware` when transactional commands are required. There is no default database adapter
+or automatic registration. See the [Transaction guide](../transaction/README.md#wrap-cqrs-commands) for ordering,
+nesting, and failure behavior.

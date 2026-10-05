@@ -6,8 +6,11 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Transaction component with a generic transactional execution contract, explicit nested-call rejection, lifecycle
+  exceptions preserving operation and rollback failures, and opt-in CQRS command middleware.
 - CLI component with command definitions, argument and option parsing, lazy handler dispatch, stream output, named exit
-  codes, command listings, definition-based usage help, and customizable error presentation with usage and failure codes.
+  codes, command listings, definition-based usage help, and customizable error presentation with usage and failure
+  codes.
 - HTTP component with immutable request, response, header, and URI values, named method and status enums, repeatable
   string bodies, body and handler contracts, ordered middleware execution, and method/path routing with typed matches,
   immutable request attributes, lazy handler resolution with a service locator adapter, and 404/405 responses.
@@ -32,10 +35,9 @@ All notable changes to ExaPHP will be documented in this file.
 - GitHub Actions workflow running the full test suite through the shared just recipes on pushes and pull requests.
 - Integration component with CQRS, Event, HTTP, and CLI modules providing default bus, dispatcher, and server services,
   named HTTP route and middleware configuration with lazy handler resolution, an HTTP application runner with shutdown
-  and preservation of execution and cleanup failures, a CLI runner with command help, dispatch, shutdown, and an optional exception-handling boundary,
-  configuration-driven
-  factories, handler and middleware configuration under `cqrs.command` and `cqrs.query`, keyed listener registrations,
-  and a root exception contract.
+  and preservation of execution and cleanup failures, a CLI runner with command help, dispatch, shutdown, and an
+  optional exception-handling boundary, configuration-driven factories, handler and middleware configuration under
+  `cqrs.command` and `cqrs.query`, keyed listener registrations, and a root exception contract.
 - CQRS component with command and generic query contracts, synchronous command and query buses with validated handler
   registrations, command and query middleware with extensible dispatch context, and component exceptions. Custom bus
   implementations must accept the optional context argument; existing dispatch calls remain valid.
