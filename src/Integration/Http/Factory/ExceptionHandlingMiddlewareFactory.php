@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
-use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\ExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;

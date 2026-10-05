@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
 
 /**
  * Creates the incoming request at the server boundary.

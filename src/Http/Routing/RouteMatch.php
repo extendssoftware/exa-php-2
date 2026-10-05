@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidRouteMatchException;
-use ExtendsSoftware\ExaPHP\Http\Exception\RouteParameterNotFoundException;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteMatchException;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\RouteParameterNotFoundException;
 
 use function count;
 use function is_string;

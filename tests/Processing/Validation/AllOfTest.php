@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Validation;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidIntegerRangeException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
 use ExtendsSoftware\ExaPHP\Processing\Validation\AllOf;

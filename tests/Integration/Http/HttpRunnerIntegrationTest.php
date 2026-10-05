@@ -6,8 +6,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Http;
 
 use ExtendsSoftware\ExaPHP\Application\Application;
 use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
-use ExtendsSoftware\ExaPHP\Application\Exception\ConfigurationLoadException;
-use ExtendsSoftware\ExaPHP\Application\Exception\ModuleShutdownException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\ConfigurationLoadException;
+use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleShutdownException;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\HttpRunException;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Http\HttpRunner;

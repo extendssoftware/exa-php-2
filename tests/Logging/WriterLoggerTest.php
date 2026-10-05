@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Logging;
 
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogStreamWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;

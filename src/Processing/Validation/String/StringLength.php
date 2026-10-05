@@ -7,8 +7,8 @@ namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidStringLengthException;
-use ExtendsSoftware\ExaPHP\Processing\Exception\PatternExecutionException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidStringLengthException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\PatternExecutionException;
 
 use function is_string;
 use function preg_match_all;

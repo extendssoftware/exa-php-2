@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\DuplicateRouteException;
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidRouteException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Request;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\DuplicateRouteException;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Routing\SimpleRouter;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;

@@ -6,7 +6,7 @@ namespace ExtendsSoftware\ExaPHP\Tests\Logging\Formatter;
 
 use DateTime;
 use DateTimeImmutable;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogFormattingException;
+use ExtendsSoftware\ExaPHP\Logging\Formatter\Exception\LogFormattingException;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\JsonLogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;

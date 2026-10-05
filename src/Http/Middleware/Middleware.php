@@ -6,8 +6,8 @@ namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Throwable;
 
 /**

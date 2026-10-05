@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Application\Configuration;
 
-use ExtendsSoftware\ExaPHP\Application\Exception\ConfigurationNotFoundException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidConfigurationPathException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\ConfigurationNotFoundException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidConfigurationPathException;
 
 use function array_key_exists;
 use function explode;

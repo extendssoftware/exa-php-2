@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Server;
 
-use ExtendsSoftware\ExaPHP\Http\Body\StringBody;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\ProtocolVersion;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpServerRequestFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Http\Body\Body;
-use ExtendsSoftware\ExaPHP\Http\Body\StreamBody;
-use ExtendsSoftware\ExaPHP\Http\Exception\RequestCreationException;
-use ExtendsSoftware\ExaPHP\Http\Headers;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StreamBody;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\RequestCreationException;
+use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\ProtocolVersion;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 
 use function fopen;
 use function is_string;

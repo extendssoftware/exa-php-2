@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Logging\Writer;
 
 use DateTimeImmutable;
-use ExtendsSoftware\ExaPHP\Logging\Exception\CompositeLogWriteException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogStreamWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use ExtendsSoftware\ExaPHP\Logging\Writer\CompositeLogWriter;

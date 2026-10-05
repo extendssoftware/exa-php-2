@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Validation\String;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidStringLengthException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidStringLengthException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\String\StringLength;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Integration\Http\Resolver;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\HandlerResolutionException;
+use ExtendsSoftware\ExaPHP\Http\Handler\Exception\HandlerResolutionException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Integration\Http\Resolver\ServiceLocatorHandlerResolver;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceNotFoundException;

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Application\Configuration;
 
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Application\Exception\ConfigurationLoadException;
-use ExtendsSoftware\ExaPHP\Application\Exception\DuplicateServiceDefinitionException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidConfigurationException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\ConfigurationLoadException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\DuplicateServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidConfigurationException;
 use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
 use FilesystemIterator;

@@ -4,6 +4,25 @@ The `ExtendsSoftware\ExaPHP\Http` component provides immutable request and respo
 and body, handler, and middleware contracts. It has no PSR dependency. URI parsing requires PHP 8.5's `ext-uri` extension,
 which Composer checks during installation.
 
+## Find the relevant API
+
+Namespaces below are relative to `ExtendsSoftware\ExaPHP\Http`:
+
+| Namespace | Purpose |
+| --- | --- |
+| `Message` | Request, response, headers, URI, method, status, protocol, and request attributes |
+| `Message\Body` | String and stream body implementations |
+| `Decoding` | Request-body decoder contracts and content-type selection |
+| `Representation` | Response factories and content negotiation |
+| `Handler` | Request handling and handler resolution contracts |
+| `Routing` | Route definitions, matching, and dispatch |
+| `Middleware` | Middleware contracts, pipelines, and the exception boundary |
+| `ErrorHandling` | Policies for converting failures into responses |
+| `Server` | Request creation and response emission adapters |
+
+Each concept owns its exceptions. All HTTP exceptions still implement the root `HttpException` contract.
+Application wiring remains in `Integration\Http`.
+
 ## Create requests and responses
 
 ```php
@@ -11,13 +30,13 @@ which Composer checks during installation.
 
 declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Http\Body\StringBody;
-use ExtendsSoftware\ExaPHP\Http\Headers;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
-use ExtendsSoftware\ExaPHP\Http\StatusCode;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
+use ExtendsSoftware\ExaPHP\Http\Message\Headers;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 
 $request = new Request(
     Method::Post,
@@ -104,7 +123,7 @@ URI replacement revalidates these rules. Host headers remain explicitly controll
 
 ## Supply body bytes
 
-`Body\Body` exposes `chunks(): iterable` and `size(): ?int`. Consumers iterate raw byte chunks; transfer framing is not
+`Message\Body\Body` exposes `chunks(): iterable` and `size(): ?int`. Consumers iterate raw byte chunks; transfer framing is not
 part of the body. Size is measured in bytes and may be unknown. Iteration can raise `HttpException`, so handle errors
 around iteration as well as around the initial method call.
 
@@ -112,14 +131,14 @@ around iteration as well as around the initial method call.
 It yields one chunk for non-empty content and no chunks for an empty body. Its size is always known. Encoding and
 serialization are the caller's responsibility.
 
-`Body\StreamBody` borrows an open readable stream and consumes it once from its current position, in chunks of at most
+`Message\Body\StreamBody` borrows an open readable stream and consumes it once from its current position, in chunks of at most
 8192 bytes. It never rewinds or closes caller-owned streams. Keep the stream open and do not read or seek it elsewhere
 until consumption ends. Repeated, concurrent, abandoned, or failed iteration cannot be restarted. `size()` returns null;
 set content headers explicitly when the application knows the length. An empty read before EOF is a failure, so this
 implementation is unsuitable for polling nonblocking streams.
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\Body\StreamBody;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StreamBody;
 
 $stream = fopen(__DIR__ . '/download.bin', 'rb');
 if ($stream === false) {
@@ -279,13 +298,13 @@ later does not automatically recompute its attributes.
 
 ## Decode JSON request bodies
 
-Inject `RequestBody\RequestBodyDecoder` into handlers that need request data. With `HttpModule`, this service selects
+Inject `Decoding\RequestBodyDecoder` into handlers that need request data. With `HttpModule`, this service selects
 from registered decoders using `Content-Type`; it does not use `Accept` or guess a missing content type.
 For direct construction:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\RequestBody\ContentTypeRequestBodyDecoder;
-use ExtendsSoftware\ExaPHP\Http\RequestBody\JsonRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Decoding\ContentTypeRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
 
 $decoder = new ContentTypeRequestBodyDecoder([
     'application/json' => new JsonRequestBodyDecoder(maxBytes: 1048576),
@@ -321,12 +340,12 @@ decoders. Direct `JsonRequestBodyDecoder` calls assume JSON selection was alread
 
 ## Negotiate response representations
 
-Use `ResponseFactory\ContentNegotiatingResponseFactory` in HTTP handlers to encode public representation data according
+Use `Representation\ContentNegotiatingResponseFactory` in HTTP handlers to encode public representation data according
 to the request's `Accept` header. `HttpModule` registers it with JSON available and preferred by default:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\ResponseFactory\ContentNegotiatingResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\ResponseFactory\JsonResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 
 // For direct construction; with HttpModule, inject the registered negotiator into your handler.
 $factory = new ContentNegotiatingResponseFactory([
@@ -352,7 +371,7 @@ Accept ranges with media parameters do not match these representations. Media ty
 Multiple Accept field values are considered together. Successful and 406 responses include `Vary: Accept`; existing Vary
 values are preserved and `Accept` is not added again when already present or covered by `*`.
 
-Implement `ResponseFactory\ResponseFactory` for additional formats and register each under the media type it actually
+Implement `Representation\ResponseFactory` for additional formats and register each under the media type it actually
 produces. The selected factory receives the data, status, and additional headers; it must encode its declared format
 and set the corresponding Content-Type. Only the selected factory executes. Encoding failures are not retried using a
 different format. A 406 discards supplied success headers and data.
@@ -368,7 +387,7 @@ Place `Middleware\ExceptionHandlingMiddleware` first in the middleware list so i
 handler execution, and subsequent middleware:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\DefaultExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\DefaultExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
 
 $pipeline = new MiddlewarePipeline($routing, [
@@ -381,11 +400,11 @@ The default factory returns status 500 with the plain-text body `Internal Server
 and `Cache-Control: no-store`. It retains the request protocol version and never exposes exception messages, codes,
 types, or stack traces. It does not log. Successful downstream responses pass through unchanged.
 
-Implement `ExceptionHandling\ExceptionResponseFactory` to choose application-specific status codes and response formats.
+Implement `ErrorHandling\ExceptionResponseFactory` to choose application-specific status codes and response formats.
 For example, assuming your application defines `ArticleNotFound`, a factory can map that failure and delegate others:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\ExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 
 final readonly class ApplicationExceptionResponseFactory implements ExceptionResponseFactory
 {
@@ -470,7 +489,7 @@ Use [exception-handling middleware](#convert-application-failures-into-responses
 
 ## Handle component failures
 
-`HttpException` is the common exception interface. Specific failures under `Http\Exception` are:
+`HttpException` is the common exception interface. Specific failures live in the `Exception` namespace of their owning concept:
 
 - `InvalidHeaderException` for invalid field names, value types, or control bytes.
 - `InvalidResponseFactoryException` for invalid representation registrations or an unavailable default media type.

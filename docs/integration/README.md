@@ -270,7 +270,7 @@ The module supplies these shared services:
 | `Http\Handler\HandlerResolver` | `ServiceLocatorHandlerResolver` |
 | `Http\Routing\RoutingRequestHandler` | Routing and lazy handler dispatch |
 | `Http\Middleware\ExceptionHandlingMiddleware` | Configured exception response factory |
-| `Http\ExceptionHandling\ExceptionResponseFactory` | Request decoding error policy with a generic 500 fallback |
+| `Http\ErrorHandling\ExceptionResponseFactory` | Request decoding error policy with a generic 500 fallback |
 | `Http\Server\ServerRequestFactory` | `PhpServerRequestFactory` |
 | `Http\Server\ResponseEmitter` | `PhpResponseEmitter` |
 
@@ -285,7 +285,7 @@ in `/config/*.global.php` or `*.local.php`. For an autoloadable, constructorless
 `RequestHandler`, a configuration file can contain:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 
@@ -324,12 +324,12 @@ constructing the pipeline occur before its exception middleware can run.
 
 ### Configure request body decoding
 
-`HttpModule` registers `Http\RequestBody\RequestBodyDecoder` as a `ContentTypeRequestBodyDecoder`, and registers
+`HttpModule` registers `Http\Decoding\RequestBodyDecoder` as a `ContentTypeRequestBodyDecoder`, and registers
 `JsonRequestBodyDecoder` with a one-MiB default input limit. Inject the decoder into handlers and call `decode($request)`
 only when their request body is needed. A configuration override can set:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\RequestBody\JsonRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
 
 return [
     'http' => [
@@ -352,12 +352,12 @@ plain-text 500 factory. Overriding that service replaces this policy. See the
 
 ### Configure response representations
 
-`HttpModule` registers `Http\ResponseFactory\ContentNegotiatingResponseFactory` and
-`Http\ResponseFactory\JsonResponseFactory`. Inject the negotiator into handlers that return representation data.
+`HttpModule` registers `Http\Representation\ContentNegotiatingResponseFactory` and
+`Http\Representation\JsonResponseFactory`. Inject the negotiator into handlers that return representation data.
 The default configuration is:
 
 ```php
-use ExtendsSoftware\ExaPHP\Http\ResponseFactory\JsonResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 
 return [
     'http' => [

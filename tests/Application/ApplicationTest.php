@@ -6,8 +6,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Application;
 
 use ExtendsSoftware\ExaPHP\Application\Application;
 use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
-use ExtendsSoftware\ExaPHP\Application\Exception\DuplicateModuleException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidModuleException;
+use ExtendsSoftware\ExaPHP\Application\Module\Exception\DuplicateModuleException;
+use ExtendsSoftware\ExaPHP\Application\Module\Exception\InvalidModuleException;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

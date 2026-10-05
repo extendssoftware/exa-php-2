@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Shape;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\AmbiguousProcessingStepException;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\StepTransformer;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;

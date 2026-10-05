@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Transformation\Shape;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidShapeException;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\Exception\ProcessingValueUnavailableException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;

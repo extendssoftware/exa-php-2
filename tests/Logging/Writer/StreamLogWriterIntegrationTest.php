@@ -6,10 +6,10 @@ namespace ExtendsSoftware\ExaPHP\Tests\Logging\Writer;
 
 use DateTimeImmutable;
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\InvalidLogStreamException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogFormattingException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogStreamOpenException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogStreamWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\InvalidLogStreamException;
+use ExtendsSoftware\ExaPHP\Logging\Formatter\Exception\LogFormattingException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamOpenException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\LogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;

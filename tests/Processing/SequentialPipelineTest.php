@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Processing;
 
 use ExtendsSoftware\ExaPHP\Processing\Exception\AmbiguousPipelineStepException;
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidIntegerRangeException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\String\StringToInteger;

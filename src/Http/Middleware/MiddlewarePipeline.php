@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidMiddlewareException;
+use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\InvalidMiddlewareException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Throwable;
 
 use function array_is_list;

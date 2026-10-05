@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Http\Exception\ResponseEmissionException;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 
 use function header;
 use function header_remove;

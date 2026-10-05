@@ -6,11 +6,11 @@ namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Headers;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
-use ExtendsSoftware\ExaPHP\Http\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Headers;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use Throwable;
 
 use function array_map;

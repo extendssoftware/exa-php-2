@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Resolver;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\HandlerResolutionException;
+use ExtendsSoftware\ExaPHP\Http\Handler\Exception\HandlerResolutionException;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;

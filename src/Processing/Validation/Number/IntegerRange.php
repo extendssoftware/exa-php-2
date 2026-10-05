@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\Number;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidIntegerRangeException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;

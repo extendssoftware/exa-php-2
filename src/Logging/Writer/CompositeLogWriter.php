@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
-use ExtendsSoftware\ExaPHP\Logging\Exception\CompositeLogWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use Throwable;

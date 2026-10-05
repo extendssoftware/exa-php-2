@@ -6,8 +6,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Application\Configuration;
 
 use ExtendsSoftware\ExaPHP\Application\ApplicationException;
 use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationMerger;
-use ExtendsSoftware\ExaPHP\Application\Exception\DuplicateServiceDefinitionException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidConfigurationException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\DuplicateServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;

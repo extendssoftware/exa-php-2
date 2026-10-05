@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Application\Configuration;
 
-use ExtendsSoftware\ExaPHP\Application\Exception\DuplicateServiceDefinitionException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidConfigurationException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\DuplicateServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidConfigurationException;
 
 use function array_is_list;
 use function array_key_exists;

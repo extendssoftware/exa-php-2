@@ -170,7 +170,9 @@ Class aliases and differently cased class names are normalized. Multiple keys re
 Identical array keys are overwritten by PHP before the constructor receives the map, so they cannot be detected as
 separate registrations.
 
-The following exceptions live in `ExtendsSoftware\ExaPHP\Cqrs\Exception` and implement `CqrsException`:
+Command exceptions live in `ExtendsSoftware\ExaPHP\Cqrs\Command\Exception`; query exceptions live in
+`ExtendsSoftware\ExaPHP\Cqrs\Query\Exception`. Both implement `CqrsException`. Shared dispatch metadata failures
+remain under `Cqrs\Exception`.
 
 | Failure | Command bus | Query bus |
 | --- | --- | --- |

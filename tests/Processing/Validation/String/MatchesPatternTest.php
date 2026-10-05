@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Validation\String;
 
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidPatternException;
-use ExtendsSoftware\ExaPHP\Processing\Exception\PatternExecutionException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidPatternException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\PatternExecutionException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\String\MatchesPattern;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

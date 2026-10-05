@@ -58,7 +58,7 @@ Stream failures implement `LoggingException`:
 - `LogStreamOpenException`: a path or URI could not be opened.
 - `LogStreamWriteException`: writing, seeking, locking, flushing, or cleanup failed.
 
-These exceptions live in `Logging\Exception`. Converted stream warnings retain their cause as the previous exception.
+These exceptions live in `Logging\Writer\Exception`. Converted stream warnings retain their cause as the previous exception.
 Formatter exceptions propagate unchanged. To add a destination, implement `Logging\Writer\LogWriter::write()`;
 accept the existing record without modifying it or its context objects.
 
@@ -135,7 +135,7 @@ original timestamp and context. An empty composite discards records. Registering
 it for each occurrence.
 
 When a writer throws `LoggingException`, remaining writers are still attempted. Afterwards, any collected failures
-are reported in `Logging\Exception\CompositeLogWriteException`, even if only one writer failed. Its readonly
+are reported in `Logging\Writer\Exception\CompositeLogWriteException`, even if only one writer failed. Its readonly
 `failures` array contains the original exceptions keyed by zero-based writer position, in delivery order. The first
 failure is also the previous exception. Nested composites retain their own aggregate exception rather than flattening it.
 
@@ -233,7 +233,7 @@ objects,
 Trace argument exclusion does not redact secrets already present in messages or explicit context; callers must choose
 what to log. Normalization does not modify context objects.
 
-`Logging\Exception\LogFormattingException` implements `LoggingException`. It is thrown for excessive context nesting
+`Logging\Formatter\Exception\LogFormattingException` implements `LoggingException`. It is thrown for excessive context nesting
 (over 32 levels, including previous-exception traversal), resources, invalid UTF-8, non-finite numbers, and output
 exceeding
 1 MiB including the newline. Cyclic arrays fail through the nesting limit. JSON encoding errors retain their
@@ -246,6 +246,9 @@ the size check occurs after encoding and is not a bound on temporary memory use.
 Implement `Logger::log(LogLevel $level, string $message, array $context = []): void`. Keep logging dependencies behind
 this contract so application services do not depend on a particular destination. Document formatting, filtering,
 destination behavior, and delivery guarantees on the implementation that provides them.
+
+Formatting failures live under `Logging\Formatter\Exception`; writer and stream failures live under
+`Logging\Writer\Exception`.
 
 `LoggingException` extends `Throwable`. Logging-specific exceptions must implement it, allowing callers to handle
 logging failures together. Implementations should preserve the original cause when translating a lower-level failure.

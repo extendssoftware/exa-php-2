@@ -6,8 +6,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Application\Configuration;
 
 use ExtendsSoftware\ExaPHP\Application\ApplicationException;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Application\Exception\ConfigurationNotFoundException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidConfigurationPathException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\ConfigurationNotFoundException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidConfigurationPathException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;

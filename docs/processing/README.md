@@ -85,12 +85,12 @@ if ($parsed->isValid()) {
 
 This example supplies a known string to the trimmer; check its result too when accepting arbitrary input.
 `IntegerRange` requires both bounds and accepts equal bounds. A minimum greater than the maximum throws
-`Exception\InvalidIntegerRangeException`. Out-of-range violations include `minimum` and `maximum` parameters.
+`Validation\Exception\InvalidIntegerRangeException`. Out-of-range violations include `minimum` and `maximum` parameters.
 
 ## Validate string length, patterns, and allowed values
 
 `Validation\String\StringLength($minimum, $maximum)` counts UTF-8 Unicode code points with inclusive bounds.
-Both bounds must be non-negative and ordered, otherwise construction throws `Exception\InvalidStringLengthException`.
+Both bounds must be non-negative and ordered, otherwise construction throws `Validation\Exception\InvalidStringLengthException`.
 Zero bounds are permitted. Combining marks count separately: `é` has one code point, while `e` followed by a combining
 accent has two. No normalization is performed; this is neither byte length nor grapheme-cluster length. Newlines count.
 It requires no mbstring or intl dependency.
@@ -100,10 +100,10 @@ input uses `CODE_NOT_STRING`; malformed UTF-8 uses `CODE_INVALID_UTF8`.
 
 `Validation\String\MatchesPattern($pattern)` accepts a complete delimited PCRE expression, including modifiers.
 Patterns are not automatically anchored: use `\A` and `\z` to require a whole-string match. Invalid expressions throw
-`Exception\InvalidPatternException` during construction, preserving compiler warnings as previous exceptions.
+`Validation\Exception\InvalidPatternException` during construction, preserving compiler warnings as previous exceptions.
 Ordinary mismatches use `CODE_PATTERN_MISMATCH`; non-string input uses `CODE_NOT_STRING`. With Unicode matching enabled,
 malformed UTF-8 produces `CODE_INVALID_UTF8`. Without Unicode matching, byte strings follow the supplied pattern's rules.
-Regex execution failures, such as backtracking limits, throw `Exception\PatternExecutionException`; the same exception
+Regex execution failures, such as backtracking limits, throw `Validation\Exception\PatternExecutionException`; the same exception
 reports an unexpected failure while counting string length.
 
 `Validation\OneOf(...$values)` compares using strict PHP equality. For example, `new OneOf(1, 2)` rejects `'1'`, `true`,
@@ -268,9 +268,9 @@ Input containers are not changed. Output containers are newly constructed, but n
 values are not automatically cloned. Custom steps must honor the input immutability contract.
 
 Wrong container types yield `ObjectShape::CODE_NOT_OBJECT`, `ArrayShape::CODE_NOT_ARRAY`, or `EachItem::CODE_NOT_ARRAY`.
-Malformed field definitions throw `Exception\InvalidShapeException`; object definition names cannot contain null bytes.
+Malformed field definitions throw `Transformation\Exception\InvalidShapeException`; object definition names cannot contain null bytes.
 Objects with multiple processing roles are rejected by `Field` and `EachItem` with
-`Exception\AmbiguousProcessingStepException` before execution. The same rule applies to
+`Transformation\Exception\AmbiguousProcessingStepException` before execution. The same rule applies to
 `Transformation\StepTransformer`, which adapts one validator, transformer, or pipeline to the transformer interface.
 Use that adapter to append a pipeline inside another pipeline:
 

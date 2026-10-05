@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\HandlerResolutionException;
+use ExtendsSoftware\ExaPHP\Http\Handler\Exception\HandlerResolutionException;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\ProtocolVersion;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Routing\RouteMatch;
 use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Routing\SimpleRouter;
-use ExtendsSoftware\ExaPHP\Http\StatusCode;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
 use stdClass;
 use Throwable;

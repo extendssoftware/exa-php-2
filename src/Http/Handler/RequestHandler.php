@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Handler;
 
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Throwable;
 
 /**

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\AmbiguousProcessingStepException;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;

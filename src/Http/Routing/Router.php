@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
 
 /**
  * Selects request routes and exposes the methods available for a request target.

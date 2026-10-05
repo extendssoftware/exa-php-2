@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidRouteException;
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidUriException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
+use ExtendsSoftware\ExaPHP\Http\Message\Exception\InvalidUriException;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 
 use function array_keys;
 use function count;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Handler;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\HandlerResolutionException;
+use ExtendsSoftware\ExaPHP\Http\Handler\Exception\HandlerResolutionException;
 
 /**
  * Resolves request handlers by identifier.

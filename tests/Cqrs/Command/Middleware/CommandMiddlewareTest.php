@@ -10,7 +10,7 @@ use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\SynchronousCommandBus;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidCommandMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandMiddlewareException;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Command\Fixture\ParentCommand;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

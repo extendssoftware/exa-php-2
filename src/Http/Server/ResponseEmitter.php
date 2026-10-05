@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
 use ExtendsSoftware\ExaPHP\Http\HttpException;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 
 /**
  * Sends an HTTP response through the server boundary.

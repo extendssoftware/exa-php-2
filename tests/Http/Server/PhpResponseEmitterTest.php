@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Server;
 
-use ExtendsSoftware\ExaPHP\Http\Body\Body;
-use ExtendsSoftware\ExaPHP\Http\Exception\ResponseEmissionException;
-use ExtendsSoftware\ExaPHP\Http\Headers;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
+use ExtendsSoftware\ExaPHP\Http\Message\Headers;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
-use ExtendsSoftware\ExaPHP\Http\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 

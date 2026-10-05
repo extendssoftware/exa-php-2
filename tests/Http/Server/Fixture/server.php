@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Http\Body\StreamBody;
-use ExtendsSoftware\ExaPHP\Http\Body\StringBody;
-use ExtendsSoftware\ExaPHP\Http\Exception\ResponseEmissionException;
-use ExtendsSoftware\ExaPHP\Http\Headers;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StreamBody;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
+use ExtendsSoftware\ExaPHP\Http\Message\Headers;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpServerRequestFactory;
-use ExtendsSoftware\ExaPHP\Http\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 
 require dirname(__DIR__, 4) . '/vendor/autoload.php';
 

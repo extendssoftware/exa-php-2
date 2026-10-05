@@ -103,8 +103,10 @@ $application = new Application(
 
 ## Handle bootstrap failures
 
-Catch `ExtendsSoftware\ExaPHP\Application\ApplicationException` for component failures. Specific exceptions live in
-`ExtendsSoftware\ExaPHP\Application\Exception`:
+Catch `ExtendsSoftware\ExaPHP\Application\ApplicationException` for component failures. Module registration and lifecycle exceptions live in
+`ExtendsSoftware\ExaPHP\Application\Module\Exception`. `ApplicationStateException` remains in
+`ExtendsSoftware\ExaPHP\Application\Exception`; configuration and service-definition exceptions live in
+`ExtendsSoftware\ExaPHP\Application\Configuration\Exception`:
 
 | Exception | Cause |
 | --- | --- |

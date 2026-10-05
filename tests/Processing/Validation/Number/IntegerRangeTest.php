@@ -8,7 +8,7 @@ use ExtendsSoftware\ExaPHP\Processing\Validation\Number\IntegerRange;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
-use ExtendsSoftware\ExaPHP\Processing\Exception\InvalidIntegerRangeException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 
 final class IntegerRangeTest extends TestCase
 {

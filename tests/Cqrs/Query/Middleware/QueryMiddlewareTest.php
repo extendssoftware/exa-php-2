@@ -10,7 +10,7 @@ use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\SynchronousQueryBus;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryMiddlewareException;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Query\Fixture\ParentQuery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

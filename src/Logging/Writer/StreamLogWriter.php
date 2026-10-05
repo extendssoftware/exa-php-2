@@ -6,9 +6,9 @@ namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
 use Closure;
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\InvalidLogStreamException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogStreamOpenException;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogStreamWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\InvalidLogStreamException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamOpenException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\JsonLogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\LogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\LoggingException;

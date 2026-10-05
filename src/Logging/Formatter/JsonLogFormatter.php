@@ -8,7 +8,7 @@ use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
-use ExtendsSoftware\ExaPHP\Logging\Exception\LogFormattingException;
+use ExtendsSoftware\ExaPHP\Logging\Formatter\Exception\LogFormattingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use JsonException;
 use Throwable;

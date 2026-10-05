@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Application\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidConfigurationException;
-use ExtendsSoftware\ExaPHP\Application\Exception\InvalidServiceDefinitionException;
-use ExtendsSoftware\ExaPHP\Application\Exception\ReservedServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidConfigurationException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\ReservedServiceDefinitionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\DefinitionServiceLocator;

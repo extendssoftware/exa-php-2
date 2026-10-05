@@ -4,16 +4,16 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Middleware;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidHeaderException;
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidMiddlewareException;
+use ExtendsSoftware\ExaPHP\Http\Message\Exception\InvalidHeaderException;
+use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\InvalidMiddlewareException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Middleware\Middleware;
 use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewarePipeline;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
-use ExtendsSoftware\ExaPHP\Http\StatusCode;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use stdClass;

@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Integration\Http\Fixture;
 
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Method;
-use ExtendsSoftware\ExaPHP\Http\Request;
-use ExtendsSoftware\ExaPHP\Http\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
-use ExtendsSoftware\ExaPHP\Http\Uri;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use TypeError;
 
 /**

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidRouteException;
-use ExtendsSoftware\ExaPHP\Http\Exception\InvalidRouteMatchException;
-use ExtendsSoftware\ExaPHP\Http\Exception\RouteParameterNotFoundException;
-use ExtendsSoftware\ExaPHP\Http\Method;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteMatchException;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\RouteParameterNotFoundException;
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Routing\RouteMatch;
 use PHPUnit\Framework\Attributes\DataProvider;

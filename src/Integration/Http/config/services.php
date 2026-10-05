@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\DefaultExceptionResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\ExceptionResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\RequestBodyExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\DefaultExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\RequestBodyExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
-use ExtendsSoftware\ExaPHP\Http\RequestBody\JsonRequestBodyDecoder;
-use ExtendsSoftware\ExaPHP\Http\RequestBody\RequestBodyDecoder;
-use ExtendsSoftware\ExaPHP\Http\ResponseFactory\ContentNegotiatingResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\ResponseFactory\JsonResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Decoding\RequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;

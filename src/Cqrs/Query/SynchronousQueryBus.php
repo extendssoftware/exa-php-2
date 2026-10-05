@@ -8,10 +8,10 @@ use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\ClosureQueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryMiddlewareException;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\QueryHandlerNotFoundException;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\DuplicateQueryHandlerException;
-use ExtendsSoftware\ExaPHP\Cqrs\Exception\InvalidQueryRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
 use ReflectionClass;
 use Throwable;
 
