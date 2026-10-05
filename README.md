@@ -20,6 +20,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
+- [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array processing.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
 - [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
 - [Integration](docs/integration/README.md): application wiring for CQRS, events, and logging.

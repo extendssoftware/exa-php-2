@@ -6,6 +6,10 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Processing component with transformation, validation, and pipeline contracts, sequential execution with unambiguous
+  step roles, immutable shared violations and results, null, string, pattern, strict-membership, and integer-range
+  validators, collecting `AllOf` validation, string trimming and integer conversion, and nested object/array shapes and
+  collection processing with explicit field policies and prefixed violation paths.
 - Logging component with logger, writer, and formatter contracts, stream output, predicate filtering, multi-destination
   delivery with aggregated failures, immutable log records, and NDJSON formatting with UTC timestamps and inline
   exception details, severity enum, component exceptions, and application integration with configurable writer services,
