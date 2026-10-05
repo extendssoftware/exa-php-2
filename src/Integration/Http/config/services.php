@@ -7,6 +7,8 @@ use ExtendsSoftware\ExaPHP\Http\ExceptionHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
+use ExtendsSoftware\ExaPHP\Http\ResponseFactory\ContentNegotiatingResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ResponseFactory\JsonResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
@@ -16,6 +18,7 @@ use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ExceptionHandlingMiddlewareFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\HandlerResolverFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewarePipelineFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ResponseNegotiationFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouterFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RoutingRequestHandlerFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
@@ -23,11 +26,21 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 
 return [
     'http' => [
+        'response' => [
+            'default' => 'application/json',
+            'factories' => [
+                'application/json' => JsonResponseFactory::class,
+            ],
+        ],
         'middleware' => [
             'exceptions' => ExceptionHandlingMiddleware::class,
         ],
     ],
     'services' => [
+        JsonResponseFactory::class => new InvokableDefinition(JsonResponseFactory::class),
+        ContentNegotiatingResponseFactory::class => new FactoryDefinition(
+            new ResponseNegotiationFactory()->create(...),
+        ),
         Router::class => new FactoryDefinition(new RouterFactory()->create(...)),
         HandlerResolver::class => new FactoryDefinition(new HandlerResolverFactory()->create(...)),
         RoutingRequestHandler::class => new FactoryDefinition(new RoutingRequestHandlerFactory()->create(...)),

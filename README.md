@@ -20,7 +20,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
-- [HTTP](docs/http/README.md): immutable messages, stream bodies, middleware, routing, and PHP server adapters.
+- [HTTP](docs/http/README.md): immutable messages, stream bodies, middleware, routing, JSON content negotiation, and PHP server adapters.
 - [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array processing.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
 - [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.

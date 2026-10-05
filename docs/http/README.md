@@ -277,6 +277,49 @@ On dispatch, the routing handler attaches a fresh `RouteMatch`, replacing any pr
 metadata. The original request remains unchanged. The match reflects the routing decision; changing a request's URI
 later does not automatically recompute its attributes.
 
+## Negotiate response representations
+
+Use `ResponseFactory\ContentNegotiatingResponseFactory` in HTTP handlers to encode public representation data according
+to the request's `Accept` header. `HttpModule` registers it with JSON available and preferred by default:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\ResponseFactory\ContentNegotiatingResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ResponseFactory\JsonResponseFactory;
+
+// For direct construction; with HttpModule, inject the registered negotiator into your handler.
+$factory = new ContentNegotiatingResponseFactory([
+    'application/json' => new JsonResponseFactory(),
+]);
+$response = $factory->create($request, ['id' => 42, 'title' => 'An article'], StatusCode::Ok);
+```
+
+Handlers choose the public fields; the selected factory encodes them. Responses retain the request protocol version.
+`JsonResponseFactory` uses PHP JSON serialization with `JSON_THROW_ON_ERROR`, sets `Content-Type: application/json`,
+and removes supplied Content-Length and Transfer-Encoding headers. It preserves other headers. Encoding failures throw
+`ResponseEncodingException` with the original `JsonException`; application serialization callback failures propagate.
+Do not pass domain objects indiscriminately: PHP serialization may expose public properties or invoke `JsonSerializable`.
+
+Negotiation uses exact media types, `type/*`, `*/*`, and quality weights with up to three decimal places. The most specific
+matching range determines a representation's quality, so `application/json;q=0, */*;q=1` excludes JSON. Candidates rank
+by quality, then matching specificity, then the configured default, then registration order. Equally specific repeated
+ranges use their highest quality. These matching rules build on [Accept semantics](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1).
+
+An absent Accept field selects the default. An empty field, or no acceptable available format, returns an empty 406
+without invoking an encoder. Invalid ranges are ignored. Registered media types must be concrete and parameterless;
+Accept ranges with media parameters do not match these representations. Media type names are case-insensitive.
+Multiple Accept field values are considered together. Successful and 406 responses include `Vary: Accept`; existing Vary
+values are preserved and `Accept` is not added again when already present or covered by `*`.
+
+Implement `ResponseFactory\ResponseFactory` for additional formats and register each under the media type it actually
+produces. The selected factory receives the data, status, and additional headers; it must encode its declared format
+and set the corresponding Content-Type. Only the selected factory executes. Encoding failures are not retried using a
+different format. A 406 discards supplied success headers and data.
+
+See [response factory configuration](../integration/README.md#configure-response-representations) for adding formats or
+changing the default. Existing manually constructed responses, routing errors, and exception responses are not converted
+automatically. A custom exception response factory can delegate to the negotiator when negotiated errors are desired.
+The emitter sends the resulting bytes without serialization.
+
 ## Convert application failures into responses
 
 Place `Middleware\ExceptionHandlingMiddleware` first in the middleware list so it surrounds routing, handler resolution,
@@ -385,6 +428,8 @@ Use [exception-handling middleware](#convert-application-failures-into-responses
 `HttpException` is the common exception interface. Specific failures under `Http\Exception` are:
 
 - `InvalidHeaderException` for invalid field names, value types, or control bytes.
+- `InvalidResponseFactoryException` for invalid representation registrations or an unavailable default media type.
+- `ResponseEncodingException` for JSON encoding failures.
 - `InvalidBodyStreamException` for invalid streams and `BodyReadException` for unsupported or failed stream reads.
 - `RequestCreationException` for missing or unsupported server metadata and request input opening failures.
 - `ResponseEmissionException` for unsupported responses or failed header emission.

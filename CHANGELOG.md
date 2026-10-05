@@ -10,7 +10,8 @@ All notable changes to ExaPHP will be documented in this file.
   string bodies, body and handler contracts, ordered middleware execution, and method/path routing with typed matches,
   immutable request attributes, lazy handler resolution with a service locator adapter, and 404/405 responses.
   Includes single-use stream bodies, PHP request creation and response emission adapters, and exception-handling
-  middleware with customizable response factories and a generic 500 default.
+  middleware with customizable response factories and a generic 500 default. Content negotiation selects registered
+  response factories using Accept preferences, with JSON as the configurable default and 406 for unsupported formats.
   Requires PHP’s native `ext-uri` extension.
 - Processing component with transformation, validation, and pipeline contracts, sequential execution with unambiguous
   step roles, immutable shared violations and results, null, string, pattern, strict-membership, and integer-range

@@ -322,6 +322,43 @@ and service resolution failures unchanged. When invoked through the service loca
 are wrapped in `ServiceResolutionException`, with the original cause available through `getPrevious()`. Failures
 constructing the pipeline occur before its exception middleware can run.
 
+### Configure response representations
+
+`HttpModule` registers `Http\ResponseFactory\ContentNegotiatingResponseFactory` and
+`Http\ResponseFactory\JsonResponseFactory`. Inject the negotiator into handlers that return representation data.
+The default configuration is:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\ResponseFactory\JsonResponseFactory;
+
+return [
+    'http' => [
+        'response' => [
+            'default' => 'application/json',
+            'factories' => ['application/json' => JsonResponseFactory::class],
+        ],
+    ],
+];
+```
+
+Modules can add media-type-to-service mappings under `http.response.factories`. For example, after implementing an
+application `XmlResponseFactory` that implements the HTTP `ResponseFactory` contract, add:
+
+```php
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
+
+return [
+    'http' => ['response' => ['factories' => ['application/xml' => XmlResponseFactory::class]]],
+    'services' => [XmlResponseFactory::class => new InvokableDefinition(XmlResponseFactory::class)],
+];
+```
+
+This adds XML while retaining JSON as the default. Use application configuration to set `http.response.default` to
+another registered media type. Media types must be concrete and parameterless, and case-insensitively unique. Factory
+services are resolved when the negotiator is constructed; encoding occurs only for the selected factory per request.
+An empty factory map or a default without a registered factory is invalid. No XML encoder is supplied by the framework.
+See [negotiation behavior](../http/README.md#negotiate-response-representations) for quality weights and 406 responses.
+
 ### Run the configured pipeline
 
 After the bootstrap shown above, a front controller can execute:
