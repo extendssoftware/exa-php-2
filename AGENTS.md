@@ -213,6 +213,10 @@ public function id(): string
 - Each component must define its own root exception interface.
 - The root exception interface must extend `Throwable`.
 - Name the root exception interface after the component, for example `ServiceLocatorException`.
+- Keep the component root exception interface at the component root.
+- Place specific exceptions in an `Exception` subnamespace of the concept that owns the failure.
+- Use a component-level `Exception` namespace for failures shared across concepts or owned by the component as a whole.
+- Do not create an exception namespace per class; group exceptions by meaningful concept.
 - Every component-specific exception must implement the component root exception interface.
 - Specific exceptions should extend the most appropriate SPL exception type, such as `InvalidArgumentException`,
   `LogicException`, or `RuntimeException`, while also implementing the component root exception interface.
