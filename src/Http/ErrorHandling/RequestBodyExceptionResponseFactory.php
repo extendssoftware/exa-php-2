@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\ErrorHandling;
 
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
+
 use Override;
-use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
-use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
@@ -30,14 +31,14 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
     }
 
     /**
-     * Creates a non-cacheable plain-text response without exposing decoding details.
+     * Creates a non-cacheable Problem Details response without exposing decoding details.
      *
      * @param Throwable $exception The execution failure.
      * @param Request $request The request at the exception boundary.
      *
      * @return Response A decoding error response or the fallback response.
      *
-     * @throws Throwable When the fallback fails, propagated unchanged.
+     * @throws Throwable When encoding or the fallback fails, propagated unchanged.
      */
     #[Override]
     public function create(Throwable $exception, Request $request): Response
@@ -54,11 +55,9 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
             return $this->fallback->create($exception, $request);
         }
 
-        return new Response(
-            $status,
-            new Headers(['Content-Type' => 'text/plain; charset=utf-8', 'Cache-Control' => 'no-store']),
-            new StringBody($message),
-            $request->protocolVersion,
+        return new ProblemDetailsResponseFactory()->create(
+            new ProblemDetails($status, $message),
+            protocolVersion: $request->protocolVersion,
         );
     }
 }

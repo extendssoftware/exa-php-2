@@ -277,7 +277,7 @@ supported by this path router and cannot be registered.
 
 `SimpleRouter::match()` returns `RouteMatch` or null. `allowedMethods()` returns the methods of the winning path pattern
 in registration order, without duplicates, or an empty list when there is no routed target.
-`RoutingRequestHandler` returns an empty 404 response for an unmatched path, or an empty 405 response with an `Allow`
+`RoutingRequestHandler` returns a Problem Details 404 response for an unmatched path, or a Problem Details 405 response with an `Allow`
 header for an unsupported method. These error responses retain the request protocol version. Matched handler responses
 and all execution exceptions propagate unchanged.
 
@@ -330,7 +330,7 @@ unsupported content types produce `UnsupportedRequestMediaTypeException` before 
 Content-Encoding is also rejected; compressed bodies require a separate decompression boundary.
 
 `RequestBodyExceptionResponseFactory` maps malformed input to 400, an exceeded limit to 413, and unsupported metadata
-to 415. It returns generic non-cacheable plain-text messages and delegates unrelated exceptions to its fallback.
+to 415. It returns generic non-cacheable Problem Details and delegates unrelated exceptions to its fallback.
 `HttpModule` installs this policy around `DefaultExceptionResponseFactory`, retaining generic 500 responses for other
 failures. Application overrides of `ExceptionResponseFactory` should preserve these mappings if desired. Neither
 representation decoding nor HTTP error mapping validates domain fields.
@@ -365,8 +365,8 @@ matching range determines a representation's quality, so `application/json;q=0, 
 by quality, then matching specificity, then the configured default, then registration order. Equally specific repeated
 ranges use their highest quality. These matching rules build on [Accept semantics](https://www.rfc-editor.org/rfc/rfc9110.html#section-12.5.1).
 
-An absent Accept field selects the default. An empty field, or no acceptable available format, returns an empty 406
-without invoking an encoder. Invalid ranges are ignored. Registered media types must be concrete and parameterless;
+An absent Accept field selects the default. An empty field, or no acceptable available format, returns a Problem Details 406
+without invoking a registered representation factory. Invalid ranges are ignored. Registered media types must be concrete and parameterless;
 Accept ranges with media parameters do not match these representations. Media type names are case-insensitive.
 Multiple Accept field values are considered together. Successful and 406 responses include `Vary: Accept`; existing Vary
 values are preserved and `Accept` is not added again when already present or covered by `*`.
@@ -396,7 +396,7 @@ $pipeline = new MiddlewarePipeline($routing, [
 ]);
 ```
 
-The default factory returns status 500 with the plain-text body `Internal Server Error`, a UTF-8 text content type,
+The default factory returns status 500 with a generic Problem Details document, `application/problem+json`,
 and `Cache-Control: no-store`. It retains the request protocol version and never exposes exception messages, codes,
 types, or stack traces. It does not log. Successful downstream responses pass through unchanged.
 
@@ -404,7 +404,14 @@ Implement `ErrorHandling\ExceptionResponseFactory` to choose application-specifi
 For example, assuming your application defines `ArticleNotFound`, a factory can map that failure and delegate others:
 
 ```php
+use App\ArticleNotFound;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 
 final readonly class ApplicationExceptionResponseFactory implements ExceptionResponseFactory
 {
@@ -415,11 +422,13 @@ final readonly class ApplicationExceptionResponseFactory implements ExceptionRes
     public function create(Throwable $exception, Request $request): Response
     {
         if ($exception instanceof ArticleNotFound) {
-            return new Response(
-                StatusCode::NotFound,
-                new Headers(['Content-Type' => 'application/json', 'Cache-Control' => 'no-store']),
-                new StringBody('{"error":"Article not found"}'),
-                $request->protocolVersion,
+            return new ProblemDetailsResponseFactory()->create(
+                new ProblemDetails(
+                    StatusCode::NotFound,
+                    'Article not found',
+                    new Uri('https://api.example.com/problems/article-not-found'),
+                ),
+                protocolVersion: $request->protocolVersion,
             );
         }
 
@@ -511,3 +520,86 @@ Use [exception-handling middleware](#convert-application-failures-into-responses
 
 Creating invalid values throws exceptions. The exception-handling middleware can translate failures within its
 downstream chain; callers outside that chain must choose how to represent them.
+
+## Create Problem Details responses
+
+`ErrorHandling\ProblemDetails\ProblemDetails` holds the fields defined by
+[RFC 9457](https://www.rfc-editor.org/rfc/rfc9457.html). `ProblemDetailsResponseFactory` serializes them as
+`application/problem+json`, with the same status in the HTTP response and the document:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
+
+$response = new ProblemDetailsResponseFactory()->create(new ProblemDetails(
+    StatusCode::NotFound,
+    'Not Found',
+    instance: new Uri('/articles/123'),
+));
+```
+
+The default `type` is `about:blank`, meaning the problem has the semantics of its HTTP status. Supply the standard status
+title for that type. For application-specific problems, supply a stable type URI and title. `instance` identifies this
+occurrence, while `detail` provides a safe occurrence-specific explanation. Both are omitted when null; empty strings
+are retained. Default framework errors omit them rather than copying request URLs or exception messages.
+
+Extensions are named members such as `errors` or `requestId`. Their names must be nonempty strings and cannot replace
+`type`, `title`, `status`, `detail`, or `instance`. Values may contain null, finite scalars, and nested arrays up to
+64 levels deep. Objects and resources are rejected; caller-owned array references are detached. Invalid extensions
+raise `ErrorHandling\ProblemDetails\Exception\InvalidProblemDetailsException`. Invalid UTF-8 or other JSON encoding failures raise
+`Representation\Exception\ResponseEncodingException` without returning a partial response.
+
+The framework produces Problem Details for routing 404/405, negotiation 406, request decoding 400/413/415, and the default
+500 exception response. Required headers such as `Allow` are retained. These responses use `Cache-Control: no-store`.
+The response factory replaces content type and removes stale `Content-Length` and `Transfer-Encoding` headers.
+The PHP emitter retains its normal HEAD behavior, suppressing the response body on the wire.
+
+Problem responses use their own media type independently of normal response negotiation, even when Accept does not
+include `application/problem+json`. This includes a negotiation failure's 406 response and avoids negotiating that error
+again. Successful response formats are unaffected. Applications own domain-exception mappings through
+`ExceptionResponseFactory`; configuration selects that factory rather than declaring exception-to-status rules.
+
+## Map exceptions by module
+
+Implement `ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper` when a module owns exception mappings. Each mapper receives the original
+exception object and the request at the exception boundary. Return `null` for exceptions the module does not handle:
+
+```php
+use App\Article\Exception\ArticleNotFound;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
+
+final readonly class ArticleProblemDetailsMapper implements ExceptionProblemDetailsMapper
+{
+    #[Override]
+    public function map(Throwable $exception, Request $request): ?ProblemDetails
+    {
+        if (!$exception instanceof ArticleNotFound) {
+            return null;
+        }
+
+        return new ProblemDetails(
+            StatusCode::NotFound,
+            'Article not found',
+            new Uri('https://api.example.com/problems/article-not-found'),
+            extensions: ['articleId' => $exception->articleId()],
+        );
+    }
+}
+```
+
+This example assumes your `ArticleNotFound` exposes `articleId()`. Expose only data appropriate for the caller.
+`MappingExceptionResponseFactory` evaluates its mapper list in order, renders the first non-null result, and delegates
+to its injected `ExceptionResponseFactory` fallback when none matches. The original exception and request are passed
+unchanged. Later mappers are skipped after a match; no priorities or automatic exception-class matching are applied.
+Mapper, encoding, and fallback failures propagate without another mapping or fallback attempt. Invalid mapper lists
+raise `ErrorHandling\ProblemDetails\Exception\InvalidExceptionProblemDetailsMapperException`.
+
+For manual wiring, construct `MappingExceptionResponseFactory($mappers, $fallback, $problems)` with an ordered list of
+mapper instances. The default problem encoder can be omitted. Applications using `HttpModule` can instead
+[register mapper services in configuration](../integration/README.md#register-module-exception-mappers).

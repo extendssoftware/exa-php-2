@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
 use Override;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
@@ -18,7 +20,7 @@ use function array_map;
 use function implode;
 
 /**
- * Dispatches matched routes with typed metadata or returns empty 404 and 405 responses.
+ * Dispatches matched routes with typed metadata or returns Problem Details 404 and 405 responses.
  */
 final readonly class RoutingRequestHandler implements RequestHandler
 {
@@ -41,7 +43,7 @@ final readonly class RoutingRequestHandler implements RequestHandler
      *
      * @param Request $request The incoming request.
      *
-     * @return Response The selected handler's response, or an empty routing error response.
+     * @return Response The selected handler's response, or a Problem Details routing error response.
      *
      * @throws Throwable When routing, handler resolution, or execution fails, propagated unchanged.
      */
@@ -54,12 +56,15 @@ final readonly class RoutingRequestHandler implements RequestHandler
         }
         $methods = $this->router->allowedMethods($request);
         if ($methods === []) {
-            return new Response(StatusCode::NotFound, protocolVersion: $request->protocolVersion);
+            return new ProblemDetailsResponseFactory()->create(
+                new ProblemDetails(StatusCode::NotFound, 'Not Found'),
+                protocolVersion: $request->protocolVersion,
+            );
         }
         $allow = implode(', ', array_map(static fn(Method $method): string => $method->value, $methods));
 
-        return new Response(
-            StatusCode::MethodNotAllowed,
+        return new ProblemDetailsResponseFactory()->create(
+            new ProblemDetails(StatusCode::MethodNotAllowed, 'Method Not Allowed'),
             new Headers(['Allow' => $allow]),
             protocolVersion: $request->protocolVersion,
         );

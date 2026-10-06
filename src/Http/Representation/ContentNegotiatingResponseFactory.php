@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Representation;
 
-use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
 use Throwable;
 
 use function array_key_exists;
@@ -72,7 +74,7 @@ final readonly class ContentNegotiatingResponseFactory
     }
 
     /**
-     * Negotiates and encodes data, or returns an empty 406 without invoking any encoder.
+     * Negotiates data or returns a Problem Details 406 without invoking registered representation factories.
      *
      * Missing Accept accepts all representations; an empty field accepts none. Vary retains existing entries and
      * includes Accept unless already covered. The response uses the request protocol. Factory failures are not retried.
@@ -82,7 +84,7 @@ final readonly class ContentNegotiatingResponseFactory
      * @param StatusCode $statusCode The requested successful negotiation status.
      * @param Headers $headers Additional response headers, used only when negotiation succeeds.
      *
-     * @return Response The encoded response, or an empty 406 with Vary: Accept.
+     * @return Response The encoded response, or a Problem Details 406 with Vary: Accept.
      *
      * @throws Throwable When the selected factory fails, propagated unchanged.
      */
@@ -121,7 +123,9 @@ final readonly class ContentNegotiatingResponseFactory
             }
         }
         $response = $selected === null
-            ? new Response(StatusCode::NotAcceptable)
+            ? new ProblemDetailsResponseFactory()->create(
+                new ProblemDetails(StatusCode::NotAcceptable, 'Not Acceptable'),
+            )
             : $selected->create($data, $statusCode, $headers);
         $headers = $response->headers;
         foreach ($headers->get('Vary') as $line) {
@@ -132,7 +136,8 @@ final readonly class ContentNegotiatingResponseFactory
             }
         }
 
-        return $response->withHeaders($headers->withAdded('Vary', 'Accept'))
+        return $response
+            ->withHeaders($headers->withAdded('Vary', 'Accept'))
             ->withProtocolVersion($request->protocolVersion);
     }
 
@@ -181,7 +186,7 @@ final readonly class ContentNegotiatingResponseFactory
         $index = 0;
         $quoted = false;
         $escaped = false;
-        for ($offset = 0, $length = strlen($value); $offset < $length; ++$offset) {
+        for ($offset = 0, $length = strlen($value) ; $offset < $length ; ++$offset) {
             $character = $value[$offset];
             if ($character === $delimiter && !$quoted) {
                 $parts[++$index] = '';

@@ -270,7 +270,8 @@ The module supplies these shared services:
 | `Http\Handler\HandlerResolver` | `ServiceLocatorHandlerResolver` |
 | `Http\Routing\RoutingRequestHandler` | Routing and lazy handler dispatch |
 | `Http\Middleware\ExceptionHandlingMiddleware` | Configured exception response factory |
-| `Http\ErrorHandling\ExceptionResponseFactory` | Request decoding error policy with a generic 500 fallback |
+| `Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory` | JSON Problem Details response creation |
+| `Http\ErrorHandling\ExceptionResponseFactory` | Ordered exception mappers with decoding and generic 500 fallback |
 | `Http\Server\ServerRequestFactory` | `PhpServerRequestFactory` |
 | `Http\Server\ResponseEmitter` | `PhpResponseEmitter` |
 
@@ -346,8 +347,8 @@ policies. Add exact media-type-to-service mappings to `http.request.decoders` to
 must implement `RequestBodyDecoder`. Parameters are not permitted in registration keys. Services are resolved when the
 dispatcher is constructed; bodies are read only when `decode()` is called. An empty map supports no input formats.
 
-The default exception response service maps decoding failures to 400, 413, and 415, and delegates all others to the
-plain-text 500 factory. Overriding that service replaces this policy. See the
+The default exception response service tries configured mappers first, then maps decoding failures to 400, 413,
+and 415, and delegates all others to the Problem Details 500 factory. Overriding that service replaces this policy. See the
 [request decoding guide](../http/README.md#decode-json-request-bodies) for body consumption and format limitations.
 
 ### Configure response representations
@@ -588,3 +589,48 @@ available. The default presenter performs no logging and adds no dependency on t
 identifier in `cqrs.command.middleware` when transactional commands are required. There is no default database adapter
 or automatic registration. See the [Transaction guide](../transaction/README.md#wrap-cqrs-commands) for ordering,
 nesting, and failure behavior.
+
+### Customize HTTP problem responses
+
+`HttpModule` registers `Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory` for application factories to inject.
+Framework routing, negotiation, decoding, and fallback exception errors produce Problem Details by default.
+To map application exceptions, register your implementation under `ExceptionResponseFactory::class`; wrap it with
+`RequestBodyExceptionResponseFactory` when retaining the framework's decoding policy. See the
+[Problem Details guide](../http/README.md#create-problem-details-responses) and the application exception factory example
+in [HTTP error handling](../http/README.md).
+
+### Register module exception mappers
+
+`HttpModule` creates a `MappingExceptionResponseFactory` for the `ExceptionResponseFactory` service. Modules contribute
+named service identifiers under `http.exceptionMappers`:
+
+```php
+use App\Article\Http\ArticleProblemDetailsMapper;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
+
+return [
+    'http' => [
+        'exceptionMappers' => [
+            'article' => ArticleProblemDetailsMapper::class,
+        ],
+    ],
+    'services' => [
+        ArticleProblemDetailsMapper::class => new InvokableDefinition(ArticleProblemDetailsMapper::class),
+    ],
+];
+```
+
+Each service must implement `Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper`. Registration names and service identifiers
+must be nonempty strings. Missing `http` or `exceptionMappers` sections mean no mappers; explicitly invalid section
+values are rejected. Services are resolved when the exception response factory is created, and run in configuration
+order. Module maps merge by name; an application override replaces the named mapper while retaining its position.
+The first mapper returning a problem wins. Register specific mappings before broad ones.
+
+Configured mappers run before framework defaults. With no match, request decoding errors retain their 400/413/415
+responses and unexpected errors retain the generic 500. Routing 404/405 and negotiation 406 are normal responses and do
+not invoke exception mappers. Mapper failures propagate through the existing exception factory failure behavior.
+
+The composing factory uses the registered `ProblemDetailsResponseFactory` service. Overriding
+`ExceptionResponseFactory::class` entirely replaces this composition and its defaults. Configuration errors raise
+`InvalidHttpConfigurationException`; incompatible mapper instances raise `InvalidExceptionProblemDetailsMapperException`.
+As with other service factories, failures during locator resolution are retained inside `ServiceResolutionException`.

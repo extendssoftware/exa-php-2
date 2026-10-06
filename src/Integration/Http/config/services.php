@@ -2,9 +2,8 @@
 
 declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\DefaultExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\RequestBodyExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
@@ -19,6 +18,7 @@ use ExtendsSoftware\ExaPHP\Http\Server\PhpServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ExceptionHandlingMiddlewareFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ExceptionMappingFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\HandlerResolverFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewarePipelineFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RequestBodyDecoderFactory;
@@ -26,7 +26,6 @@ use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ResponseNegotiationFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouterFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RoutingRequestHandlerFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 
 return [
@@ -50,6 +49,7 @@ return [
         ],
     ],
     'services' => [
+        ProblemDetailsResponseFactory::class => new InvokableDefinition(ProblemDetailsResponseFactory::class),
         RequestBodyDecoder::class => new FactoryDefinition(new RequestBodyDecoderFactory()->create(...)),
         JsonRequestBodyDecoder::class => new FactoryDefinition(new RequestBodyDecoderFactory()->createJson(...)),
         JsonResponseFactory::class => new InvokableDefinition(JsonResponseFactory::class),
@@ -60,8 +60,8 @@ return [
         HandlerResolver::class => new FactoryDefinition(new HandlerResolverFactory()->create(...)),
         RoutingRequestHandler::class => new FactoryDefinition(new RoutingRequestHandlerFactory()->create(...)),
         RequestHandler::class => new FactoryDefinition(new MiddlewarePipelineFactory()->create(...)),
-        ExceptionResponseFactory::class => new InstanceDefinition(
-            new RequestBodyExceptionResponseFactory(new DefaultExceptionResponseFactory()),
+        ExceptionResponseFactory::class => new FactoryDefinition(
+            new ExceptionMappingFactory()->create(...),
         ),
         ExceptionHandlingMiddleware::class => new FactoryDefinition(
             new ExceptionHandlingMiddlewareFactory()->create(...),

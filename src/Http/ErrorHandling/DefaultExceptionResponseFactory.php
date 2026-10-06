@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\ErrorHandling;
 
-use Override;
-use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
-use ExtendsSoftware\ExaPHP\Http\Message\Headers;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
+use Override;
 use Throwable;
 
 /**
- * Represents every failure as a generic plain-text 500 response without exception details.
+ * Represents every failure as a generic Problem Details 500 response without exception details.
  */
 final readonly class DefaultExceptionResponseFactory implements ExceptionResponseFactory
 {
@@ -26,15 +27,15 @@ final readonly class DefaultExceptionResponseFactory implements ExceptionRespons
      * @param Request $request The request providing the protocol version.
      *
      * @return Response A generic Internal Server Error response.
+     *
+     * @throws ResponseEncodingException When encoding fails.
      */
     #[Override]
     public function create(Throwable $exception, Request $request): Response
     {
-        return new Response(
-            StatusCode::InternalServerError,
-            new Headers(['Content-Type' => 'text/plain; charset=utf-8', 'Cache-Control' => 'no-store']),
-            new StringBody('Internal Server Error'),
-            $request->protocolVersion,
+        return new ProblemDetailsResponseFactory()->create(
+            new ProblemDetails(StatusCode::InternalServerError, 'Internal Server Error'),
+            protocolVersion: $request->protocolVersion,
         );
     }
 }

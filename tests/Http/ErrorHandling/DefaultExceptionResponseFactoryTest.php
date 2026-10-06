@@ -26,9 +26,12 @@ final class DefaultExceptionResponseFactoryTest extends TestCase
         $this->assertSame(StatusCode::InternalServerError, $response->statusCode);
         $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
         $this->assertSame([
-            'Content-Type' => ['text/plain; charset=utf-8'],
+            'Content-Type' => ['application/problem+json'],
             'Cache-Control' => ['no-store'],
         ], $response->headers->all());
-        $this->assertSame('Internal Server Error', implode('', iterator_to_array($response->body->chunks())));
+        $this->assertSame(
+            '{"type":"about:blank","title":"Internal Server Error","status":500}',
+            implode('', iterator_to_array($response->body->chunks())),
+        );
     }
 }

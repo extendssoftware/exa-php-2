@@ -23,6 +23,10 @@ use stdClass;
 use Throwable;
 use TypeError;
 
+use function json_decode;
+use function implode;
+use function iterator_to_array;
+
 final class RoutingRequestHandlerTest extends TestCase
 {
     public function testDispatchesWithMatchAndPreservesOtherMetadataAndOriginalRequest(): void
@@ -75,7 +79,8 @@ final class RoutingRequestHandlerTest extends TestCase
         $missing = $routing->handle(new Request(Method::Get, new Uri('/missing')));
         $this->assertSame(StatusCode::NotFound, $missing->statusCode);
         $this->assertSame([], $missing->headers->get('Allow'));
-        $this->assertSame(0, $missing->body->size());
+        $this->assertSame(['application/problem+json'], $missing->headers->get('Content-Type'));
+        $this->assertSame(404, json_decode(implode('', iterator_to_array($missing->body->chunks())), true)['status']);
         $notAllowed = $routing->handle(new Request(
             Method::Delete,
             new Uri('/articles'),
@@ -83,7 +88,8 @@ final class RoutingRequestHandlerTest extends TestCase
         ));
         $this->assertSame(StatusCode::MethodNotAllowed, $notAllowed->statusCode);
         $this->assertSame(['GET, POST'], $notAllowed->headers->get('Allow'));
-        $this->assertSame(0, $notAllowed->body->size());
+        $this->assertSame(['application/problem+json'], $notAllowed->headers->get('Content-Type'));
+        $this->assertSame(405, json_decode(implode('', iterator_to_array($notAllowed->body->chunks())), true)['status']);
         $this->assertSame(ProtocolVersion::Http2, $notAllowed->protocolVersion);
     }
 

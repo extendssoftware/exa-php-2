@@ -20,6 +20,7 @@ use PHPUnit\Framework\TestCase;
 use Throwable;
 use TypeError;
 
+use function json_decode;
 use function implode;
 use function iterator_to_array;
 
@@ -34,6 +35,10 @@ final class RequestBodyExceptionResponseFactoryTest extends TestCase
         $response = new RequestBodyExceptionResponseFactory($fallback)->create($failure, $request);
         $this->assertSame($status, $response->statusCode);
         $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
+        $this->assertSame(['application/problem+json'], $response->headers->get('Content-Type'));
+        $data = json_decode(implode('', iterator_to_array($response->body->chunks())), true);
+        $this->assertSame('about:blank', $data['type']);
+        $this->assertSame($status->value, $data['status']);
         $this->assertSame(['no-store'], $response->headers->get('Cache-Control'));
         $this->assertStringNotContainsString('secret', implode('', iterator_to_array($response->body->chunks())));
     }

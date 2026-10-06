@@ -43,7 +43,7 @@ final class ContentNegotiatingResponseFactoryTest extends TestCase
         $negotiator = new ContentNegotiatingResponseFactory($factories);
         $response = $negotiator->create($request, ['id' => 1], StatusCode::Created);
         $this->assertSame($expected === null ? StatusCode::NotAcceptable : StatusCode::Created, $response->statusCode);
-        $this->assertSame($expected === null ? [] : [$expected], $response->headers->get('Content-Type'));
+        $this->assertSame($expected === null ? ['application/problem+json'] : [$expected], $response->headers->get('Content-Type'));
         $this->assertSame(['Accept'], $response->headers->get('Vary'));
         $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
     }
