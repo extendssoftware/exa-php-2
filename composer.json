@@ -9,7 +9,7 @@
     "ext-uri": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^13.3"
+    "phpunit/phpunit": "^13.4"
   },
   "autoload": {
     "psr-4": {
