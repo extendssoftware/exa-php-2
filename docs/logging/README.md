@@ -32,7 +32,25 @@ To register logging services with an application, use the
 
 ## Write to a stream
 
-`WriterLogger` creates one `LogRecord` per call with the current UTC timestamp and passes it to its `LogWriter`.
+`WriterLogger` reads its clock once per call to timestamp a `LogRecord` and passes the record to its `LogWriter`.
+The default `SystemClock` supplies UTC system time. Pass a [Clock](../clock/README.md) as the second constructor argument
+to control timestamps, for example in tests:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
+use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
+use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
+
+$clock = new FrozenClock(new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00'));
+$logger = new WriterLogger(new StreamLogWriter('php://stderr'), $clock);
+```
+
+The record preserves the clock's timestamp and timezone; JSON formatting still normalizes timestamps to UTC.
+A `ClockException` becomes `Logging\Exception\LogTimestampException`, preserving the cause, and no record is written.
 Writers receive existing records, allowing multiple destinations to use the same timestamp and context.
 
 `Logging\Writer\StreamLogWriter` accepts a file path, a stream URI such as `php://stdout` or `php://stderr`, or an

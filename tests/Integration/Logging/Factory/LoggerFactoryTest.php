@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Integration\Logging\Factory;
 
+use DateTimeImmutable;
+use ExtendsSoftware\ExaPHP\Clock\Clock;
+use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
 use ExtendsSoftware\ExaPHP\Integration\Logging\Exception\InvalidLoggingConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Logging\Factory\LoggerFactory;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
@@ -16,15 +19,21 @@ use stdClass;
 
 final class LoggerFactoryTest extends TestCase
 {
-    public function testCreatesIndependentLoggersUsingTheResolvedWriter(): void
+    public function testCreatesIndependentLoggersUsingTheResolvedWriterAndClock(): void
     {
+        $time = new DateTimeImmutable('2026-10-06T12:00:00Z');
+        $clock = new FrozenClock($time);
         $writer = $this->createMock(LogWriter::class);
         $writer->expects($this->once())->method('write')->with($this->callback(
             static fn(LogRecord $record): bool => $record->message === 'Message'
-                && $record->level === LogLevel::Info && $record->context === ['id' => 1],
+                && $record->level === LogLevel::Info && $record->context === ['id' => 1]
+                && $record->timestamp === $time,
         ));
         $locator = $this->createMock(ServiceLocator::class);
-        $locator->expects($this->exactly(2))->method('get')->with(LogWriter::class)->willReturn($writer);
+        $locator->expects($this->exactly(4))->method('get')->willReturnMap([
+            [LogWriter::class, $writer],
+            [Clock::class, $clock],
+        ]);
         $factory = new LoggerFactory();
         $logger = $factory->create($locator);
         $this->assertNotSame($logger, $factory->create($locator));
@@ -35,6 +44,17 @@ final class LoggerFactoryTest extends TestCase
     {
         $locator = $this->createStub(ServiceLocator::class);
         $locator->method('get')->willReturn(new stdClass());
+        $this->expectException(InvalidLoggingConfigurationException::class);
+        new LoggerFactory()->create($locator);
+    }
+
+    public function testRejectsIncorrectClockService(): void
+    {
+        $locator = $this->createStub(ServiceLocator::class);
+        $locator->method('get')->willReturnMap([
+            [LogWriter::class, $this->createStub(LogWriter::class)],
+            [Clock::class, new stdClass()],
+        ]);
         $this->expectException(InvalidLoggingConfigurationException::class);
         new LoggerFactory()->create($locator);
     }

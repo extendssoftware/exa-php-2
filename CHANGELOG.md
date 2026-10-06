@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Clock component with a current-time contract, a UTC system clock, an immutable frozen clock for deterministic tests,
+  and a dedicated integration module registering the shared clock service.
 - Outbox component with immutable JSON message envelopes, a transactional writer contract, and message and write
   exceptions. Persistence adapters participate in the application's transaction and are supplied by the application.
 - Transaction component with a generic transactional execution contract, explicit nested-call rejection, lifecycle
@@ -30,8 +32,8 @@ All notable changes to ExaPHP will be documented in this file.
   collection processing with explicit field policies and prefixed violation paths.
 - Logging component with logger, writer, and formatter contracts, stream output, predicate filtering, multi-destination
   delivery with aggregated failures, immutable log records, and NDJSON formatting with UTC timestamps and inline
-  exception details, severity enum, component exceptions, and application integration with configurable writer services,
-  without PSR dependencies.
+  exception details, severity enum, component exceptions, injectable clocks for record timestamps, and application
+  integration with configurable writer and clock services, without PSR dependencies.
 - DDD component with aggregate and domain event contracts, optional abstract aggregate roots, a reusable recorded-event
   collection, composable generic specifications, and an article example. Documents atomic command and synchronous
   listener execution, with application-provided transactional outboxes for deferred work and external side effects.

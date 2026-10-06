@@ -20,6 +20,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
+- [Clock](docs/clock/README.md): a clock contract with UTC system time and immutable frozen time implementations.
 - [Outbox](docs/outbox/README.md): immutable JSON message envelopes and a transactional writer contract.
 - [Transaction](docs/transaction/README.md): transactional execution contracts, lifecycle exceptions, and CQRS command middleware.
 - [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.

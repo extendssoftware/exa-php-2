@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Integration\Logging;
 
 use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Clock\Clock;
+use ExtendsSoftware\ExaPHP\Clock\SystemClock;
+use ExtendsSoftware\ExaPHP\Integration\Clock\ClockModule;
 use ExtendsSoftware\ExaPHP\Integration\Logging\LoggingModule;
-use ExtendsSoftware\ExaPHP\Logging\Logger;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
+use ExtendsSoftware\ExaPHP\Logging\Logger;
+use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
 use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
-use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
 use PHPUnit\Framework\TestCase;
 
 use function bin2hex;
@@ -32,8 +35,12 @@ final class LoggingModuleIntegrationTest extends TestCase
         mkdir($directory);
         try {
             $application = new Application($directory);
+            $application->registerModule(ClockModule::class);
             $application->registerModule(LoggingModule::class);
             $services = $application->bootstrap();
+            $clock = $services->get(Clock::class);
+            $this->assertInstanceOf(SystemClock::class, $clock);
+            $this->assertSame($clock, $services->get(Clock::class));
             $logger = $services->get(Logger::class);
             $writer = $services->get(LogWriter::class);
             $this->assertInstanceOf(WriterLogger::class, $logger);
@@ -46,7 +53,7 @@ final class LoggingModuleIntegrationTest extends TestCase
         }
     }
 
-    public function testApplicationConfigurationOverridesDefaultWriter(): void
+    public function testApplicationCanProvideTheClockWithoutTheClockModule(): void
     {
         $directory = sys_get_temp_dir() . '/exa-logging-' . bin2hex(random_bytes(8));
         mkdir($directory);
@@ -55,11 +62,16 @@ final class LoggingModuleIntegrationTest extends TestCase
 
 declare(strict_types=1);
 
+use ExtendsSoftware\ExaPHP\Clock\Clock;
+use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
 use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 
 return ['services' => [
+    Clock::class => new FactoryDefinition(
+        static fn(): Clock => new FrozenClock(new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00')),
+    ),
     LogWriter::class => new FactoryDefinition(static fn(): LogWriter => new StreamLogWriter(__DIR__ . '/app.log')),
 ]];
 CONFIG);
@@ -69,6 +81,7 @@ CONFIG);
             $services = $application->bootstrap();
             $services->get(Logger::class)->log(LogLevel::Info, 'Application message', ['id' => 1]);
             $record = json_decode(file_get_contents($directory . '/app.log'), true);
+            $this->assertSame('2026-10-06T10:34:56.123456Z', $record['timestamp']);
             $this->assertSame('Application message', $record['message']);
             $this->assertSame(['id' => 1], $record['context']);
             $application->shutdown();

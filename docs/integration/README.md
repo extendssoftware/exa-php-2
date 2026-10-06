@@ -197,23 +197,65 @@ As with command middleware, configure the ordered pipeline at application level 
 The handler map now lives at `cqrs.query.handlers`; move registrations previously stored under `cqrs.queries` there.
 See [query middleware](../cqrs/README.md#query-middleware) for result and context semantics.
 
+## Register the Clock module
+
+Register `Integration\Clock\ClockModule` before bootstrap to provide a shared `Clock\Clock` service backed by
+`Clock\SystemClock`. The application configuration directory must exist:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Clock\Clock;
+use ExtendsSoftware\ExaPHP\Integration\Clock\ClockModule;
+
+$application = new Application(__DIR__ . '/config');
+$application->registerModule(ClockModule::class);
+$services = $application->bootstrap();
+$clock = $services->get(Clock::class);
+```
+
+Override `Clock::class` in application service configuration to supply another clock, such as a `FrozenClock` for tests:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Clock\Clock;
+use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
+
+return ['services' => [
+    Clock::class => new FactoryDefinition(
+        static fn(): Clock => new FrozenClock(new DateTimeImmutable('2026-10-06T12:00:00Z')),
+    ),
+]];
+```
+
 ## Register the Logging module
 
-Register `Integration\Logging\LoggingModule` before bootstrap. The application configuration directory must exist:
+Register `Integration\Logging\LoggingModule` and [ClockModule](#register-the-clock-module) before bootstrap, or supply
+your own `Clock\Clock` service. The application configuration directory must exist:
 
 ```php
 use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Integration\Clock\ClockModule;
 use ExtendsSoftware\ExaPHP\Integration\Logging\LoggingModule;
 use ExtendsSoftware\ExaPHP\Logging\Logger;
 
 $application = new Application(__DIR__ . '/config');
+$application->registerModule(ClockModule::class);
 $application->registerModule(LoggingModule::class);
 $services = $application->bootstrap();
 $logger = $services->get(Logger::class);
 ```
 
-The module registers shared `Logger` and `Logging\Writer\LogWriter` services. `LoggerFactory` resolves `LogWriter`
-and creates a `WriterLogger`. The default writer is a `StreamLogWriter` targeting `php://stderr` with NDJSON formatting.
+The logging module registers shared `Logger` and `Logging\Writer\LogWriter` services. `LoggerFactory` resolves
+the writer and the separately registered clock to create a `WriterLogger`.
+The default writer is a `StreamLogWriter` targeting `php://stderr` with NDJSON formatting.
 Resolving these services does not write a record or open the destination.
 
 Override `LogWriter::class` in an application file such as `/config/logging.global.php` to configure the destination:
@@ -241,7 +283,7 @@ combinations or resolve other registered writers. See the [logging guide](../log
 failure behavior. No separate logging configuration schema is required. Override `Logger::class` itself to use a
 different logger implementation.
 
-A writer service that does not implement `LogWriter` causes
+A writer service that does not implement `LogWriter`, or a clock service that does not implement `Clock`, causes
 `Integration\Logging\Exception\InvalidLoggingConfigurationException`, which implements `IntegrationException`.
 Direct `LoggerFactory::create()` calls preserve service-resolution exceptions unchanged. Resolution through
 `FactoryDefinition` wraps non-ServiceLocator exceptions in `ServiceResolutionException`, preserving the cause.
