@@ -390,6 +390,9 @@ unless those changes have meaningful impact outside normal repository maintenanc
 ## Documentation
 
 - Keep documentation synchronized with the implementation.
+- Always present documented items in the same order as the corresponding source listing or structure. Component lists
+  must follow the alphabetical directory order in `src/`; API and configuration lists must follow their declarations.
+- Keep this ordering consistent across documentation files and update it when the corresponding source order changes.
 - Update `README.md` files when installation, setup, public APIs, requirements, or usage change.
 - Keep the root `README.md` focused on project purpose, status, requirements, setup, a minimal usage example, and
   testing.

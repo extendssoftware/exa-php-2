@@ -20,24 +20,24 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 ## Components
 
-- [Clock](docs/clock/README.md): a clock contract with UTC system time and immutable frozen time implementations.
-- [Outbox](docs/outbox/README.md): immutable JSON message envelopes and a transactional writer contract.
-- [Transaction](docs/transaction/README.md): transactional execution contracts, lifecycle exceptions, and CQRS command middleware.
-- [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.
-- [HTTP](docs/http/README.md): immutable messages, middleware, named routing and URL generation, JSON request decoding,
-  response negotiation, Problem Details, and PHP server adapters.
-- [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array
-  processing.
-- [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
-- [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
-- [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
-  command execution.
 - [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
+- [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.
+- [Clock](docs/clock/README.md): a clock contract with UTC system time and immutable frozen time implementations.
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, middleware, and dispatch metadata.
+- [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
 - [Event](docs/event/README.md): event messages, generic listeners, and synchronous event dispatch.
+- [HTTP](docs/http/README.md): immutable messages, middleware, named routing and URL generation, JSON request decoding,
+  response negotiation, Problem Details, and PHP server adapters.
+- [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
+  command execution.
+- [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
+- [Outbox](docs/outbox/README.md): immutable JSON message envelopes and a transactional writer contract.
+- [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array
+  processing.
 - [Service locator](docs/service-locator/README.md): shared object services and constructor injection,
   with extensible resolvers.
+- [Transaction](docs/transaction/README.md): transactional execution contracts, lifecycle exceptions, and CQRS command middleware.
 
 ## Basic usage
 
