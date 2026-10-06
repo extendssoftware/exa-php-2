@@ -52,8 +52,8 @@ All notable changes to ExaPHP will be documented in this file.
   configuration injection. Optional module bootstrap and shutdown hooks support ordered startup, reverse-order cleanup,
   and preservation of hook failures. Successful bootstrap is shared while running; distribution templates are excluded.
 - Service locator component with immutable definitions for instances, aliases, factories, and class construction;
-  extensible resolvers; constructor injection; shared service instances; circular dependency detection; and a
-  component-specific exception contract.
+  generic PHPDoc return typing for class and interface lookups; extensible resolvers; constructor injection; shared
+  service instances; circular dependency detection; and a component-specific exception contract.
 - Initial ExaPHP 2.0 project structure with Composer configuration requiring PHP ^8.5 and PSR-4 autoloading for the
   `ExtendsSoftware\ExaPHP` namespace.
 - MIT license.

@@ -58,6 +58,11 @@ Identifiers are lookup keys, independent of the class described by a definition.
 `report.date`, class names, or interface names. Register constructor dependencies under their declared type names when
 using reflection-based injection.
 
+`get()` has a generic PHPDoc return type: class and interface identifiers infer their corresponding object type, while
+custom string identifiers return `object`. For example, `$locator->get(DateTimeZone::class)` infers `DateTimeZone`.
+Register compatible objects under class and interface identifiers; this inference describes the registration convention
+and does not add runtime type validation.
+
 Include a resolver for every definition type you use; the locator does not install default resolvers. The first resolver
 whose `supports()` method returns `true` handles the definition. A failure in `supports()` or `resolve()` ends the
 request;

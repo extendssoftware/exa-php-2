@@ -52,9 +52,14 @@ final class DefinitionServiceLocator implements ServiceLocator
      * Failed resolutions are not cached and may be retried. Resolvers report resolution failures through
      * ServiceLocatorException. Their exceptions and errors propagate unchanged after resolution-path cleanup.
      *
-     * @param string $id The service identifier.
+     * Class and interface identifiers must be registered with compatible services for generic type inference.
+     * The locator does not validate that the resolved object's type matches its identifier.
      *
-     * @return object The shared service instance.
+     * @template T of object
+     *
+     * @param string|class-string<T> $id The service identifier.
+     *
+     * @return ($id is class-string<T> ? T : object) The shared service instance.
      *
      * @throws ServiceNotFoundException When the identifier is not registered.
      * @throws CircularDependencyException When the identifier is already being resolved.
