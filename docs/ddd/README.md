@@ -109,9 +109,12 @@ and delegate `releaseEvents()` to its `release()` method. Domain behavior calls 
 Use a separate collection for each aggregate. Restoring persisted state should not record historical actions as new
 pending events. This example's `restore()` method makes that distinction explicit.
 
-## Persist before publishing
+## Save and dispatch within one transaction
 
-In an application's `CreateArticle` command handler, the flow can be:
+Treat a command and its synchronous domain-event listeners as one atomic operation. Configure
+[transactional command middleware](../transaction/README.md#wrap-cqrs-commands) with an application transaction adapter
+and ensure the aggregate repository and all listener persistence participate in that transaction. Inside an application's
+`CreateArticle` command handler, save the aggregate and dispatch its events before the middleware commits:
 
 ```php
 $article = Article::create($command->id, $command->title);
@@ -124,16 +127,31 @@ foreach ($article->releaseEvents() as $event) {
 
 Here `Article` is the class above, `$command` supplies the identifier and title, `$this->articles` is an injected
 application-specific repository, and `$this->events` is an injected `EventDispatcher`. Neither dependency belongs in the
-aggregate. The repository saves article state without draining or persisting the in-memory event collection. If an
-explicit transaction is used, commit it before publishing.
+aggregate. The repository saves article state without draining or persisting the in-memory event collection. Handlers
+and synchronous listeners use the enclosing transaction directly; they must not start nested transactions.
 
-If saving fails, this flow does not release or publish events. After release, the caller owns the pending batch; if
-publication fails partway through, the aggregate does not retain or restore the events. Synchronous publication after
-saving is not atomic with persistence and does not guarantee delivery. Durable delivery requires an application-level
-strategy such as a transactional outbox.
+If saving fails, this flow does not release or dispatch events. A synchronous listener failure stops dispatch and must
+propagate to the transaction middleware, which attempts rollback of all participating changes. For example, a listener
+can write required article history so the article and its history commit together. See
+[transaction lifecycle failures](../transaction/README.md#handle-lifecycle-failures) for rollback and commit failures.
+
+After release, the caller owns the pending batch; the aggregate does not retain or restore it when dispatch fails.
+Database rollback also does not restore PHP object state. Discard affected aggregates after a failed operation and
+reload persisted state before retrying.
 
 Register listeners through the [Event integration module](../integration/README.md#register-the-event-module).
 The dispatcher matches concrete event classes, so register `ArticleCreated::class` rather than `DomainEvent::class`.
+
+## Defer work through a transactional outbox
+
+Route external side effects and work whose failure should not reject the command through an application-provided
+transactional outbox. A synchronous listener can translate a domain event into an outgoing message and persist it in
+the same transaction as the aggregate. Failure to write that message must propagate and trigger rollback as well.
+
+A separate application worker processes only committed messages, with retries and duplicate-delivery handling.
+For example, a notification listener writes a message during article creation; the worker sends the notification later.
+Delivery failure leaves the original command committed. Use stable message identifiers and idempotent consumers where
+possible, since a worker can complete delivery and fail before recording success.
 
 ## Compose domain specifications
 

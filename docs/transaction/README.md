@@ -77,6 +77,8 @@ to `cqrs.command.middleware`, following the [CQRS integration guide](../integrat
 is opt-in and is not registered by `CqrsModule`. Queries are not wrapped automatically. Dispatching another command
 through the same transactional middleware while a transaction is active triggers the nesting rejection.
 
-The middleware does not publish domain events or schedule after-commit callbacks. Publishing to external systems from
-inside the handler cannot be undone by a database rollback. Applications must arrange publication after confirmed
-commit or use a transactional outbox when reliable delivery is required.
+The middleware does not dispatch domain events or schedule after-commit callbacks. Handlers dispatch recorded domain
+events synchronously after saving aggregates and before this middleware commits. Listener failures must propagate so
+the transaction can roll back, and all listener persistence must participate in the same transaction. Route external
+side effects and deferred work through an application-provided transactional outbox. See the
+[DDD guide](../ddd/README.md#save-and-dispatch-within-one-transaction) for dispatch and outbox guidance.

@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Outbox component with immutable JSON message envelopes, a transactional writer contract, and message and write
+  exceptions. Persistence adapters participate in the application's transaction and are supplied by the application.
 - Transaction component with a generic transactional execution contract, explicit nested-call rejection, lifecycle
   exceptions preserving operation and rollback failures, and opt-in CQRS command middleware.
 - CLI component with command definitions, argument and option parsing, lazy handler dispatch, stream output, named exit
