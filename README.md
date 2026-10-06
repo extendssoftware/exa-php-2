@@ -6,6 +6,7 @@ The successor to the PHP library ExaPHP. The project is in initial development.
 
 - PHP ^8.5 with the `uri` extension
 - Composer
+- PDO and a database driver when using the PDO integration; `pdo_sqlite` for its integration tests
 
 ## Development setup
 
@@ -22,14 +23,15 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 - [Outbox](docs/outbox/README.md): immutable JSON message envelopes and a transactional writer contract.
 - [Transaction](docs/transaction/README.md): transactional execution contracts, lifecycle exceptions, and CQRS command middleware.
-
 - [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.
 - [HTTP](docs/http/README.md): immutable messages, middleware, named routing and URL generation, JSON request decoding,
   response negotiation, Problem Details, and PHP server adapters.
-- [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array processing.
+- [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array
+  processing.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
 - [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
-- [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI command execution.
+- [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
+  command execution, plus [PDO connections and transactions](docs/integration/pdo/README.md).
 - [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, middleware, and dispatch metadata.

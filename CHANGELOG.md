@@ -6,6 +6,9 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- PDO integration module with configurable shared connections, a connection factory, and a transaction manager with
+  required exception error mode, nested-transaction rejection, and lifecycle failure translation. Requires PDO and a
+  driver for the selected database.
 - Outbox component with immutable JSON message envelopes, a transactional writer contract, and message and write
   exceptions. Persistence adapters participate in the application's transaction and are supplied by the application.
 - Transaction component with a generic transactional execution contract, explicit nested-call rejection, lifecycle
