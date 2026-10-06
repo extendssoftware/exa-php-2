@@ -241,6 +241,18 @@ public function id(): string
 - Exception messages must be clear and useful for debugging.
 - Document publicly relevant exceptions using `@throws`.
 
+## Transactions and Events
+
+- Treat a command and its synchronous domain-event listeners as one atomic operation.
+- Dispatch recorded domain events after saving the aggregate and before committing the transaction.
+- Synchronous listeners must propagate failures so the enclosing transaction can roll back.
+- All persistence performed by synchronous listeners must participate in the enclosing transaction.
+- Route deferred work and external side effects through a transactional outbox.
+- Persist outbox messages in the same transaction as the aggregate changes.
+- Process committed outbox messages asynchronously, with retries and duplicate-delivery handling.
+- Do not start nested transactions from handlers or synchronous listeners.
+- Keep transaction management, synchronous event dispatch, and asynchronous delivery as separate responsibilities.
+
 ## Testing
 
 ### General
