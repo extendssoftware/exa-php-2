@@ -8,11 +8,7 @@
     "php": "^8.5",
     "ext-uri": "*"
   },
-  "suggest": {
-    "ext-pdo": "Required for the PDO integration, together with a database-specific PDO driver."
-  },
   "require-dev": {
-    "ext-pdo_sqlite": "*",
     "phpunit/phpunit": "^13.4"
   },
   "autoload": {

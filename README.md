@@ -6,7 +6,6 @@ The successor to the PHP library ExaPHP. The project is in initial development.
 
 - PHP ^8.5 with the `uri` extension
 - Composer
-- PDO and a database driver when using the PDO integration; `pdo_sqlite` for its integration tests
 
 ## Development setup
 
@@ -31,7 +30,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
 - [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
 - [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
-  command execution, plus [PDO connections and transactions](docs/integration/pdo/README.md).
+  command execution.
 - [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, middleware, and dispatch metadata.

@@ -588,9 +588,8 @@ available. The default presenter performs no logging and adds no dependency on t
 `Integration\Transaction\Middleware\TransactionalCommandMiddleware` accepts an application-provided
 `TransactionManager` adapter and wraps the remaining command pipeline. Register it as a service and include its
 identifier in `cqrs.command.middleware` when transactional commands are required. The middleware is not registered
-automatically. For a shared PDO connection and transaction adapter, register
-[`PdoModule`](pdo/README.md). See the [Transaction guide](../transaction/README.md#wrap-cqrs-commands) for ordering,
-nesting, and failure behavior.
+automatically. See the [Transaction guide](../transaction/README.md#wrap-cqrs-commands) for ordering, nesting, and
+failure behavior.
 
 ### Customize HTTP problem responses
 

@@ -1,8 +1,7 @@
 # Transaction
 
 `TransactionManager` defines transactional execution independently of a database. Supply an adapter implementing this
-contract for your application's participating resources. For PDO persistence, register the
-[PDO integration module](../integration/pdo/README.md) to provide a shared connection and transaction manager.
+contract for your application's participating resources.
 
 ## Execute an operation
 
