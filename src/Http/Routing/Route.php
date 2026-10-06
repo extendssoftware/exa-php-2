@@ -46,14 +46,23 @@ final readonly class Route
     /**
      * Creates a route with full-segment placeholders such as /articles/{id}.
      *
+     * @param non-empty-string $name The unique, case-sensitive route identifier used for URL generation.
      * @param Method $method The method matched exactly; CONNECT is not supported by path routing.
      * @param string $path The encoded absolute path pattern, or a bare asterisk for OPTIONS.
      * @param non-empty-string $handlerId The handler identifier resolved on a successful match.
      *
      * @throws InvalidRouteException When the identifier is empty, the pattern is invalid, or the method is unsupported.
      */
-    public function __construct(public Method $method, public string $path, public string $handlerId)
+    public function __construct(
+        public string $name,
+        public Method $method,
+        public string $path,
+        public string $handlerId,
+    )
     {
+        if ($name === '') {
+            throw new InvalidRouteException('Route names must not be empty.');
+        }
         if ($handlerId === '') {
             throw new InvalidRouteException('Route handler identifiers must not be empty.');
         }
@@ -71,7 +80,7 @@ final readonly class Route
         $signature = [];
         $example = [];
         foreach (explode('/', $path) as $segment) {
-            if (preg_match('/\A\{([A-Za-z_][A-Za-z0-9_]*)\}\z/', $segment, $matches) === 1) {
+            if (preg_match('/\A\{([A-Za-z_][A-Za-z0-9_]*)}\z/', $segment, $matches) === 1) {
                 $name = $matches[1];
                 if (isset($names[$name])) {
                     throw new InvalidRouteException('Route parameter names must be unique.');

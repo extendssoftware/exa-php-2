@@ -219,6 +219,7 @@ use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Routing\RouteMatch;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Routing\SimpleRouter;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
 
 final class ArticleHandler implements RequestHandler
 {
@@ -233,9 +234,9 @@ final class ArticleHandler implements RequestHandler
 }
 
 // $resolver implements Handler\HandlerResolver and resolves ArticleHandler::class.
-$routing = new RoutingRequestHandler(new SimpleRouter([
-    new Route(Method::Get, '/articles/{id}', ArticleHandler::class),
-]), $resolver);
+$routing = new RoutingRequestHandler(new SimpleRouter(new RouteCollection([
+    new Route('articles.show', Method::Get, '/articles/{id}', ArticleHandler::class),
+])), $resolver);
 $pipeline = new MiddlewarePipeline($routing, [new NoStore()]);
 $response = $pipeline->handle(new Request(Method::Get, new Uri('/articles/42')));
 ```
@@ -265,6 +266,7 @@ Patterns with more literal segments take priority. Overlapping patterns with equ
 The winning structural pattern reserves the path across methods: if POST `/articles/new` exists alongside GET
 `/articles/{id}`, GET `/articles/new` yields 405 with `Allow: POST`, rather than treating `new` as an ID.
 
+Every route requires a unique, nonempty, case-sensitive name as its first constructor argument.
 Equivalent patterns for the same method are rejected, even when placeholder names differ (`/{id}` versus `/{name}`).
 Different methods can share a structural pattern and use their own parameter names. Routing never executes handlers
 while registering or matching.
@@ -603,3 +605,47 @@ raise `ErrorHandling\ProblemDetails\Exception\InvalidExceptionProblemDetailsMapp
 For manual wiring, construct `MappingExceptionResponseFactory($mappers, $fallback, $problems)` with an ordered list of
 mapper instances. The default problem encoder can be omitted. Applications using `HttpModule` can instead
 [register mapper services in configuration](../integration/README.md#register-module-exception-mappers).
+
+## Generate route URLs
+
+`Routing\UrlGenerator` creates a path and query from a route name. `RouteUrlGenerator` and `SimpleRouter` can share one
+validated `RouteCollection`:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Routing\Route;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteUrlGenerator;
+use ExtendsSoftware\ExaPHP\Http\Routing\SimpleRouter;
+
+$routes = new RouteCollection([
+    new Route('articles.show', Method::Get, '/articles/{id}', 'article-handler'),
+]);
+$router = new SimpleRouter($routes);
+$urls = new RouteUrlGenerator($routes);
+$uri = $urls->generate('articles.show', ['id' => 123], ['include' => 'author']);
+// $uri->toString(): /articles/123?include=author
+```
+
+`SimpleRouter` requires a `RouteCollection` and sorts its own copy by matching specificity. The collection retains route
+identity and registration order, reject duplicate names across methods, and reject equivalent method/pattern pairs.
+The matched name is available through `RouteMatch::$route->name`. Generation never resolves a handler or reads request
+headers. The returned `Uri` has a path and optional query, without a scheme or authority.
+
+Supply raw strings or integers for exactly the route's placeholders. Each value is percent-encoded as one segment;
+slashes, spaces, percent signs, and Unicode are encoded. Literal path bytes and trailing slashes are preserved.
+Do not supply already encoded values: `%2F` becomes `%252F`. Empty values and `.` or `..` are rejected. Routing returns
+encoded parameters, so decode those deliberately before reusing them as generation input. Domain-specific ID validation
+remains the application's responsibility.
+
+Queries are flat maps with nonempty string keys and string, integer, boolean, or null values. Spaces encode as `%20`,
+booleans as `1` or `0`, and null values are omitted. Nested arrays and floats are rejected. An empty encoded query adds
+no question mark. This initial generator does not assemble absolute URLs or fragments.
+
+Unknown names raise `Routing\Exception\RouteNotFoundException`; missing, extra, or unsupported parameters raise
+`InvalidRouteParametersException`; invalid query data raises `InvalidRouteQueryException`. OPTIONS `*` and patterns
+beginning with `//` raise `UnsupportedRouteUrlException` because they cannot produce a path-only URL. Such routes remain
+available for matching. Registration failures retain `InvalidRouteException` and `DuplicateRouteException`.
+
+With `HttpModule`, resolve or inject the registered `UrlGenerator`; it shares the configured route collection with the
+router. [Integration configuration](../integration/README.md#generate-urls-from-configured-routes) explains route overrides.

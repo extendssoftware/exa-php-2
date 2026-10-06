@@ -35,7 +35,7 @@ final class RequestBodyDecodingIntegrationTest extends TestCase
         $configuration = new ConfigurationMerger()->merge(['http' => $defaults], ['application' => [
             'http' => [
                 'request' => ['json' => ['maxBytes' => 4]],
-                'routes' => ['create' => new Route(Method::Post, '/', 'handler')],
+                'routes' => ['create' => new Route('route.1', Method::Post, '/', 'handler')],
             ],
             'services' => ['handler' => new InstanceDefinition($handler)],
         ]]);

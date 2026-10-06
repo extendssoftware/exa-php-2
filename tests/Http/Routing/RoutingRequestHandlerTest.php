@@ -16,6 +16,7 @@ use ExtendsSoftware\ExaPHP\Http\Routing\RouteMatch;
 use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Routing\SimpleRouter;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use PHPUnit\Framework\TestCase;
@@ -35,7 +36,7 @@ final class RoutingRequestHandlerTest extends TestCase
         $request = new Request(Method::Get, new Uri('/articles/42'))->withAttribute($metadata);
         $response = new Response(StatusCode::Accepted);
         $handler = $this->createMock(RequestHandler::class);
-        $route = new Route(Method::Get, '/articles/{id}', 'handler');
+        $route = new Route('route.1', Method::Get, '/articles/{id}', 'handler');
         $handler->expects($this->once())->method('handle')->willReturnCallback(
             function (Request $routed) use ($request, $route, $metadata, $response): Response {
                 $this->assertNotSame($request, $routed);
@@ -48,7 +49,7 @@ final class RoutingRequestHandlerTest extends TestCase
                 return $response;
             },
         );
-        $routing = new RoutingRequestHandler(new SimpleRouter([$route]), $this->resolver($handler));
+        $routing = new RoutingRequestHandler(new SimpleRouter(new RouteCollection([$route])), $this->resolver($handler));
         $this->assertSame($response, $routing->handle($request));
         $this->assertFalse($request->attributes->has(RouteMatch::class));
     }
@@ -56,7 +57,7 @@ final class RoutingRequestHandlerTest extends TestCase
     public function testExistingMatchIsReplacedOnlyOnRoutedRequest(): void
     {
         $handler = $this->createMock(RequestHandler::class);
-        $route = new Route(Method::Get, '/{id}', 'handler');
+        $route = new Route('route.2', Method::Get, '/{id}', 'handler');
         $oldMatch = new RouteMatch($route, ['id' => 'old']);
         $request = new Request(Method::Get, new Uri('/new'))->withAttribute($oldMatch);
         $handler->expects($this->once())->method('handle')->willReturnCallback(function (Request $routed): Response {
@@ -64,7 +65,7 @@ final class RoutingRequestHandlerTest extends TestCase
 
             return new Response();
         });
-        new RoutingRequestHandler(new SimpleRouter([$route]), $this->resolver($handler))->handle($request);
+        new RoutingRequestHandler(new SimpleRouter(new RouteCollection([$route])), $this->resolver($handler))->handle($request);
         $this->assertSame($oldMatch, $request->attributes->get(RouteMatch::class));
     }
 
@@ -72,10 +73,10 @@ final class RoutingRequestHandlerTest extends TestCase
     {
         $resolver = $this->createMock(HandlerResolver::class);
         $resolver->expects($this->never())->method('resolve');
-        $routing = new RoutingRequestHandler(new SimpleRouter([
-            new Route(Method::Get, '/articles', 'handler'),
-            new Route(Method::Post, '/articles', 'handler'),
-        ]), $resolver);
+        $routing = new RoutingRequestHandler(new SimpleRouter(new RouteCollection([
+            new Route('route.3', Method::Get, '/articles', 'handler'),
+            new Route('route.4', Method::Post, '/articles', 'handler'),
+        ])), $resolver);
         $missing = $routing->handle(new Request(Method::Get, new Uri('/missing')));
         $this->assertSame(StatusCode::NotFound, $missing->statusCode);
         $this->assertSame([], $missing->headers->get('Allow'));
@@ -98,7 +99,10 @@ final class RoutingRequestHandlerTest extends TestCase
         $failure = new TypeError('Handler failure');
         $handler = $this->createMock(RequestHandler::class);
         $handler->expects($this->once())->method('handle')->willThrowException($failure);
-        $routing = new RoutingRequestHandler(new SimpleRouter([new Route(Method::Get, '/', 'handler')]), $this->resolver($handler));
+        $routing = new RoutingRequestHandler(
+            new SimpleRouter(new RouteCollection([new Route('route.5', Method::Get, '/', 'handler')])),
+            $this->resolver($handler),
+        );
         try {
             $routing->handle(new Request(Method::Get, new Uri('/')));
             $this->fail('Expected handler failure.');
@@ -126,7 +130,10 @@ final class RoutingRequestHandlerTest extends TestCase
         $failure = new HandlerResolutionException('Missing handler');
         $resolver = $this->createMock(HandlerResolver::class);
         $resolver->expects($this->once())->method('resolve')->with('missing')->willThrowException($failure);
-        $routing = new RoutingRequestHandler(new SimpleRouter([new Route(Method::Get, '/', 'missing')]), $resolver);
+        $routing = new RoutingRequestHandler(
+            new SimpleRouter(new RouteCollection([new Route('route.6', Method::Get, '/', 'missing')])),
+            $resolver,
+        );
         try {
             $routing->handle(new Request(Method::Get, new Uri('/')));
             $this->fail('Expected resolution failure.');

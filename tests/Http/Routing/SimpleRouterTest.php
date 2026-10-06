@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Routing\Exception\DuplicateRouteException;
-use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Routing\SimpleRouter;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use stdClass;
 
 final class SimpleRouterTest extends TestCase
 {
     public function testExtractsEncodedParametersWithoutCallingHandler(): void
     {
-        $route = new Route(Method::Get, '/articles/{id}/tags/{tag}', 'handler');
-        $router = new SimpleRouter([$route]);
+        $route = new Route('route.1', Method::Get, '/articles/{id}/tags/{tag}', 'handler');
+        $router = new SimpleRouter(new RouteCollection([$route]));
         $match = $router->match(new Request(Method::Get, new Uri('/articles/abc/tags/a%2Fb?sort=asc')));
         $this->assertSame($route, $match->route);
         $this->assertSame(['id' => 'abc', 'tag' => 'a%2Fb'], $match->parameters);
@@ -29,10 +27,12 @@ final class SimpleRouterTest extends TestCase
 
     public function testStaticPathReservesItsMethodsRegardlessOfRegistrationOrder(): void
     {
-        $dynamic = new Route(Method::Get, '/articles/{id}', 'handler');
-        $static = new Route(Method::Post, '/articles/new', 'handler');
+        $dynamic = new Route('route.2', Method::Get, '/articles/{id}', 'handler');
+        $static = new Route('route.3', Method::Post, '/articles/new', 'handler');
         foreach ([[$dynamic, $static], [$static, $dynamic]] as $routes) {
-            $router = new SimpleRouter($routes);
+            $collection = new RouteCollection($routes);
+            $router = new SimpleRouter($collection);
+            $this->assertSame($routes, $collection->all());
             $request = new Request(Method::Get, new Uri('/articles/new'));
             $this->assertNull($router->match($request));
             $this->assertSame([Method::Post], $router->allowedMethods($request));
@@ -42,10 +42,10 @@ final class SimpleRouterTest extends TestCase
 
     public function testEquivalentPatternsAcrossMethodsUseTheirOwnParameterNames(): void
     {
-        $router = new SimpleRouter([
-            new Route(Method::Get, '/articles/{id}', 'handler'),
-            new Route(Method::Delete, '/articles/{article}', 'handler'),
-        ]);
+        $router = new SimpleRouter(new RouteCollection([
+            new Route('route.4', Method::Get, '/articles/{id}', 'handler'),
+            new Route('route.5', Method::Delete, '/articles/{article}', 'handler'),
+        ]));
         $request = new Request(Method::Delete, new Uri('/articles/42'));
         $this->assertSame(['article' => '42'], $router->match($request)->parameters);
         $this->assertSame([Method::Get, Method::Delete], $router->allowedMethods($request));
@@ -53,17 +53,17 @@ final class SimpleRouterTest extends TestCase
 
     public function testTiedOverlappingPatternsUseRegistrationOrder(): void
     {
-        $first = new Route(Method::Get, '/a/{value}', 'handler');
-        $second = new Route(Method::Get, '/{value}/b', 'handler');
+        $first = new Route('route.6', Method::Get, '/a/{value}', 'handler');
+        $second = new Route('route.7', Method::Get, '/{value}/b', 'handler');
         $request = new Request(Method::Get, new Uri('/a/b'));
-        $this->assertSame($first, new SimpleRouter([$first, $second])->match($request)->route);
-        $this->assertSame($second, new SimpleRouter([$second, $first])->match($request)->route);
+        $this->assertSame($first, new SimpleRouter(new RouteCollection([$first, $second]))->match($request)->route);
+        $this->assertSame($second, new SimpleRouter(new RouteCollection([$second, $first]))->match($request)->route);
     }
 
     #[DataProvider('paths')]
     public function testExactPathMatching(string $pattern, string $uri, bool $matches): void
     {
-        $router = new SimpleRouter([new Route(Method::Get, $pattern, 'handler')]);
+        $router = new SimpleRouter(new RouteCollection([new Route('route.8', Method::Get, $pattern, 'handler')]));
         $this->assertSame($matches, $router->match(new Request(Method::Get, new Uri($uri))) !== null);
     }
 
@@ -89,55 +89,27 @@ final class SimpleRouterTest extends TestCase
 
     public function testHeadAndOptionsRequireExplicitRegistration(): void
     {
-        $get = new Route(Method::Get, '/', 'handler');
-        $router = new SimpleRouter([$get]);
+        $get = new Route('route.9', Method::Get, '/', 'handler');
+        $router = new SimpleRouter(new RouteCollection([$get]));
         foreach ([Method::Head, Method::Options] as $method) {
             $request = new Request($method, new Uri('/'));
             $this->assertNull($router->match($request));
             $this->assertSame([Method::Get], $router->allowedMethods($request));
         }
-        $head = new Route(Method::Head, '/', 'handler');
-        $options = new Route(Method::Options, '*', 'handler');
-        $router = new SimpleRouter([$get, $head, $options]);
+        $head = new Route('route.10', Method::Head, '/', 'handler');
+        $options = new Route('route.11', Method::Options, '*', 'handler');
+        $router = new SimpleRouter(new RouteCollection([$get, $head, $options]));
         $this->assertSame($head, $router->match(new Request(Method::Head, new Uri('/')))->route);
         $this->assertSame($options, $router->match(new Request(Method::Options, new Uri('*')))->route);
     }
 
     public function testUnmatchedAndConnectTargetsHaveNoAllowedMethods(): void
     {
-        $router = new SimpleRouter([new Route(Method::Get, '/', 'handler')]);
+        $router = new SimpleRouter(new RouteCollection([new Route('route.12', Method::Get, '/', 'handler')]));
         foreach ([new Request(Method::Get, new Uri('/missing')), new Request(Method::Connect, new Uri('//host:443'))] as $r) {
             $this->assertNull($router->match($r));
             $this->assertSame([], $router->allowedMethods($r));
         }
     }
 
-    #[DataProvider('duplicates')]
-    public function testRejectsDuplicateStructuralRegistrations(string $first, string $second): void
-    {
-        $this->expectException(DuplicateRouteException::class);
-        new SimpleRouter([new Route(Method::Get, $first, 'handler'), new Route(Method::Get, $second, 'handler')]);
-    }
-
-    /**
-     * @return iterable<array{string, string}>
-     */
-    public static function duplicates(): iterable
-    {
-        yield ['/articles', '/articles'];
-        yield ['/articles/{id}', '/articles/{articleId}'];
-    }
-
-    public function testRejectsInvalidRegistrations(): void
-    {
-        $this->expectException(InvalidRouteException::class);
-        new SimpleRouter([new stdClass()]);
-    }
-
-    public function testRejectsNamedRegistrationMaps(): void
-    {
-        $route = new Route(Method::Get, '/', 'handler');
-        $this->expectException(InvalidRouteException::class);
-        new SimpleRouter(['home' => $route]);
-    }
 }

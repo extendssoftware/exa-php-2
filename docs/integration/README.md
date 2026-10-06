@@ -293,7 +293,7 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 return [
     'http' => [
         'routes' => [
-            'articles.show' => new Route(Method::Get, '/articles/{id}', ArticleHandler::class),
+            'articles.show' => new Route('articles.show', Method::Get, '/articles/{id}', ArticleHandler::class),
         ],
     ],
     'services' => [
@@ -302,10 +302,11 @@ return [
 ];
 ```
 
-Use `FactoryDefinition` for handlers with dependencies. Route names are configuration identifiers only; they do not
-provide URL generation or become route-match names. The router receives the values in registration order and applies
+Use `FactoryDefinition` for handlers with dependencies. Configuration keys identify entries for merging; each
+`Route::$name` is the authoritative identifier for URL generation and is available through `RouteMatch::$route`.
+Use matching keys and route names for readability. The router receives the values in registration order and applies
 its normal [matching rules](../http/README.md#path-patterns-and-precedence). Duplicate method/path structures still fail,
-even when their configuration names differ.
+even when their configuration names differ. Route names must also be unique across all methods and paths.
 
 `http.middleware` is an ordered map from non-empty registration names to non-empty service identifiers. The module
 provides `['exceptions' => ExceptionHandlingMiddleware::class]`. Business modules can append entries such as
@@ -634,3 +635,21 @@ The composing factory uses the registered `ProblemDetailsResponseFactory` servic
 `ExceptionResponseFactory::class` entirely replaces this composition and its defaults. Configuration errors raise
 `InvalidHttpConfigurationException`; incompatible mapper instances raise `InvalidExceptionProblemDetailsMapperException`.
 As with other service factories, failures during locator resolution are retained inside `ServiceResolutionException`.
+
+### Generate URLs from configured routes
+
+`HttpModule` registers a shared `Routing\RouteCollection` from `http.routes`. Both `Router` and `UrlGenerator` use that
+collection, so application overrides affect matching and generation together. Definitions are validated when the
+collection is resolved; handler services remain lazy.
+
+```php
+use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
+
+$urls = $services->get(UrlGenerator::class);
+$uri = $urls->generate('articles.show', ['id' => 123], ['include' => 'author']);
+// /articles/123?include=author
+```
+
+Inject `UrlGenerator` into application handlers needing links. Route names are case-sensitive, nonempty, and globally
+unique within the collection. A configuration key may differ from the route name; generation uses the definition's
+name. See [URL generation](../http/README.md#generate-route-urls) for encoding rules and failure behavior.

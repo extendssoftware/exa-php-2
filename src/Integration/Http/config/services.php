@@ -12,6 +12,8 @@ use ExtendsSoftware\ExaPHP\Http\Decoding\RequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Routing\Router;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
+use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpServerRequestFactory;
@@ -24,6 +26,8 @@ use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewarePipelineFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RequestBodyDecoderFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ResponseNegotiationFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouterFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouteCollectionFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\UrlGeneratorFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RoutingRequestHandlerFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
@@ -56,6 +60,8 @@ return [
         ContentNegotiatingResponseFactory::class => new FactoryDefinition(
             new ResponseNegotiationFactory()->create(...),
         ),
+        RouteCollection::class => new FactoryDefinition(new RouteCollectionFactory()->create(...)),
+        UrlGenerator::class => new FactoryDefinition(new UrlGeneratorFactory()->create(...)),
         Router::class => new FactoryDefinition(new RouterFactory()->create(...)),
         HandlerResolver::class => new FactoryDefinition(new HandlerResolverFactory()->create(...)),
         RoutingRequestHandler::class => new FactoryDefinition(new RoutingRequestHandlerFactory()->create(...)),

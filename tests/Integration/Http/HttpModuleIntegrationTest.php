@@ -14,6 +14,8 @@ use ExtendsSoftware\ExaPHP\Http\Middleware\Middleware;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
+use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
 use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
@@ -62,13 +64,15 @@ final class HttpModuleIntegrationTest extends TestCase
         $configuration = new ConfigurationMerger()->merge([
             'http' => $defaults,
             'articles' => ['http' => ['routes' => [
-                'articles.show' => new Route(Method::Get, '/old', 'old'),
+                'articles.show' => new Route('articles.show', Method::Get, '/old', 'old'),
             ]]],
             'other' => ['http' => ['routes' => [
-                'other.show' => new Route(Method::Get, '/other', 'unregistered'),
+                'other.show' => new Route('other.show', Method::Get, '/other', 'unregistered'),
             ]]],
         ], ['app' => [
-            'http' => ['routes' => ['articles.show' => new Route(Method::Get, '/articles', 'article')]],
+            'http' => ['routes' => [
+                'articles.show' => new Route('articles.show', Method::Get, '/articles', 'article'),
+            ]],
             'services' => ['article' => new FactoryDefinition(static function () use (&$created, $handler) {
                 ++$created;
 
@@ -76,6 +80,11 @@ final class HttpModuleIntegrationTest extends TestCase
             })],
         ]]);
         $services = new ServiceLocatorFactory()->create($configuration);
+        $generator = $services->get(UrlGenerator::class);
+        $this->assertSame('/articles', $generator->generate('articles.show')->toString());
+        $this->assertSame('/other', $generator->generate('other.show')->toString());
+        $this->assertSame('/articles', $services->get(RouteCollection::class)->get('articles.show')->path);
+        $this->assertSame(0, $created);
         $pipeline = $services->get(RequestHandler::class);
         $this->assertSame(0, $created);
         $missing = $pipeline->handle(new Request(Method::Get, new Uri('/old')));

@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
 use Override;
-use ExtendsSoftware\ExaPHP\Http\Routing\Exception\DuplicateRouteException;
-use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 
-use function array_is_list;
 use function array_map;
-use function sprintf;
 use function usort;
 
 /**
@@ -30,27 +26,12 @@ final readonly class SimpleRouter implements Router
     /**
      * Creates a router without executing route handlers.
      *
-     * @param list<Route> $routes The route registrations in tie-breaking order.
-     *
-     * @throws InvalidRouteException When registrations are not a list of routes.
-     * @throws DuplicateRouteException When structurally equivalent patterns use the same method.
+     * @param RouteCollection $routes The validated routes in registration order.
+
      */
-    public function __construct(array $routes = [])
+    public function __construct(RouteCollection $routes)
     {
-        if (!array_is_list($routes)) {
-            throw new InvalidRouteException('Routes must be a list.');
-        }
-        $registered = [];
-        foreach ($routes as $route) {
-            if (!$route instanceof Route) {
-                throw new InvalidRouteException('Every registration must be a Route.');
-            }
-            $key = $route->method->value . ' ' . $route->signature();
-            if (isset($registered[$key])) {
-                throw new DuplicateRouteException(sprintf('A route is already registered for %s.', $key));
-            }
-            $registered[$key] = true;
-        }
+        $routes = $routes->all();
         usort($routes, static fn(Route $left, Route $right): int => $right->specificity() <=> $left->specificity());
         $this->routes = $routes;
     }

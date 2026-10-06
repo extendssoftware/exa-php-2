@@ -18,14 +18,14 @@ final class RouteTest extends TestCase
     public function testRejectsEmptyHandlerIdentifier(): void
     {
         $this->expectException(InvalidRouteException::class);
-        new Route(Method::Get, '/', '');
+        new Route('route.1', Method::Get, '/', '');
     }
 
     #[DataProvider('invalidPatterns')]
     public function testRejectsInvalidPatterns(Method $method, string $pattern): void
     {
         $this->expectException(InvalidRouteException::class);
-        new Route($method, $pattern, 'handler');
+        new Route('route.2', $method, $pattern, 'handler');
     }
 
     /**
@@ -54,7 +54,7 @@ final class RouteTest extends TestCase
     #[DataProvider('invalidParameters')]
     public function testRejectsInvalidMatchParameters(array $parameters): void
     {
-        $route = new Route(Method::Get, '/{id}', 'handler');
+        $route = new Route('route.3', Method::Get, '/{id}', 'handler');
         $this->expectException(InvalidRouteMatchException::class);
         new RouteMatch($route, $parameters);
     }
@@ -73,7 +73,7 @@ final class RouteTest extends TestCase
 
     public function testMissingParameterThrowsSpecificException(): void
     {
-        $match = new RouteMatch(new Route(Method::Get, '/', 'handler'));
+        $match = new RouteMatch(new Route('route.4', Method::Get, '/', 'handler'));
         $this->expectException(RouteParameterNotFoundException::class);
         $match->parameter('id');
     }

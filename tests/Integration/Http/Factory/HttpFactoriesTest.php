@@ -9,6 +9,8 @@ use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationEx
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ExceptionHandlingMiddlewareFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewarePipelineFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouterFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouteCollectionFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\UrlGeneratorFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RoutingRequestHandlerFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -24,7 +26,7 @@ final class HttpFactoriesTest extends TestCase
         $services = $this->createMock(ServiceLocator::class);
         $services->expects($this->once())->method('get')->with(Configuration::class)->willReturn($configuration);
         $this->expectException(InvalidHttpConfigurationException::class);
-        $factory = $section === 'middleware' ? new MiddlewarePipelineFactory() : new RouterFactory();
+        $factory = $section === 'middleware' ? new MiddlewarePipelineFactory() : new RouteCollectionFactory();
         $factory->create($services);
     }
 
@@ -54,6 +56,8 @@ final class HttpFactoriesTest extends TestCase
     public static function factories(): iterable
     {
         yield [new RouterFactory()];
+        yield [new RouteCollectionFactory()];
+        yield [new UrlGeneratorFactory()];
         yield [new MiddlewarePipelineFactory()];
         yield [new RoutingRequestHandlerFactory()];
         yield [new ExceptionHandlingMiddlewareFactory()];

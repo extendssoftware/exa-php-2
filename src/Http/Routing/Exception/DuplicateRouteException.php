@@ -8,7 +8,7 @@ use ExtendsSoftware\ExaPHP\Http\HttpException;
 use LogicException;
 
 /**
- * Indicates equivalent route patterns registered for the same method.
+ * Indicates duplicate route names or equivalent patterns registered for the same method.
  */
 final class DuplicateRouteException extends LogicException implements HttpException
 {
