@@ -8,6 +8,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 - Clock component with a current-time contract, a UTC system clock, an immutable frozen clock for deterministic tests,
   and a dedicated integration module registering the shared clock service.
+- Identity component with immutable actors carrying an application-defined principal identifier and kind, with
+  validation and a component exception contract.
 - Messaging component with immutable JSON message envelopes, a durable publisher contract, explicit subscription
   definitions and exact-type lookup with unique subscriber identities, subscriber processing and resolution contracts,
   a consumer contract for receiving, acknowledgement, retries scheduled by absolute timestamp, and rejection, with
