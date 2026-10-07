@@ -60,6 +60,10 @@
 - Keep classes focused on a single responsibility.
 - Keep methods small and focused.
 - Avoid unnecessary boolean parameters when a more expressive type, enum, or separate method can be used.
+- Prefer passing an existing domain or value object when it represents the concept an operation acts on, rather than
+  extracting individual properties at the call site.
+- Pass scalar values when they fully express the required input or preserve a meaningful dependency boundary.
+- Do not pass whole objects solely for speculative future needs.
 - Avoid hidden side effects.
 - Do not suppress errors, warnings, or static-analysis findings without a documented reason.
 - Prefer explicit behavior over clever or overly compact code.
