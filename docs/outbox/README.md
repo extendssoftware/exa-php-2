@@ -87,6 +87,10 @@ processor evaluates only this exception for retry; other exceptions and engine e
 Configure the delivery timeout to leave enough lease time for recording an outcome. Follow the
 [ownership and duplicate-delivery constraints](#record-a-processing-outcome), including idempotency at the destination.
 
+For a `Messaging\MessagePublisher` destination, use
+[`PublishingMessageDelivery`](../messaging/README.md#publish-through-outbox) to preserve the outgoing envelope and
+translate publishing failures into delivery failures.
+
 ### Configure retries
 
 `Retry\FixedDelayRetryPolicy` uses a non-negative delay in seconds and a positive total attempt limit. The example

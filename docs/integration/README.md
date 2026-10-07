@@ -288,6 +288,28 @@ A writer service that does not implement `LogWriter`, or a clock service that do
 Direct `LoggerFactory::create()` calls preserve service-resolution exceptions unchanged. Resolution through
 `FactoryDefinition` wraps non-ServiceLocator exceptions in `ServiceResolutionException`, preserving the cause.
 
+## Register the Messaging module
+
+Register `Integration\Messaging\MessagingModule` with `CliModule` and `ClockModule`, or provide a shared `Clock`
+service. The module configures the subscription registry, lazy subscriber resolver, processor, and `messaging:consume`
+command. Applications supply a consumer adapter and a consumption retry policy. Consumption runs independently of
+publishing and Outbox services. See the [Messaging CLI guide](../messaging/README.md#run-the-cli-consumer) for service
+registration, subscription configuration, polling, and shutdown behavior.
+
+## Publish Outbox messages through Messaging
+
+`Integration\Messaging\Outbox\PublishingMessageDelivery` implements Outbox's `MessageDelivery` using an injected
+`Messaging\MessagePublisher`. Register your application publisher and use `ReflectionDefinition` to bind
+`MessageDelivery` to this bridge. See the [Messaging guide](../messaging/README.md#publish-through-outbox) for configuration,
+acknowledgement guarantees, and failure handling.
+
+## Resolve Messaging subscribers
+
+`Integration\Messaging\Resolver\ServiceLocatorSubscriberResolver` implements
+`Messaging\Subscription\SubscriberResolver` with explicit subscriber-to-service mappings. It resolves only the mapped
+service on demand and checks that it implements `MessageSubscriber`, without invoking it. See
+[subscriber resolution](../messaging/README.md#resolve-subscribers) for configuration and failure behavior.
+
 ## Register the Outbox module
 
 Register `Integration\Outbox\OutboxModule` with `CliModule` and `ClockModule`, or provide a shared `Clock` service.

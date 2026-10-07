@@ -8,6 +8,16 @@ All notable changes to ExaPHP will be documented in this file.
 
 - Clock component with a current-time contract, a UTC system clock, an immutable frozen clock for deterministic tests,
   and a dedicated integration module registering the shared clock service.
+- Messaging component with immutable JSON message envelopes, a durable publisher contract, explicit subscription
+  definitions and exact-type lookup with unique subscriber identities, subscriber processing and resolution contracts,
+  a consumer contract for receiving, acknowledgement, retries scheduled by absolute timestamp, and rejection, with
+  immutable received deliveries, opaque receipts and acquisition counts, and component exceptions. A consumer processor
+  resolves subscribers and records outcomes using an independent retry policy for subscriber exceptions and engine
+  errors, with a fixed-delay implementation and bounded attempts.
+  Includes lazy service-locator resolution through explicit subscriber mappings and an Outbox delivery bridge preserving
+  envelope fields and translating publishing failures. An opt-in Messaging module configures subscriptions and provides
+  `messaging:consume` with idle polling, `--once`, graceful shutdown, and CLI error reporting. Applications supply
+  transport adapters and the consumer retry policy.
 - Outbox component with immutable JSON message envelopes, a transactional writer contract, and processing contracts
   for exclusive claims with worker-selected lease durations and store-owned time evaluation, completion, scheduled
   retries, and terminal failure. Includes immutable claim values, a processor for one delivery attempt per invocation,

@@ -236,6 +236,12 @@ different runtime.
 that service in their configuration. The control manages signals and waiting, while the handler owns its processing
 loop and application-specific settings.
 
+## Run the messaging consumer
+
+The optional [Messaging integration module](../messaging/README.md#run-the-cli-consumer) registers `messaging:consume`.
+It processes subscriber deliveries within one application lifecycle, supports `--once`, and uses the shared worker
+control for graceful shutdown. Applications supply the consumer adapter and subscriber retry policy.
+
 ## Run the outbox worker
 
 The optional [Outbox integration module](../outbox/README.md#run-the-cli-worker) registers `outbox:work` using this CLI
