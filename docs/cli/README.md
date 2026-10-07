@@ -215,3 +215,9 @@ produce a generic message and `ExitCode::Failure->value`. Parser and command loo
 The presenter does not print traces, log exceptions, or exit the process. Output failures propagate unchanged.
 Use the [CLI error boundary](../integration/README.md#present-cli-failures) to present failures after application cleanup,
 including bootstrap failures, or inject a custom presenter to add application logging and formatting.
+
+## Run the outbox worker
+
+The optional [Outbox integration module](../outbox/README.md#run-the-cli-worker) registers `outbox:work` using this CLI
+infrastructure. It processes messages within one application lifecycle, supports `--once`, and stops cooperatively on
+SIGTERM or SIGINT. Use the CLI exception boundary to report worker failures and return a nonzero exit code.

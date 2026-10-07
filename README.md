@@ -7,8 +7,11 @@ The successor to the PHP library ExaPHP. The project is in initial development.
 - PHP ^8.5 with the `uri` extension
 - Composer
 
+Persistent outbox workers require `ext-pcntl` for graceful signal handling; `--once` does not.
+
 ## Development setup
 
+Development dependencies require `ext-pcntl` for signal-handling tests. The development container includes it.
 Install dependencies from the repository root:
 
 ```sh
@@ -32,8 +35,8 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 - [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
   command execution.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
-- [Outbox](docs/outbox/README.md): transactional JSON messages, processing ownership, delivery coordination, and bounded
-  retries.
+- [Outbox](docs/outbox/README.md): transactional JSON messages, processing ownership, delivery coordination, bounded
+  retries, and a persistent CLI worker.
 - [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array
   processing.
 - [Service locator](docs/service-locator/README.md): shared object services and constructor injection,

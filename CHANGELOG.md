@@ -12,8 +12,10 @@ All notable changes to ExaPHP will be documented in this file.
   for exclusive claims with worker-selected lease durations and store-owned time evaluation, completion, scheduled
   retries, and terminal failure. Includes immutable claim values, a processor for one delivery attempt per invocation,
   delivery and retry contracts with full claim context for retry decisions, and a fixed-delay policy with bounded
-  attempts. Applications supply persistence and
-  delivery adapters; producer writes participate in the application's transaction.
+  attempts. Includes an opt-in `outbox:work` CLI integration with configurable lease and idle polling durations,
+  `--once`, and graceful SIGTERM/SIGINT shutdown through PCNTL. Applications supply persistence and delivery adapters;
+  producer writes participate in the application's transaction. Development dependencies require PCNTL for signal
+  tests; the development container enables it.
 - Transaction component with a generic transactional execution contract, explicit nested-call rejection, lifecycle
   exceptions preserving operation and rollback failures, and opt-in CQRS command middleware.
 - CLI component with command definitions, argument and option parsing, lazy handler dispatch, stream output, named exit

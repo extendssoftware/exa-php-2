@@ -74,7 +74,8 @@ $processed = $processor->process(new DateInterval('PT30S'));
 Each invocation claims at most one message and makes one delivery attempt. It returns `false` when no message is
 eligible, or `true` after successfully recording completion, a scheduled retry, or terminal failure. A `true` result
 therefore does not necessarily mean successful delivery. Invoke the processor outside application transactions;
-the application controls polling and worker lifetime. The processor does not sleep or renew claims.
+the application controls polling and worker lifetime, directly or through the [CLI worker](#run-the-cli-worker).
+The processor does not sleep or renew claims.
 
 ### Provide delivery
 
@@ -109,6 +110,102 @@ or reading the retry clock fails, no outcome is recorded and the claim remains s
 `Retry\Exception\InvalidRetryPolicyException` reports invalid fixed-delay configuration and a
 negative delay returned by a custom policy. `Processing\Exception\RetryTimestampException` wraps `ClockException`
 when retry scheduling cannot obtain the current time. These and `MessageDeliveryException` implement `OutboxException`.
+
+## Run the CLI worker
+
+Register `Integration\Cli\CliModule`, `Integration\Clock\ClockModule`, and `Integration\Outbox\OutboxModule` in your
+CLI application. Supply services for `OutboxStore`, `Delivery\MessageDelivery`, and `Retry\RetryPolicy` through your
+application configuration. You may provide `Clock\Clock` yourself instead of registering `ClockModule`.
+
+For example, assuming your application provides `App\Messaging\DatabaseOutboxStore` and
+`App\Messaging\HttpMessageDelivery` with resolvable constructor dependencies, add `config/outbox.global.php`:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use App\Messaging\DatabaseOutboxStore;
+use App\Messaging\HttpMessageDelivery;
+use ExtendsSoftware\ExaPHP\Outbox\Delivery\MessageDelivery;
+use ExtendsSoftware\ExaPHP\Outbox\Processing\OutboxStore;
+use ExtendsSoftware\ExaPHP\Outbox\Retry\FixedDelayRetryPolicy;
+use ExtendsSoftware\ExaPHP\Outbox\Retry\RetryPolicy;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ReflectionDefinition;
+
+return [
+    'services' => [
+        OutboxStore::class => new ReflectionDefinition(DatabaseOutboxStore::class),
+        MessageDelivery::class => new ReflectionDefinition(HttpMessageDelivery::class),
+        RetryPolicy::class => new InstanceDefinition(new FixedDelayRetryPolicy(60, 3)),
+    ],
+    'outbox' => ['worker' => [
+        'lease_seconds' => 30,
+        'idle_delay_seconds' => 1,
+    ]],
+];
+```
+
+Both durations require positive integers in seconds; the values above are the module defaults. Choose the lease to
+cover delivery and acknowledgement, and configure timeouts on external requests. The worker does not renew claims.
+
+Use an entry point such as `bin/cli.php` with the existing CLI exception boundary:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use ExtendsSoftware\ExaPHP\Application\Application;
+use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
+use ExtendsSoftware\ExaPHP\Integration\Cli\CliModule;
+use ExtendsSoftware\ExaPHP\Integration\Cli\ExceptionHandlingCliRunner;
+use ExtendsSoftware\ExaPHP\Integration\Clock\ClockModule;
+use ExtendsSoftware\ExaPHP\Integration\Outbox\OutboxModule;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+$application = new Application(__DIR__ . '/../config');
+$application->registerModule(CliModule::class);
+$application->registerModule(ClockModule::class);
+$application->registerModule(OutboxModule::class);
+
+exit(new ExceptionHandlingCliRunner()->run($application, $argv, new StreamOutput(STDOUT, STDERR)));
+```
+
+Run continuously or perform one poll:
+
+```sh
+php bin/cli.php outbox:work
+php bin/cli.php outbox:work --once
+php bin/cli.php outbox:work --help
+```
+
+The application bootstraps once and reuses its services for the lifetime of the command. The worker immediately polls
+again after a recorded outcome and waits only when no message is eligible. `--once` attempts at most one message,
+returns successfully even when the queue is empty, and never waits. A scheduled retry or recorded terminal failure is
+also a successfully handled attempt; it does not make the command fail.
+
+The default persistent worker requires `ext-pcntl`, enabled in the development container. It handles SIGTERM and SIGINT
+by requesting shutdown, allowing the current processing attempt to finish and then stopping before the next poll.
+Idle waiting responds to stop requests. Previous signal handlers and asynchronous dispatch settings are restored before
+application shutdown. A forceful kill cannot perform this cleanup. Set your supervisor's shutdown grace period long
+enough for in-flight delivery and acknowledgement. `--once` and command help do not require PCNTL.
+
+Unhandled processing failures stop the worker, restore signal control, and shut down the application. With
+`ExceptionHandlingCliRunner`, the default presenter writes a generic error to stderr and returns exit code 1; graceful
+shutdown and a successful single poll return 0. Use a custom exception presenter for diagnostic logging. A process
+supervisor can restart failed workers; the worker does not retry infrastructure failures in its loop.
+
+The command owns polling and shutdown only. Transactions remain inside the persistence operations; external delivery
+and the worker loop are not wrapped in `TransactionalCommandMiddleware`.
+
+For another runtime, override `Integration\Outbox\Worker\WorkerControl` with your own stop and waiting implementation.
+`Integration\Outbox\Exception\InvalidOutboxConfigurationException` reports invalid settings, and
+`WorkerControlException` reports lifecycle failures. If processing and control cleanup both fail, `WorkerRunException`
+preserves the processing exception as its previous exception and the cleanup error as `cleanupFailure`. These exceptions
+implement `IntegrationException`.
 
 ## Claim committed messages
 

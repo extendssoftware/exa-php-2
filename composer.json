@@ -9,7 +9,12 @@
     "ext-uri": "*"
   },
   "require-dev": {
+    "ext-pcntl": "*",
+    "ext-posix": "*",
     "phpunit/phpunit": "^13.4"
+  },
+  "suggest": {
+    "ext-pcntl": "Enables graceful SIGTERM/SIGINT shutdown for persistent outbox CLI workers."
   },
   "autoload": {
     "psr-4": {
