@@ -1,8 +1,9 @@
 # Outbox
 
-The `ExtendsSoftware\ExaPHP\Outbox` component defines immutable outgoing messages and the `OutboxWriter` contract for
-appending them within an application's transaction. Supply a persistence adapter implementing that contract and sharing
-the transaction used by the related application repositories.
+The `ExtendsSoftware\ExaPHP\Outbox` component defines immutable outgoing messages, transactional writing, processing
+ownership contracts, and delivery coordination. Supply persistence adapters for `OutboxWriter` and
+`Processing\OutboxStore`. The writer must share its transaction with the related application repositories; the store
+performs independent atomic processing operations.
 
 ## Create a message
 
@@ -49,6 +50,113 @@ messages.
 Let write failures propagate to the [transaction middleware](../transaction/README.md#wrap-cqrs-commands) so the related
 application changes roll back too. Merely using the same database with separate transactions does not provide atomicity.
 
+## Process one message
+
+Supply an `OutboxStore` adapter and a `Delivery\MessageDelivery` implementation, then compose a processor:
+
+```php
+use DateInterval;
+use ExtendsSoftware\ExaPHP\Clock\SystemClock;
+use ExtendsSoftware\ExaPHP\Outbox\Processing\OutboxProcessor;
+use ExtendsSoftware\ExaPHP\Outbox\Retry\FixedDelayRetryPolicy;
+
+// $store and $delivery are application-provided adapters.
+$processor = new OutboxProcessor(
+    store: $store,
+    delivery: $delivery,
+    retryPolicy: new FixedDelayRetryPolicy(delaySeconds: 60, maxAttempts: 3),
+    clock: new SystemClock(),
+);
+
+$processed = $processor->process(new DateInterval('PT30S'));
+```
+
+Each invocation claims at most one message and makes one delivery attempt. It returns `false` when no message is
+eligible, or `true` after successfully recording completion, a scheduled retry, or terminal failure. A `true` result
+therefore does not necessarily mean successful delivery. Invoke the processor outside application transactions;
+the application controls polling and worker lifetime. The processor does not sleep or renew claims.
+
+### Provide delivery
+
+Implement `Delivery\MessageDelivery::deliver()`. Return when the destination acknowledges acceptance and preserve the
+message identifier across attempts. Translate expected delivery failures, including timeouts, into
+`Delivery\Exception\MessageDeliveryException`, preserving any underlying exception as its previous cause. The
+processor evaluates only this exception for retry; other exceptions and engine errors propagate unchanged.
+
+Configure the delivery timeout to leave enough lease time for recording an outcome. Follow the
+[ownership and duplicate-delivery constraints](#record-a-processing-outcome), including idempotency at the destination.
+
+### Configure retries
+
+`Retry\FixedDelayRetryPolicy` uses a non-negative delay in seconds and a positive total attempt limit. The example
+schedules another attempt 60 seconds after the processor reads its clock following a delivery failure. A failure on
+claim three or later records terminal failure; zero delay permits immediate retry, and a limit of one disables retries.
+The limit is evaluated after delivery fails, so a reclaimed message may still deliver successfully at a higher claim
+number. The count includes claims where a worker stopped before delivering.
+
+Implement `Retry\RetryPolicy::delay($claim, $failure)` for other policies, such as exponential backoff or decisions
+based on the delivery failure. The claim provides the attempt number and original message, allowing policies to use
+message type or creation time. Return a non-negative number of seconds to retry, or `null` to record terminal failure.
+The processor reads its injected clock only when scheduling a retry; the store independently evaluates ownership using
+its own clock. Configure both clocks consistently.
+
+### Handle processing failures
+
+Store failures, including lost ownership, propagate without attempting another outcome. Completion happens outside the
+delivery failure handler: failure to record successful delivery never triggers the retry policy. If policy evaluation
+or reading the retry clock fails, no outcome is recorded and the claim remains subject to expiry.
+
+`Retry\Exception\InvalidRetryPolicyException` reports invalid fixed-delay configuration and a
+negative delay returned by a custom policy. `Processing\Exception\RetryTimestampException` wraps `ClockException`
+when retry scheduling cannot obtain the current time. These and `MessageDeliveryException` implement `OutboxException`.
+
+## Claim committed messages
+
+Use `Processing\OutboxStore` from a worker outside application transactions. Inject the existing
+[`Clock`](../clock/README.md) into the store adapter so it determines the current time for each operation. The worker
+supplies a lease duration:
+
+```php
+use DateInterval;
+
+// $store implements OutboxStore and receives a Clock through its constructor.
+$claim = $store->claim(new DateInterval('PT1M'));
+
+if ($claim === null) {
+    return; // No message is currently eligible.
+}
+```
+
+Choose a lease duration that allows the delivery operation to finish. The store adds it to the current time used for
+acquisition; it must produce a strictly later expiry. A claim owns one committed message exclusively until its expiry.
+Newly committed messages are immediately eligible; retries become eligible at their scheduled time.
+Expired claims can be reclaimed, including at the exact expiry instant. Selection order is not guaranteed.
+
+The returned `Processing\ClaimedMessage` contains the original `message`, an `attempt` number, an opaque `token`, and
+`expiresAt`. Attempts start at one and increase on each acquisition, including recovery after a worker stops before
+performing delivery. Each acquisition uses a token never reused for that message. Claim construction validates a
+positive attempt and non-empty token; constructing the value does not acquire ownership or check the current time.
+
+## Record a processing outcome
+
+After acquiring a claim, deliver its message outside persistence transactions, then record one outcome:
+
+- `complete($claim)`: acknowledge successful delivery and exclude the message from future claims.
+- `retry($claim, $availableAt)`: release ownership and schedule another attempt. A due time at or before now
+  allows immediate retry.
+- `fail($claim)`: record terminal failure and exclude the message from future claims.
+
+The store determines the current time for each operation. Every outcome must atomically verify the message identifier
+and ownership token against the stored active claim and require its stored expiry to be strictly after that time.
+Missing, expired, superseded, and already released claims are rejected without changing state. Repeating an outcome
+with the same claim therefore raises `LostClaimException`. An expired worker must stop updating that message.
+
+Each store operation is durable on successful return. Delivery and completion cannot be atomic: delivery may succeed
+before a worker stops or recording completion fails, allowing delivery again after expiry. Consumers should use the
+stable message identifier for idempotency. A store failure after delivery is a persistence failure, not evidence that
+delivery failed. Claims prevent simultaneous ownership, but an expired worker may still have an external request in
+flight when another worker acquires the message.
+
 ## Handle failures
 
 `OutboxException` is the component's root exception contract. Invalid envelope data raises
@@ -58,3 +166,17 @@ replace existing messages. Persistence failures must retain their lower-level ca
 
 When implementing an adapter, integration-test commit and rollback with application writes, rejection of writes
 outside a transaction, duplicate identifiers, and visibility to a separate processing connection only after commit.
+
+Processing exceptions live under `Processing\Exception` and implement `OutboxException`:
+
+- `InvalidClaimException`: claim data is invalid, or a lease duration cannot be applied or does not produce a future
+  expiry.
+- `LostClaimException`: an outcome cannot be recorded because the supplied claim no longer owns the message.
+- `OutboxStoreException`: persistence or obtaining the current time failed while claiming or recording an outcome.
+  Preserve the underlying persistence exception or `ClockException` as the previous exception.
+
+When implementing a store adapter, integration-test concurrent claims, visibility only after producer commit, due-time
+and expiry boundaries, increasing attempts and fresh tokens on reclaim, stale-token rejection, and all three outcome
+transitions. Verify that terminal outcomes remain ineligible, invalid lease durations acquire no claim, and persistence
+and clock failures preserve their causes. Inject `FrozenClock` for deterministic time boundaries, using another frozen
+clock instance when constructing an adapter for a later instant.

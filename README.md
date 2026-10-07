@@ -32,7 +32,8 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 - [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
   command execution.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
-- [Outbox](docs/outbox/README.md): immutable JSON message envelopes and a transactional writer contract.
+- [Outbox](docs/outbox/README.md): transactional JSON messages, processing ownership, delivery coordination, and bounded
+  retries.
 - [Processing](docs/processing/README.md): validators, string transformers, immutable results, sequential pipelines, and nested object/array
   processing.
 - [Service locator](docs/service-locator/README.md): shared object services and constructor injection,

@@ -8,8 +8,12 @@ All notable changes to ExaPHP will be documented in this file.
 
 - Clock component with a current-time contract, a UTC system clock, an immutable frozen clock for deterministic tests,
   and a dedicated integration module registering the shared clock service.
-- Outbox component with immutable JSON message envelopes, a transactional writer contract, and message and write
-  exceptions. Persistence adapters participate in the application's transaction and are supplied by the application.
+- Outbox component with immutable JSON message envelopes, a transactional writer contract, and processing contracts
+  for exclusive claims with worker-selected lease durations and store-owned time evaluation, completion, scheduled
+  retries, and terminal failure. Includes immutable claim values, a processor for one delivery attempt per invocation,
+  delivery and retry contracts with full claim context for retry decisions, and a fixed-delay policy with bounded
+  attempts. Applications supply persistence and
+  delivery adapters; producer writes participate in the application's transaction.
 - Transaction component with a generic transactional execution contract, explicit nested-call rejection, lifecycle
   exceptions preserving operation and rollback failures, and opt-in CQRS command middleware.
 - CLI component with command definitions, argument and option parsing, lazy handler dispatch, stream output, named exit

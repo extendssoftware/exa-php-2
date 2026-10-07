@@ -7,7 +7,7 @@ namespace ExtendsSoftware\ExaPHP\Outbox;
 use Throwable;
 
 /**
- * Identifies outbox message and persistence failures.
+ * Identifies outbox message, delivery, retry, ownership, and persistence failures.
  */
 interface OutboxException extends Throwable
 {
