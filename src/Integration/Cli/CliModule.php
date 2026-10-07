@@ -9,7 +9,7 @@ use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
 
 /**
- * Provides CLI command dispatch and stream output service configuration.
+ * Provides CLI command dispatch, stream output, and worker control service configuration.
  */
 final readonly class CliModule implements Module, ConfigurableModule
 {

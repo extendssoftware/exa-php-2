@@ -216,6 +216,26 @@ The presenter does not print traces, log exceptions, or exit the process. Output
 Use the [CLI error boundary](../integration/README.md#present-cli-failures) to present failures after application cleanup,
 including bootstrap failures, or inject a custom presenter to add application logging and formatting.
 
+## Control long-running workers
+
+Inject `Worker\WorkerControl` into a long-running CLI handler to coordinate shutdown and idle waiting. Call `start()`
+before the loop, check `stopRequested()` before each processing attempt, use `wait($seconds)` after an empty poll, and
+call `finish()` after the loop, including when processing fails. Allow the active attempt to finish before stopping.
+
+`Worker\PcntlWorkerControl` handles SIGTERM and SIGINT using PCNTL. Its handlers only request shutdown, and idle waiting
+returns early after a stop request. `finish()` restores the previous signal handlers and asynchronous dispatch setting.
+Each new session resets the stop request. Only one control session should own these process signal handlers at a time.
+Configure timeouts for blocking work so it can finish within the supervisor's shutdown grace period.
+
+The PCNTL extension is required when starting this implementation, not when constructing it or listing command help.
+`Worker\Exception\WorkerControlException` implements `CliException` and reports unavailable signal support, invalid
+lifecycle use, or signal registration and restoration failures. Provide another `WorkerControl` implementation for a
+different runtime.
+
+`Integration\Cli\CliModule` registers a shared `WorkerControl` backed by `PcntlWorkerControl`; applications can override
+that service in their configuration. The control manages signals and waiting, while the handler owns its processing
+loop and application-specific settings.
+
 ## Run the outbox worker
 
 The optional [Outbox integration module](../outbox/README.md#run-the-cli-worker) registers `outbox:work` using this CLI

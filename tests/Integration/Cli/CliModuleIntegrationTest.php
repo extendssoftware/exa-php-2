@@ -13,9 +13,12 @@ use ExtendsSoftware\ExaPHP\Cli\Output\Output;
 use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
 use ExtendsSoftware\ExaPHP\Cli\Routing\CommandDispatcher;
 use ExtendsSoftware\ExaPHP\Cli\Routing\CommandRegistry;
+use ExtendsSoftware\ExaPHP\Cli\Worker\PcntlWorkerControl;
+use ExtendsSoftware\ExaPHP\Cli\Worker\WorkerControl;
 use ExtendsSoftware\ExaPHP\Integration\Cli\CliModule;
 use ExtendsSoftware\ExaPHP\Integration\Cli\Exception\InvalidCliConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
+use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceResolutionException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -57,6 +60,28 @@ final class CliModuleIntegrationTest extends TestCase
         $services = new ServiceLocatorFactory()->create(new Configuration($defaults));
         $this->assertSame([], $services->get(CommandRegistry::class)->all());
         $this->assertInstanceOf(StreamOutput::class, $services->get(Output::class));
+    }
+
+    public function testProvidesSharedWorkerControlWithoutTheOutboxModule(): void
+    {
+        $defaults = require new CliModule()->configDirectory() . '/services.php';
+        $services = new ServiceLocatorFactory()->create(new Configuration($defaults));
+        $control = $services->get(WorkerControl::class);
+
+        self::assertInstanceOf(PcntlWorkerControl::class, $control);
+        self::assertSame($control, $services->get(WorkerControl::class));
+    }
+
+    public function testApplicationCanOverrideWorkerControl(): void
+    {
+        $control = $this->createStub(WorkerControl::class);
+        $defaults = require new CliModule()->configDirectory() . '/services.php';
+        $configuration = new ConfigurationMerger()->merge(['cli' => $defaults], ['application' => [
+            'services' => [WorkerControl::class => new InstanceDefinition($control)],
+        ]]);
+        $services = new ServiceLocatorFactory()->create($configuration);
+
+        self::assertSame($control, $services->get(WorkerControl::class));
     }
 
     /** @param array<array-key, mixed> $overrides */

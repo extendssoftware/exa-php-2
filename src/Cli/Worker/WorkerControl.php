@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Integration\Outbox\Worker;
+namespace ExtendsSoftware\ExaPHP\Cli\Worker;
 
-use ExtendsSoftware\ExaPHP\Integration\Outbox\Exception\WorkerControlException;
+use ExtendsSoftware\ExaPHP\Cli\Worker\Exception\WorkerControlException;
 
 /**
  * Controls cooperative worker shutdown and interruptible idle waiting.

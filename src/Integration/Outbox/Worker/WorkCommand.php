@@ -9,6 +9,7 @@ use ExtendsSoftware\ExaPHP\Cli\ExitCode;
 use ExtendsSoftware\ExaPHP\Cli\Handler\CommandHandler;
 use ExtendsSoftware\ExaPHP\Cli\Input\Input;
 use ExtendsSoftware\ExaPHP\Cli\Output\Output;
+use ExtendsSoftware\ExaPHP\Cli\Worker\WorkerControl;
 use ExtendsSoftware\ExaPHP\Integration\Outbox\Exception\WorkerRunException;
 use ExtendsSoftware\ExaPHP\Outbox\Processing\OutboxProcessor;
 use Override;

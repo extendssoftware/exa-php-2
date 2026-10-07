@@ -14,7 +14,7 @@
     "phpunit/phpunit": "^13.4"
   },
   "suggest": {
-    "ext-pcntl": "Enables graceful SIGTERM/SIGINT shutdown for persistent outbox CLI workers."
+    "ext-pcntl": "Enables graceful SIGTERM/SIGINT shutdown for persistent CLI workers."
   },
   "autoload": {
     "psr-4": {

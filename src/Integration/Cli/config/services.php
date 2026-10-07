@@ -9,6 +9,8 @@ use ExtendsSoftware\ExaPHP\Cli\Input\Parser\InputParser;
 use ExtendsSoftware\ExaPHP\Cli\Output\Output;
 use ExtendsSoftware\ExaPHP\Cli\Routing\CommandDispatcher;
 use ExtendsSoftware\ExaPHP\Cli\Routing\CommandRegistry;
+use ExtendsSoftware\ExaPHP\Cli\Worker\PcntlWorkerControl;
+use ExtendsSoftware\ExaPHP\Cli\Worker\WorkerControl;
 use ExtendsSoftware\ExaPHP\Integration\Cli\Factory\CommandDispatcherFactory;
 use ExtendsSoftware\ExaPHP\Integration\Cli\Factory\CommandRegistryFactory;
 use ExtendsSoftware\ExaPHP\Integration\Cli\Factory\HandlerResolverFactory;
@@ -24,5 +26,6 @@ return [
         HandlerResolver::class => new FactoryDefinition(new HandlerResolverFactory()->create(...)),
         CommandDispatcher::class => new FactoryDefinition(new CommandDispatcherFactory()->create(...)),
         Output::class => new FactoryDefinition(new OutputFactory()->create(...)),
+        WorkerControl::class => new InvokableDefinition(PcntlWorkerControl::class),
     ],
 ];

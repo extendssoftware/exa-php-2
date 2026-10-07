@@ -201,11 +201,13 @@ supervisor can restart failed workers; the worker does not retry infrastructure 
 The command owns polling and shutdown only. Transactions remain inside the persistence operations; external delivery
 and the worker loop are not wrapped in `TransactionalCommandMiddleware`.
 
-For another runtime, override `Integration\Outbox\Worker\WorkerControl` with your own stop and waiting implementation.
+The worker uses the shared `Cli\Worker\WorkerControl` service registered by `CliModule`. For another runtime, override
+that service with your own stop and waiting implementation; see
+[CLI worker control](../cli/README.md#control-long-running-workers).
 `Integration\Outbox\Exception\InvalidOutboxConfigurationException` reports invalid settings, and
-`WorkerControlException` reports lifecycle failures. If processing and control cleanup both fail, `WorkerRunException`
-preserves the processing exception as its previous exception and the cleanup error as `cleanupFailure`. These exceptions
-implement `IntegrationException`.
+`Cli\Worker\Exception\WorkerControlException` reports lifecycle failures and implements `CliException`. If processing
+and control cleanup both fail, `WorkerRunException` preserves the processing exception as its previous exception and
+the cleanup error as `cleanupFailure`. The Outbox integration exceptions implement `IntegrationException`.
 
 ## Claim committed messages
 

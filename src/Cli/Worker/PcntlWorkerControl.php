@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Integration\Outbox\Worker;
+namespace ExtendsSoftware\ExaPHP\Cli\Worker;
 
-use ExtendsSoftware\ExaPHP\Integration\Outbox\Exception\WorkerControlException;
+use ExtendsSoftware\ExaPHP\Cli\Worker\Exception\WorkerControlException;
 use Override;
 
 use function function_exists;
@@ -64,10 +64,10 @@ final class PcntlWorkerControl implements WorkerControl
     public function start(): void
     {
         if (!function_exists('pcntl_async_signals')) {
-            throw new WorkerControlException('Persistent outbox workers require ext-pcntl or another WorkerControl.');
+            throw new WorkerControlException('Persistent CLI workers require ext-pcntl or another WorkerControl.');
         }
         if ($this->handlers !== []) {
-            throw new WorkerControlException('Outbox worker signal control is already active.');
+            throw new WorkerControlException('CLI worker signal control is already active.');
         }
         $this->stopped = false;
         $this->previousAsync = pcntl_async_signals();
@@ -75,7 +75,7 @@ final class PcntlWorkerControl implements WorkerControl
             $this->handlers[$signal] = pcntl_signal_get_handler($signal);
             if (!pcntl_signal($signal, $this->requestStop(...))) {
                 $this->finish();
-                throw new WorkerControlException('Unable to register outbox worker stop signals.');
+                throw new WorkerControlException('Unable to register CLI worker stop signals.');
             }
         }
         pcntl_async_signals(true);
@@ -131,7 +131,7 @@ final class PcntlWorkerControl implements WorkerControl
         pcntl_async_signals($this->previousAsync);
         $this->handlers = [];
         if (!$restored) {
-            throw new WorkerControlException('Unable to restore signal handlers after the outbox worker stopped.');
+            throw new WorkerControlException('Unable to restore signal handlers after the CLI worker stopped.');
         }
     }
 

@@ -291,8 +291,9 @@ Direct `LoggerFactory::create()` calls preserve service-resolution exceptions un
 ## Register the Outbox module
 
 Register `Integration\Outbox\OutboxModule` with `CliModule` and `ClockModule`, or provide a shared `Clock` service.
-The module registers `OutboxProcessor`, worker settings, signal control, and the `outbox:work` command. Applications
-provide `OutboxStore`, `MessageDelivery`, and `RetryPolicy` services. Command help is available without resolving them.
+The module registers `OutboxProcessor`, worker settings, and the `outbox:work` command. It uses worker control from
+`CliModule`. Applications provide `OutboxStore`, `MessageDelivery`, and `RetryPolicy` services. Command help is available
+without resolving them.
 
 Configure `outbox.worker.lease_seconds` (default 30) and `outbox.worker.idle_delay_seconds` (default 1) as positive integer
 seconds. The persistent worker initializes the application once, polls until shutdown, and requires PCNTL for the default
@@ -502,6 +503,10 @@ HTTP `HandlerResolutionException`, preserving the locator failure as the previou
 handler sharing and construction; neither matching nor 404/405 responses resolve handlers.
 
 ## Register and run CLI commands
+
+`CliModule` also registers shared `Cli\Worker\WorkerControl` using `PcntlWorkerControl` for cooperative shutdown and idle
+waiting in long-running commands. See [CLI worker control](../cli/README.md#control-long-running-workers) for lifecycle
+and runtime requirements.
 
 Register `Integration\Cli\CliModule` before bootstrap. It provides shared `CommandRegistry`, `InputParser`,
 `HandlerResolver`, `CommandDispatcher`, `HelpRenderer`, and `Output` services. The default registry is empty, parsing uses

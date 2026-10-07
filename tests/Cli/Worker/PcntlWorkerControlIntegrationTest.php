@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Tests\Integration\Outbox\Worker;
+namespace ExtendsSoftware\ExaPHP\Tests\Cli\Worker;
 
-use ExtendsSoftware\ExaPHP\Integration\Outbox\Worker\PcntlWorkerControl;
+use ExtendsSoftware\ExaPHP\Cli\Worker\PcntlWorkerControl;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use PHPUnit\Framework\TestCase;

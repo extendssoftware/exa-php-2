@@ -5,20 +5,16 @@ declare(strict_types=1);
 use ExtendsSoftware\ExaPHP\Cli\Definition\CommandDefinition;
 use ExtendsSoftware\ExaPHP\Cli\Definition\OptionDefinition;
 use ExtendsSoftware\ExaPHP\Integration\Outbox\Factory\WorkerSettingsFactory;
-use ExtendsSoftware\ExaPHP\Integration\Outbox\Worker\PcntlWorkerControl;
 use ExtendsSoftware\ExaPHP\Integration\Outbox\Worker\WorkCommand;
-use ExtendsSoftware\ExaPHP\Integration\Outbox\Worker\WorkerControl;
 use ExtendsSoftware\ExaPHP\Integration\Outbox\Worker\WorkerSettings;
 use ExtendsSoftware\ExaPHP\Outbox\Processing\OutboxProcessor;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ReflectionDefinition;
 
 return [
     'services' => [
         OutboxProcessor::class => new ReflectionDefinition(OutboxProcessor::class),
         WorkerSettings::class => new FactoryDefinition(new WorkerSettingsFactory()->create(...)),
-        WorkerControl::class => new InvokableDefinition(PcntlWorkerControl::class),
         WorkCommand::class => new ReflectionDefinition(WorkCommand::class),
     ],
     'outbox' => [
