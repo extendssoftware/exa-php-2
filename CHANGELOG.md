@@ -6,6 +6,9 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Authorization component with actor-based access requests, an application authorizer contract, and a guard that
+  enforces decisions while preserving evaluation failures. Includes request validation and denial exceptions, plus
+  an opt-in integration module for guard wiring and generic HTTP 403 Problem Details responses.
 - Clock component with a current-time contract, a UTC system clock, an immutable frozen clock for deterministic tests,
   and a dedicated integration module registering the shared clock service.
 - Identity component with immutable actors carrying an application-defined principal identifier and kind, with

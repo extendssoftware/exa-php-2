@@ -25,6 +25,8 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 
 - [Application](docs/application/README.md): modules, lifecycle hooks, configuration, and service locator creation.
   See the guides for [modules](docs/application/modules.md) and [configuration](docs/application/configuration.md).
+- [Authorization](docs/authorization/README.md): actor-based access requests, application authorization rules,
+  denial guards, and optional HTTP 403 mapping.
 - [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.
 - [Clock](docs/clock/README.md): a clock contract with UTC system time and immutable frozen time implementations.
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, middleware, and dispatch metadata.

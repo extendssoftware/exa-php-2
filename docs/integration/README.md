@@ -3,6 +3,15 @@
 The `ExtendsSoftware\ExaPHP\Integration` namespace contains application modules and adapters that connect framework components.
 `IntegrationException` is the root exception contract for integration failures.
 
+## Register the Authorization module
+
+`Integration\Authorization\AuthorizationModule` registers a shared `AuthorizationGuard` using an application-provided
+`Authorizer`. It also contributes an HTTP exception mapper that converts `AccessDeniedException` into generic 403
+Problem Details responses. Other failures retain the existing HTTP fallback behavior. The guard can be used without
+HTTP, and the mapper can be used without resolving a shared authorizer. See the
+[Authorization integration guide](../authorization/README.md#register-application-and-http-integration) for configuration
+and module-specific guard usage.
+
 ## Register the CQRS module
 
 Register `CqrsModule` before application bootstrap. The application configuration directory must already exist:
