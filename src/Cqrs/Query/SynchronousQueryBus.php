@@ -132,21 +132,12 @@ final readonly class SynchronousQueryBus implements QueryBus
     }
 
     /**
-     * Executes middleware followed by the handler for the query's exact class.
+     * {@inheritDoc}
      *
-     * Middleware may short-circuit or forward a replacement query and context. Handler lookup occurs only at the
-     * end of the chain. Each call starts with its supplied context or a fresh empty context.
-     * Nested calls are independent.
-     *
-     * @template TResult
-     *
-     * @param Query<TResult> $query The query to answer.
-     * @param DispatchContext $context The application-defined execution metadata.
-     *
-     * @return TResult The query result.
+     * Middleware may replace the query and context or short-circuit before handler lookup.
+     * Each dispatch, including nested calls, has independent execution state.
      *
      * @throws QueryHandlerNotFoundException When the query reaching the handler stage has no registration.
-     * @throws Throwable When execution fails, propagated unchanged unless intercepted by middleware.
      */
     #[Override]
     public function ask(Query $query, DispatchContext $context = new DispatchContext()): mixed

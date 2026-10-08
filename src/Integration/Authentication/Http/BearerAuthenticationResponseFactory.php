@@ -20,12 +20,10 @@ use SensitiveParameter;
 final readonly class BearerAuthenticationResponseFactory implements AuthenticationResponseFactory
 {
     /**
-     * Creates a Bearer challenge without exposing credential or verification details.
+     * {@inheritDoc}
      *
-     * @param AuthenticationFailure $failure The client failure category.
-     * @param Request $request The request whose protocol version is preserved.
-     *
-     * @return Response A 400 response for malformed input or a 401 response for missing or rejected credentials.
+     * Preserves the request protocol version. Malformed input produces 400; missing or rejected credentials
+     * produce 401.
      *
      * @throws ResponseEncodingException When the problem cannot be encoded.
      */

@@ -38,11 +38,9 @@ use const E_WARNING;
 final readonly class PhpServerRequestFactory implements ServerRequestFactory
 {
     /**
-     * Creates the current request using PHP's server variables and input stream.
+     * {@inheritDoc}
      *
-     * @return Request The incoming request with a single-use stream body.
-     *
-     * @throws HttpException When server metadata is invalid or the input stream cannot be opened.
+     * The request body is a single-use stream.
      */
     #[Override]
     public function create(): Request

@@ -7,7 +7,6 @@ namespace ExtendsSoftware\ExaPHP\Http\Server;
 use Override;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
-use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 
@@ -31,18 +30,12 @@ use const E_WARNING;
 final readonly class PhpResponseEmitter implements ResponseEmitter
 {
     /**
-     * Sends response headers followed by body chunks where permitted.
+     * {@inheritDoc}
      *
-     * HEAD, 204, 205, and 304 responses never consume the body. Transfer-Encoding is rejected because PHP handles
-     * framing. Content-Length is omitted for 204 and forced to zero for 205; other content lengths remain explicit.
-     *
-     * @param Response $response The outgoing final response.
-     * @param Method $requestMethod The originating request method.
-     *
-     * @return void
+     * `HEAD`, 204, 205, and 304 responses never consume the body. `Transfer-Encoding` is rejected.
+     * `Content-Length` is omitted for 204 and forced to zero for 205; other content lengths remain explicit.
      *
      * @throws ResponseEmissionException When headers were sent or the response cannot be emitted by this adapter.
-     * @throws HttpException When reading the response body fails, propagated unchanged.
      */
     #[Override]
     public function emit(Response $response, Method $requestMethod): void

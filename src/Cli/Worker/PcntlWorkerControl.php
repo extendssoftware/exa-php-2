@@ -54,11 +54,7 @@ final class PcntlWorkerControl implements WorkerControl
     private bool $previousAsync = false;
 
     /**
-     * Installs stop handlers and enables asynchronous signal dispatch.
-     *
-     * @return void
-     *
-     * @throws WorkerControlException When PCNTL is unavailable, control is active, or registration fails.
+     * {@inheritDoc}
      */
     #[Override]
     public function start(): void
@@ -82,9 +78,7 @@ final class PcntlWorkerControl implements WorkerControl
     }
 
     /**
-     * Reports whether SIGTERM or SIGINT requested shutdown.
-     *
-     * @return bool Whether shutdown was requested.
+     * {@inheritDoc}
      */
     #[Override]
     public function stopRequested(): bool
@@ -93,11 +87,7 @@ final class PcntlWorkerControl implements WorkerControl
     }
 
     /**
-     * Waits in short intervals so shutdown also handles a signal received immediately before waiting.
-     *
-     * @param positive-int $seconds The maximum idle wait in seconds.
-     *
-     * @return void
+     * {@inheritDoc}
      */
     #[Override]
     public function wait(int $seconds): void
@@ -110,11 +100,7 @@ final class PcntlWorkerControl implements WorkerControl
     }
 
     /**
-     * Restores prior signal handlers and asynchronous dispatch settings.
-     *
-     * @return void
-     *
-     * @throws WorkerControlException When a previous handler cannot be restored.
+     * {@inheritDoc}
      */
     #[Override]
     public function finish(): void

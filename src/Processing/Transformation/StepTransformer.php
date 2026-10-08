@@ -36,11 +36,9 @@ final readonly class StepTransformer implements Transformer
     }
 
     /**
-     * Executes the configured role, retaining the input after successful validation.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ProcessingResult<mixed> The processed value or unchanged violations.
+     * Successful validation retains the input; reported violations are returned unchanged.
      *
      * @throws Throwable When execution fails, propagated unchanged.
      */

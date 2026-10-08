@@ -27,16 +27,9 @@ final readonly class WriterLogger implements Logger
     }
 
     /**
-     * Creates one record with the clock's current time and passes it to the writer.
-     *
-     * @param LogLevel $level The message severity.
-     * @param string $message The diagnostic message.
-     * @param array<string, mixed> $context Additional contextual data.
-     *
-     * @return void
+     * {@inheritDoc}
      *
      * @throws LogTimestampException When the clock cannot provide a timestamp.
-     * @throws LoggingException When the writer fails, propagated unchanged.
      */
     #[Override]
     public function log(LogLevel $level, string $message, array $context = []): void

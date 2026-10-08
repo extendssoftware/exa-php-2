@@ -31,11 +31,9 @@ use function sprintf;
 final readonly class ReflectionServiceResolver implements ServiceResolver
 {
     /**
-     * Checks the definition type without loading or inspecting its class.
+     * {@inheritDoc}
      *
-     * @param ServiceDefinition $definition The service definition.
-     *
-     * @return bool Whether the definition describes a reflection-based service.
+     * Checks only the definition type, without loading or inspecting its class.
      */
     #[Override]
     public function supports(ServiceDefinition $definition): bool
@@ -44,17 +42,11 @@ final readonly class ReflectionServiceResolver implements ServiceResolver
     }
 
     /**
-     * Constructs a service with dependencies obtained from the supplied locator.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     * @param ServiceLocator $serviceLocator The locator providing constructor dependencies.
-     *
-     * @return object The newly constructed service.
+     * {@inheritDoc}
      *
      * @throws UnsupportedDefinitionException When the definition is unsupported.
      * @throws UnresolvableParameterException When a constructor parameter cannot be supplied.
      * @throws ServiceResolutionException When loading, reflection, or construction fails.
-     * @throws ServiceLocatorException When dependency resolution or construction reports a component failure.
      */
     #[Override]
     public function resolve(ServiceDefinition $definition, ServiceLocator $serviceLocator): object

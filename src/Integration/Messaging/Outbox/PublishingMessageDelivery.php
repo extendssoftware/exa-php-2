@@ -29,16 +29,10 @@ final readonly class PublishingMessageDelivery implements MessageDelivery
     }
 
     /**
-     * Publishes the outgoing envelope without changing its identity or content.
+     * {@inheritDoc}
      *
-     * Expected publishing failures become delivery failures with their cause preserved. Other exceptions and engine
-     * errors propagate unchanged. This operation does not acknowledge the outbox claim or manage a transaction.
-     *
-     * @param OutboxMessage $message The outgoing message whose envelope is preserved during conversion.
-     *
-     * @return void
-     *
-     * @throws MessageDeliveryException When the publisher cannot acknowledge durable acceptance.
+     * Preserves the outgoing envelope content. Unexpected exceptions and engine errors propagate unchanged.
+     * Delivery does not acknowledge the outbox claim or manage a transaction.
      */
     #[Override]
     public function deliver(OutboxMessage $message): void

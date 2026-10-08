@@ -54,14 +54,10 @@ final readonly class ArrayShape implements Transformer
     }
 
     /**
-     * Produces a new array or reports all field violations without exposing partial output.
+     * {@inheritDoc}
      *
      * Known fields run in definition order, followed by unknown fields in input order. Missing optional fields are
-     * omitted; explicit null is processed. Preserved unknown values and nested objects are not cloned.
-     *
-     * @param mixed $value The input array.
-     *
-     * @return ProcessingResult<array<array-key, mixed>> The processed array or prefixed violations.
+     * omitted; explicit null is processed. Failures expose no partial output. Preserved values are not cloned.
      *
      * @throws Throwable When field execution fails, propagated unchanged without continuing.
      */

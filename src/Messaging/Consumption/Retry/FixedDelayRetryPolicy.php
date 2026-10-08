@@ -30,14 +30,7 @@ final readonly class FixedDelayRetryPolicy implements RetryPolicy
     }
 
     /**
-     * Returns the fixed delay until the attempt limit is reached.
-     *
-     * All subscriber failures receive the same retry decision.
-     *
-     * @param ReceivedDelivery $delivery The received delivery whose attempt number determines the retry limit.
-     * @param Throwable $failure The subscriber failure being evaluated.
-     *
-     * @return non-negative-int|null The delay in seconds, or null when the attempt limit has been reached.
+     * {@inheritDoc}
      */
     #[Override]
     public function delay(ReceivedDelivery $delivery, Throwable $failure): ?int

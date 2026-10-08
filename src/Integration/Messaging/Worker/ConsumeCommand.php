@@ -34,18 +34,11 @@ final readonly class ConsumeCommand implements CommandHandler
     }
 
     /**
-     * Processes messages within one application lifecycle without opening a transaction.
+     * {@inheritDoc}
      *
-     * --once performs at most one attempt without starting signal control or waiting. Persistent execution waits
-     * only after empty polls. Stop requests allow the current attempt to finish before returning success.
-     * Failures propagate to the CLI error boundary after signal cleanup, without retrying the worker operation.
-     *
-     * @param Input $input The parsed messaging:consume input, including the optional once flag.
-     * @param Output $output The CLI output channels, with failure presentation owned by the CLI runner.
-     *
-     * @return int The success exit code after a single poll or graceful shutdown.
-     *
-     * @throws Throwable When processing, signal control, or cleanup fails.
+     * `--once` performs at most one attempt without signal control or waiting. Persistent execution waits only after
+     * empty polls. Stop requests let the current attempt finish. Success returns the success exit code.
+     * Failures propagate after signal cleanup without retrying the worker operation.
      */
     #[Override]
     public function handle(Input $input, Output $output): int

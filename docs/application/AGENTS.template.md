@@ -163,10 +163,14 @@
 ## PHPDoc
 
 - For methods implementing an interface or overriding an inherited method, use a PHPDoc block containing only
-  `{@inheritDoc}` when the inherited documentation fully describes the method.
-- Do not repeat inherited documentation. Add explicit PHPDoc only when the implementation introduces relevant
-  behavior, constraints, exceptions, or more precise types that the inherited documentation does not describe.
-- PHPDoc blocks containing only `{@inheritDoc}` are exempt from the summary, `@param`, and `@return` requirements below.
+  `{@inheritDoc}` by default.
+- Add implementation-specific documentation only when callers need information beyond the inherited contract to use
+  the method correctly, such as additional constraints, exceptions, side effects, or more precise types.
+- When additional documentation is necessary, retain `{@inheritDoc}` and add only the relevant differences.
+  Do not repeat inherited summaries, parameters, return values, or exceptions.
+- Do not restate implementation details or behavior already explained by the class or constructor documentation.
+- PHPDoc blocks containing `{@inheritDoc}` are exempt from the summary and exhaustive `@param` and `@return`
+  requirements. Document only additions or refinements to the inherited contract.
 - Keep complete contract documentation on the interface or parent method.
 - Add complete PHPDoc to all public classes, interfaces, traits, enums, methods, properties, and constants.
 - Add PHPDoc to every non-promoted property, regardless of visibility.

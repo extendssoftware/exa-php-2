@@ -30,11 +30,9 @@ final readonly class NotBlank implements Validator
     public const string CODE_BLANK_STRING = 'blank_string';
 
     /**
-     * Checks for non-blank string input without modifying it.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ValidationResult The outcome, with not_string or blank_string violations on failure.
+     * Non-strings produce `not_string`; blank strings produce `blank_string`. The input is not modified.
      */
     #[Override]
     public function validate(mixed $value): ValidationResult

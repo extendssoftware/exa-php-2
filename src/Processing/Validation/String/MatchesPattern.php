@@ -70,11 +70,7 @@ final readonly class MatchesPattern implements Validator
     }
 
     /**
-     * Matches without adding anchors or modifying the string.
-     *
-     * @param mixed $value The input value.
-     *
-     * @return ValidationResult The type, encoding, or mismatch violation, or a valid result.
+     * {@inheritDoc}
      *
      * @throws PatternExecutionException When matching cannot complete, including regex resource limits.
      */

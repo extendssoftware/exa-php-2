@@ -22,9 +22,7 @@ final readonly class FrozenClock implements Clock
     }
 
     /**
-     * Returns the supplied time unchanged on every call.
-     *
-     * @return DateTimeImmutable The fixed time.
+     * {@inheritDoc}
      */
     #[Override]
     public function now(): DateTimeImmutable

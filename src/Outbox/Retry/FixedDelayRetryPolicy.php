@@ -30,14 +30,7 @@ final readonly class FixedDelayRetryPolicy implements RetryPolicy
     }
 
     /**
-     * Returns the fixed delay until the attempt limit is reached.
-     *
-     * All delivery failures receive the same retry decision.
-     *
-     * @param ClaimedMessage $claim The current claim whose attempt number determines the retry limit.
-     * @param MessageDeliveryException $failure The delivery failure being evaluated.
-     *
-     * @return non-negative-int|null The delay in seconds, or null when the attempt limit has been reached.
+     * {@inheritDoc}
      */
     #[Override]
     public function delay(ClaimedMessage $claim, MessageDeliveryException $failure): ?int

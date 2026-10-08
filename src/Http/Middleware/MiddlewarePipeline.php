@@ -9,7 +9,6 @@ use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\InvalidMiddlewareException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use Throwable;
 use SensitiveParameter;
 
 use function array_is_list;
@@ -52,16 +51,10 @@ final readonly class MiddlewarePipeline implements RequestHandler
     }
 
     /**
-     * Executes the chain and returns its response without emission.
+     * {@inheritDoc}
      *
-     * Middleware may return early, replace requests or responses, and intercept failures. Each delegation starts the
-     * remaining chain afresh; repeated and nested calls do not share an execution cursor. Instances are reused.
-     *
-     * @param Request $request The request to handle.
-     *
-     * @return Response The response returned through the middleware chain.
-     *
-     * @throws Throwable When execution fails without interception, propagated unchanged.
+     * Each delegation starts the remaining chain afresh; repeated and nested calls have independent execution state.
+     * Middleware instances are reused.
      */
     #[Override]
     public function handle(#[SensitiveParameter] Request $request): Response

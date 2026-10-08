@@ -57,13 +57,10 @@ final readonly class EachItem implements Transformer
     }
 
     /**
-     * Processes items in array order and returns no partial output when any item fails.
+     * {@inheritDoc}
      *
-     * Empty arrays succeed. Reused steps must not mutate inputs; nested objects are not automatically cloned.
-     *
-     * @param mixed $value The input collection.
-     *
-     * @return ProcessingResult<array<array-key, mixed>> The processed collection or item-prefixed violations.
+     * Items run in array order. Empty arrays succeed; failures expose no partial output.
+     * Nested objects are not cloned, and reused steps must not mutate inputs.
      *
      * @throws Throwable When item execution fails, propagated unchanged without continuing.
      */

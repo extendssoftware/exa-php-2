@@ -64,9 +64,7 @@ final readonly class RegisteredCommands implements CommandRegistry
     }
 
     /**
-     * Lists definitions in their original registration order.
-     *
-     * @return list<CommandDefinition> The registered definitions.
+     * {@inheritDoc}
      */
     #[Override]
     public function all(): array

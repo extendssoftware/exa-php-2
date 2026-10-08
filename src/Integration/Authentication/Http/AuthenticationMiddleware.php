@@ -13,7 +13,6 @@ use ExtendsSoftware\ExaPHP\Http\Middleware\Middleware;
 use ExtendsSoftware\ExaPHP\Integration\Authentication\Http\Exception\MalformedCredentialsException;
 use Override;
 use SensitiveParameter;
-use Throwable;
 
 /**
  * Requires authentication before delegating with the verified actor attached to the request.
@@ -35,17 +34,10 @@ final readonly class AuthenticationMiddleware implements Middleware
     }
 
     /**
-     * Authenticates the request or returns a client authentication failure response.
+     * {@inheritDoc}
      *
-     * Existing actor metadata never bypasses verification and is replaced on success. Only extraction malformation
-     * and credential rejection are handled locally. Operational, configuration, and downstream failures propagate.
-     *
-     * @param Request $request The request containing sensitive authentication data.
-     * @param RequestHandler $next The remaining route pipeline.
-     *
-     * @return Response The authentication failure response or downstream response.
-     *
-     * @throws Throwable When verification, response creation, or downstream execution fails.
+     * Existing actor metadata never bypasses verification and is replaced on success. Only malformed credential
+     * extraction and credential rejection produce local failure responses; other failures propagate.
      */
     #[Override]
     public function process(#[SensitiveParameter] Request $request, RequestHandler $next): Response

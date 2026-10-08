@@ -48,16 +48,9 @@ final readonly class MappingExceptionResponseFactory implements ExceptionRespons
     }
 
     /**
-     * Passes the original exception and request to each mapper until one returns a problem.
+     * {@inheritDoc}
      *
      * Mapper and encoding failures propagate without trying later mappers or the fallback.
-     *
-     * @param Throwable $exception The original execution failure.
-     * @param Request $request The request at the exception boundary.
-     *
-     * @return Response The mapped problem response or the fallback response.
-     *
-     * @throws Throwable When mapping, encoding, or fallback creation fails, propagated unchanged.
      */
     #[Override]
     public function create(Throwable $exception, #[SensitiveParameter] Request $request): Response

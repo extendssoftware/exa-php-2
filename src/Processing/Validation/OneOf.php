@@ -40,11 +40,9 @@ final readonly class OneOf implements Validator
     }
 
     /**
-     * Checks membership without coercion; objects match by identity and arrays by strict equality.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ValidationResult A not_one_of violation or a valid result.
+     * Non-members produce a `not_one_of` violation.
      */
     #[Override]
     public function validate(mixed $value): ValidationResult

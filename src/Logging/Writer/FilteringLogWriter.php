@@ -6,7 +6,6 @@ namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
 use Override;
 use Closure;
-use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use Throwable;
 
@@ -34,15 +33,10 @@ final readonly class FilteringLogWriter implements LogWriter
     }
 
     /**
-     * Evaluates the predicate once and forwards the original record when accepted.
+     * {@inheritDoc}
      *
-     * Rejected records are silently discarded. Predicate and writer failures propagate unchanged.
+     * Evaluates the predicate once. Predicate failures propagate unchanged.
      *
-     * @param LogRecord $record The record to evaluate.
-     *
-     * @return void
-     *
-     * @throws LoggingException When the wrapped writer fails.
      * @throws Throwable When the application-provided predicate fails.
      */
     #[Override]

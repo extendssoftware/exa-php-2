@@ -7,7 +7,6 @@ namespace ExtendsSoftware\ExaPHP\Http\Decoding;
 use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
-use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use SensitiveParameter;
 
@@ -56,17 +55,12 @@ final readonly class ContentTypeRequestBodyDecoder implements RequestBodyDecoder
     }
 
     /**
-     * Selects by Content-Type and delegates decoding once.
+     * {@inheritDoc}
      *
-     * Accept never affects input decoding. Structured suffix types require explicit registration. Media parameters
-     * do not change selection. Encoded bodies require decoding before this boundary and removal of Content-Encoding.
-     *
-     * @param Request $request The request containing representation metadata and body bytes.
-     *
-     * @return mixed The selected decoder's data.
+     * Structured suffix types require explicit registration. Decode encoded bodies and remove `Content-Encoding`
+     * before calling this decoder.
      *
      * @throws UnsupportedRequestMediaTypeException When content type or content encoding is unsupported or malformed.
-     * @throws HttpException When the selected decoder fails, propagated unchanged.
      */
     #[Override]
     public function decode(#[SensitiveParameter] Request $request): mixed

@@ -9,7 +9,6 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\AliasDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\UnsupportedDefinitionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
-use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
 
 /**
  * Delegates alias definitions to target identifiers through the supplied locator.
@@ -28,15 +27,9 @@ final readonly class AliasServiceResolver implements ServiceResolver
     }
 
     /**
-     * Resolves the definition's alias target through the supplied locator.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     * @param ServiceLocator $serviceLocator The locator used to resolve the target.
-     *
-     * @return object The target service returned by the locator.
+     * {@inheritDoc}
      *
      * @throws UnsupportedDefinitionException When the definition is unsupported.
-     * @throws ServiceLocatorException When target resolution fails.
      */
     #[Override]
     public function resolve(ServiceDefinition $definition, ServiceLocator $serviceLocator): object

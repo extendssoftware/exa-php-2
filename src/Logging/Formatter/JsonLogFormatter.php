@@ -55,15 +55,10 @@ final readonly class JsonLogFormatter implements LogFormatter
     private const int MAX_RECORD_BYTES = 1_048_576;
 
     /**
-     * Formats one record as compact JSON followed by exactly one LF character.
+     * {@inheritDoc}
      *
-     * Timestamps are normalized to UTC with microseconds, without changing the original date objects.
-     * Empty context is encoded as an object.
-     * Arrays retain their keys; dates and enums become strings or backed scalar values. Resources are rejected.
-     *
-     * @param LogRecord $record The record to format.
-     *
-     * @return string The complete NDJSON line.
+     * Produces compact JSON followed by exactly one LF. Timestamps use UTC with microseconds. Empty context becomes
+     * an object. Arrays retain keys; dates and enums become strings or backed scalar values. Resources are rejected.
      *
      * @throws LogFormattingException When normalization, JSON encoding, or the output size limit prevents formatting.
      */

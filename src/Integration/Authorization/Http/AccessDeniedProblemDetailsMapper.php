@@ -19,14 +19,9 @@ use SensitiveParameter;
 final readonly class AccessDeniedProblemDetailsMapper implements ExceptionProblemDetailsMapper
 {
     /**
-     * Maps access denials without exposing the actor, action, resource, or exception details.
+     * {@inheritDoc}
      *
-     * Other exceptions are declined, including invalid requests and authorization evaluation failures.
-     *
-     * @param Throwable $exception The original execution failure.
-     * @param Request $request The HTTP request at the exception boundary.
-     *
-     * @return ProblemDetails|null A generic 403 problem for access denial, or null for unrelated failures.
+     * Declines unrelated failures, including invalid authorization requests and evaluation failures.
      */
     #[Override]
     public function map(Throwable $exception, #[SensitiveParameter] Request $request): ?ProblemDetails

@@ -25,12 +25,7 @@ final readonly class InstanceServiceResolver implements ServiceResolver
     }
 
     /**
-     * Returns the exact instance held by the definition without consulting the locator.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     * @param ServiceLocator $serviceLocator The locator supplied by the caller.
-     *
-     * @return object The existing service instance.
+     * {@inheritDoc}
      *
      * @throws UnsupportedDefinitionException When the definition is unsupported.
      */

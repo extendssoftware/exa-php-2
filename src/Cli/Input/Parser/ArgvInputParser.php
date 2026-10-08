@@ -35,15 +35,10 @@ use function substr;
 final readonly class ArgvInputParser implements InputParser
 {
     /**
-     * Parses command tokens into immutable named input.
+     * {@inheritDoc}
      *
-     * Flags are true when present. Omitted entries remain absent. Repeated aliases and long names for the same option
-     * are rejected. Empty explicit values are preserved; command values are never converted or trimmed.
-     *
-     * @param CommandDefinition $definition The selected command definition.
-     * @param list<string> $tokens Tokens excluding the executable and command name.
-     *
-     * @return Input The parsed command input.
+     * Flags are true when present; omitted entries remain absent. Empty explicit values are preserved.
+     * Repeated aliases and long names for the same option are rejected.
      *
      * @throws InvalidTokensException When tokens are not a list of strings.
      * @throws UnknownOptionException When an option name, alias, or unsupported short syntax is supplied.

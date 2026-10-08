@@ -56,11 +56,7 @@ final readonly class StringLength implements Validator
     }
 
     /**
-     * Counts Unicode code points, including newlines, rather than bytes or grapheme clusters.
-     *
-     * @param mixed $value The input value.
-     *
-     * @return ValidationResult The type, encoding, or length violations, or a valid result.
+     * {@inheritDoc}
      *
      * @throws PatternExecutionException When the counting expression cannot execute.
      */

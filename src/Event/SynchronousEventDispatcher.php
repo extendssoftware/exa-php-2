@@ -102,16 +102,9 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
     }
 
     /**
-     * Invokes listeners for the event's exact class in registration order.
+     * {@inheritDoc}
      *
-     * Parent classes and interfaces are not considered. The original event object is passed to the listener.
-     * Events without listeners are ignored. Listener failures propagate unchanged and stop this dispatch.
-     *
-     * @param Event $event The event to dispatch.
-     *
-     * @return void
-     *
-     * @throws Throwable When the listener fails, propagated unchanged.
+     * Passes the original event to listeners in registration order.
      */
     #[Override]
     public function dispatch(Event $event): void

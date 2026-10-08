@@ -38,16 +38,10 @@ final readonly class RouteUrlGenerator implements UrlGenerator
     }
 
     /**
-     * Substitutes raw path segments and encodes a flat query using RFC 3986 escaping.
+     * {@inheritDoc}
      *
-     * Literal path bytes are preserved. Empty and dot-segment parameters are rejected. Asterisk and authority-like
-     * patterns beginning with // cannot produce path-only URLs. Input parameters must not already be percent-encoded.
-     *
-     * @param string $routeName The exact route name.
-     * @param array<string, string|int> $parameters The raw path parameter values.
-     * @param array<string, string|int|bool|null> $query The flat query values.
-     *
-     * @return Uri The path and optional query.
+     * Uses RFC 3986 query escaping and preserves literal path bytes. Empty and dot-segment parameters are rejected.
+     * Asterisk and authority-like patterns beginning with `//` cannot produce path-only URLs.
      *
      * @throws RouteNotFoundException When the route is not registered.
      * @throws InvalidRouteParametersException When parameter names, types, or segment values are invalid.

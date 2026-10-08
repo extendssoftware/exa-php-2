@@ -38,14 +38,10 @@ final readonly class SimpleRouter implements Router
     }
 
     /**
-     * Matches the most specific path before selecting an explicitly registered method.
+     * {@inheritDoc}
      *
-     * Literal segments outrank placeholders; tied overlapping patterns use registration order. The winning structural
-     * pattern reserves the path across methods. HEAD and OPTIONS have no implicit fallback. CONNECT is not routed.
-     *
-     * @param Request $request The request whose raw URI path and method are matched; query and host are ignored.
-     *
-     * @return RouteMatch|null The route match, or null for an unknown path or unsupported method.
+     * Tied overlapping patterns use registration order. The winning structural pattern reserves the path across
+     * methods. `HEAD` and `OPTIONS` have no implicit fallback. `CONNECT` is not routed; query and host are ignored.
      */
     #[Override]
     public function match(#[SensitiveParameter] Request $request): ?RouteMatch
@@ -60,11 +56,9 @@ final readonly class SimpleRouter implements Router
     }
 
     /**
-     * Returns explicit methods for the winning structural path pattern, in registration order.
+     * {@inheritDoc}
      *
-     * @param Request $request The request target to inspect.
-     *
-     * @return list<Method> The supported methods, or an empty list for an unrouted target.
+     * Returns explicit methods for the winning structural path pattern in registration order.
      */
     #[Override]
     public function allowedMethods(#[SensitiveParameter] Request $request): array

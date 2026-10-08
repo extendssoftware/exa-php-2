@@ -25,11 +25,9 @@ final readonly class TrimString implements Transformer
     public const string CODE_NOT_STRING = 'not_string';
 
     /**
-     * Trims a string without coercing other input types.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ProcessingResult<string> The trimmed string, or a not_string violation.
+     * Non-string input produces a `not_string` violation without coercion.
      */
     #[Override]
     public function transform(mixed $value): ProcessingResult

@@ -12,7 +12,6 @@ use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamOpenException;
 use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\JsonLogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\LogFormatter;
-use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use Throwable;
 use ValueError;
@@ -71,20 +70,15 @@ final readonly class StreamLogWriter implements LogWriter
     }
 
     /**
-     * Formats once, appends all bytes, and flushes the stream.
+     * {@inheritDoc}
      *
-     * Seekable streams are positioned at their end. Positive partial writes are completed; zero progress is a failure.
-     * Flush does not guarantee durable storage. Failures may leave a partially written record; no retry is performed.
-     * Cleanup is attempted even after engine errors without replacing the original failure.
-     *
-     * @param LogRecord $record The record to deliver.
-     *
-     * @return void
+     * Seekable streams are positioned at their end. All bytes are written and the stream is flushed, without a
+     * durability guarantee. Failures may leave a partial record; no retry is performed. Cleanup failures do not replace
+     * an earlier failure.
      *
      * @throws InvalidLogStreamException When a caller-owned stream is no longer writable.
      * @throws LogStreamOpenException When the destination cannot be opened.
      * @throws LogStreamWriteException When writing, locking, flushing, or cleanup fails.
-     * @throws LoggingException When formatting fails, propagated unchanged.
      */
     #[Override]
     public function write(LogRecord $record): void

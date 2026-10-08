@@ -11,7 +11,6 @@ use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use JsonException;
-use Throwable;
 
 use function json_encode;
 
@@ -23,16 +22,12 @@ use const JSON_THROW_ON_ERROR;
 final readonly class JsonResponseFactory implements ResponseFactory
 {
     /**
-     * Creates a JSON response, replacing content type and removing caller-supplied transfer and length headers.
+     * {@inheritDoc}
      *
-     * @param mixed $data JSON-encodable data; objects follow PHP's JSON serialization rules.
-     * @param StatusCode $statusCode The response status.
-     * @param Headers $headers Additional response headers.
-     *
-     * @return Response The JSON response.
+     * Replaces content type and removes caller-supplied transfer and length headers.
+     * Objects follow PHP's JSON serialization rules.
      *
      * @throws ResponseEncodingException When JSON encoding fails, preserving the JsonException as its cause.
-     * @throws Throwable When application serialization callbacks fail, propagated unchanged.
      */
     #[Override]
     public function create(

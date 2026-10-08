@@ -47,24 +47,13 @@ final class DefinitionServiceLocator implements ServiceLocator
     }
 
     /**
-     * Returns a shared service, resolving its definition on the first successful request.
+     * {@inheritDoc}
      *
-     * Failed resolutions are not cached and may be retried. Resolvers report resolution failures through
-     * ServiceLocatorException. Their exceptions and errors propagate unchanged after resolution-path cleanup.
-     *
-     * Class and interface identifiers must be registered with compatible services for generic type inference.
-     * The locator does not validate that the resolved object's type matches its identifier.
-     *
-     * @template T of object
-     *
-     * @param string|class-string<T> $id The service identifier.
-     *
-     * @return ($id is class-string<T> ? T : object) The shared service instance.
+     * Failed resolutions are not cached and may be retried. Resolved types are not checked against identifiers.
      *
      * @throws ServiceNotFoundException When the identifier is not registered.
      * @throws CircularDependencyException When the identifier is already being resolved.
      * @throws UnsupportedDefinitionException When no resolver supports the registered definition.
-     * @throws ServiceLocatorException When a resolver cannot determine support or resolve the service.
      * @throws Throwable When a resolver throws another exception or error, propagated unchanged.
      */
     #[Override]
@@ -85,11 +74,7 @@ final class DefinitionServiceLocator implements ServiceLocator
     }
 
     /**
-     * Checks registration without inspecting definitions or resolving services.
-     *
-     * @param string $id The service identifier.
-     *
-     * @return bool Whether the identifier is registered, regardless of whether resolution can succeed.
+     * {@inheritDoc}
      */
     #[Override]
     public function has(string $id): bool

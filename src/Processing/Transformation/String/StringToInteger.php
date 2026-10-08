@@ -42,11 +42,9 @@ final readonly class StringToInteger implements Transformer
     public const string CODE_INTEGER_OVERFLOW = 'integer_overflow';
 
     /**
-     * Parses ASCII digits with an optional leading sign, accepting leading zeros but no whitespace.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ProcessingResult<int> The integer, or a type, format, or overflow violation.
+     * Accepts ASCII digits with an optional leading sign and leading zeros, but no whitespace.
      */
     #[Override]
     public function transform(mixed $value): ProcessingResult

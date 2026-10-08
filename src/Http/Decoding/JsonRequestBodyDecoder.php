@@ -8,7 +8,6 @@ use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
-use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use JsonException;
 use SensitiveParameter;
@@ -39,20 +38,14 @@ final readonly class JsonRequestBodyDecoder implements RequestBodyDecoder
     }
 
     /**
-     * Reads and decodes JSON without consulting Accept or validating application fields.
+     * {@inheritDoc}
      *
      * Empty input is malformed; null is valid. Integers outside PHP's integer range become strings. Nesting is limited
-     * to PHP's default depth of 512. Actual bytes enforce the limit; Content-Length is not trusted.
-     * No reads are retried. This decoder assumes JSON was selected by the caller; content-type dispatch belongs
-     * to ContentTypeRequestBodyDecoder.
-     *
-     * @param Request $request The request containing JSON bytes.
-     *
-     * @return mixed Objects, arrays, scalars, or null following the JSON representation.
+     * to 512 levels. Actual bytes enforce the size limit; `Content-Length` is not trusted. Reads are not retried.
+     * The caller must select JSON decoding; content-type dispatch belongs to `ContentTypeRequestBodyDecoder`.
      *
      * @throws MalformedRequestBodyException When JSON is empty, malformed, invalid UTF-8, or exceeds nesting depth.
      * @throws RequestBodyTooLargeException When the body exceeds the byte limit.
-     * @throws HttpException When reading fails, propagated unchanged.
      */
     #[Override]
     public function decode(#[SensitiveParameter] Request $request): mixed

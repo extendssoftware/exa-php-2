@@ -32,14 +32,9 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
     }
 
     /**
-     * Creates a non-cacheable Problem Details response without exposing decoding details.
+     * {@inheritDoc}
      *
-     * @param Throwable $exception The execution failure.
-     * @param Request $request The request at the exception boundary.
-     *
-     * @return Response A decoding error response or the fallback response.
-     *
-     * @throws Throwable When encoding or the fallback fails, propagated unchanged.
+     * Responses are non-cacheable Problem Details documents.
      */
     #[Override]
     public function create(Throwable $exception, #[SensitiveParameter] Request $request): Response

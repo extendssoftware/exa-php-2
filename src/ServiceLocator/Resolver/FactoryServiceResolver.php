@@ -36,16 +36,10 @@ final readonly class FactoryServiceResolver implements ServiceResolver
     }
 
     /**
-     * Invokes the definition's factory with the supplied locator.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     * @param ServiceLocator $serviceLocator The locator available to the factory.
-     *
-     * @return object The factory's service result.
+     * {@inheritDoc}
      *
      * @throws UnsupportedDefinitionException When the definition is unsupported.
      * @throws ServiceResolutionException When the factory fails or returns a non-object value.
-     * @throws ServiceLocatorException When the factory propagates a component failure.
      */
     #[Override]
     public function resolve(ServiceDefinition $definition, ServiceLocator $serviceLocator): object

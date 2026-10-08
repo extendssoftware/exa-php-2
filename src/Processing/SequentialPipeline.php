@@ -38,16 +38,10 @@ final class SequentialPipeline implements Pipeline
     }
 
     /**
-     * Processes the input through the registered steps, stopping at the first failure.
+     * {@inheritDoc}
      *
-     * Violations retain identity and order. No input cloning, exception translation, or rollback is performed.
-     * Each call starts with its own value.
+     * Violations retain identity and order. No input cloning or rollback is performed.
      *
-     * @param mixed $value The initial input value.
-     *
-     * @return ProcessingResult<mixed> The final value or the first failed step's violations.
-     *
-     * @throws ProcessingException When a step reports a configuration or execution failure, propagated unchanged.
      * @throws Throwable When a step throws an unexpected exception or error, propagated unchanged.
      */
     #[Override]

@@ -20,11 +20,9 @@ final readonly class NotNull implements Validator
     public const string CODE_NULL_VALUE = 'null_value';
 
     /**
-     * Checks whether the input is not null.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ValidationResult The outcome, with a null_value violation for null.
+     * Null produces a `null_value` violation.
      */
     #[Override]
     public function validate(mixed $value): ValidationResult

@@ -18,7 +18,6 @@ use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\MiddlewareResolutionExcepti
 use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewarePipeline;
 use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
 use Override;
-use Throwable;
 use SensitiveParameter;
 
 use function array_map;
@@ -44,18 +43,11 @@ final readonly class RoutingRequestHandler implements RequestHandler
     }
 
     /**
-     * Routes the request and supplies its RouteMatch as immutable request metadata.
+     * {@inheritDoc}
      *
-     * Existing RouteMatch metadata is replaced without changing the original request. Other attributes are retained.
-     * A missing path produces 404; an unsupported method produces 405 with Allow.
-     * Neither response resolves middleware or handlers. Matched middleware runs in declaration order; the handler
-     * is resolved only when reached. Missing middleware resolution fails rather than bypassing the chain.
-     *
-     * @param Request $request The incoming request.
-     *
-     * @return Response The selected handler's response, or a Problem Details routing error response.
-     *
-     * @throws Throwable When routing, middleware or handler resolution, or execution fails, propagated unchanged.
+     * Replaces existing `RouteMatch` metadata while retaining other attributes. A 405 response includes `Allow`.
+     * Routing error responses do not resolve middleware or handlers. Matched middleware runs in declaration order;
+     * the handler is resolved only when reached. Missing middleware resolution fails.
      */
     #[Override]
     public function handle(#[SensitiveParameter] Request $request): Response

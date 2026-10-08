@@ -47,11 +47,7 @@ final readonly class RegisteredSubscriptions implements SubscriptionRegistry
     }
 
     /**
-     * Returns exact type matches in registration order.
-     *
-     * @param Message $message The message whose type determines matching subscriptions.
-     *
-     * @return list<Subscription> The original matching definitions, or an empty list when no type matches.
+     * {@inheritDoc}
      */
     #[Override]
     public function matching(Message $message): array
@@ -67,9 +63,7 @@ final readonly class RegisteredSubscriptions implements SubscriptionRegistry
     }
 
     /**
-     * Returns the original subscription definitions in registration order.
-     *
-     * @return list<Subscription> All registered subscriptions.
+     * {@inheritDoc}
      */
     #[Override]
     public function all(): array

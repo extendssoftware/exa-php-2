@@ -132,19 +132,12 @@ final readonly class SynchronousCommandBus implements CommandBus
     }
 
     /**
-     * Executes middleware followed by the handler for the command's exact class.
+     * {@inheritDoc}
      *
-     * Middleware may short-circuit or forward a replacement command and context. Handler lookup occurs only at the
-     * end of the chain. Each call starts with its supplied context or a fresh empty context.
-     * Nested calls are independent.
-     *
-     * @param Command $command The command to dispatch.
-     * @param DispatchContext $context The application-defined execution metadata.
-     *
-     * @return void
+     * Middleware may replace the command and context or short-circuit before handler lookup.
+     * Each dispatch, including nested calls, has independent execution state.
      *
      * @throws CommandHandlerNotFoundException When the command reaching the handler stage has no registration.
-     * @throws Throwable When execution fails, propagated unchanged unless intercepted by middleware.
      */
     #[Override]
     public function dispatch(Command $command, DispatchContext $context = new DispatchContext()): void

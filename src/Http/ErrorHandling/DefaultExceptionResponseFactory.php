@@ -20,14 +20,9 @@ use SensitiveParameter;
 final readonly class DefaultExceptionResponseFactory implements ExceptionResponseFactory
 {
     /**
-     * Creates a non-cacheable response retaining the request protocol version.
+     * {@inheritDoc}
      *
-     * Exception messages, codes, types, and traces do not affect the response. No logging is performed.
-     *
-     * @param Throwable $exception The failure, whose details are not exposed.
-     * @param Request $request The request providing the protocol version.
-     *
-     * @return Response A generic Internal Server Error response.
+     * Responses are non-cacheable and preserve the request protocol version.
      *
      * @throws ResponseEncodingException When encoding fails.
      */

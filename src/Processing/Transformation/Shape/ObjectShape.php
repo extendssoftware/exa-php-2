@@ -64,14 +64,10 @@ final readonly class ObjectShape implements Transformer
     }
 
     /**
-     * Processes public property values without invoking magic accessors or changing the source object.
+     * {@inheritDoc}
      *
-     * Only initialized, public, stored properties are included; getter hooks and virtual properties are bypassed.
-     * Paths use string property names. Nested objects remain shared unless transformed by a configured field.
-     *
-     * @param mixed $value The source object.
-     *
-     * @return ProcessingResult<stdClass> A new object or collected property violations.
+     * Getter hooks, virtual properties, and magic accessors are bypassed. Paths use string property names.
+     * Nested objects remain shared unless transformed by a configured field.
      *
      * @throws Throwable When property extraction or field execution fails, propagated unchanged.
      */

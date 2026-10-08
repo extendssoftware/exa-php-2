@@ -45,11 +45,9 @@ final readonly class IntegerRange implements Validator
     }
 
     /**
-     * Checks the integer type and inclusive bounds without coercion.
+     * {@inheritDoc}
      *
-     * @param mixed $value The input value.
-     *
-     * @return ValidationResult The outcome, with not_integer or integer_out_of_range violations on failure.
+     * Non-integers produce `not_integer`; integers outside the bounds produce `integer_out_of_range`.
      */
     #[Override]
     public function validate(mixed $value): ValidationResult

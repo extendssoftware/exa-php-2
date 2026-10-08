@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Processing\Validation;
 
 use Override;
-use ExtendsSoftware\ExaPHP\Processing\ProcessingException;
 use Throwable;
 
 use function array_values;
@@ -36,16 +35,11 @@ final readonly class AllOf implements Validator
     }
 
     /**
-     * Evaluates every validator and retains all violations in reporting order.
+     * {@inheritDoc}
      *
-     * Violations retain identity, paths, and duplicates. An empty composite succeeds. Exceptions stop evaluation
-     * immediately and propagate unchanged rather than becoming violations.
+     * Violations retain identity, paths, duplicates, and reporting order. An empty composite succeeds.
+     * Exceptions stop evaluation immediately.
      *
-     * @param TInput $value The unchanged input supplied to every validator.
-     *
-     * @return ValidationResult The combined violations, empty when every validator succeeds.
-     *
-     * @throws ProcessingException When a validator reports a configuration or execution failure.
      * @throws Throwable When a validator throws an unexpected exception or error.
      */
     #[Override]

@@ -17,17 +17,10 @@ use function str_replace;
 final readonly class DefaultExceptionPresenter implements ExceptionPresenter
 {
     /**
-     * Writes one error line and returns the corresponding conventional exit code.
+     * {@inheritDoc}
      *
-     * Usage messages have carriage returns, newlines, and escape bytes replaced with spaces. Other exception
-     * messages, types, codes, previous exceptions, and traces are not exposed. No logging is performed.
-     *
-     * @param Throwable $exception The failure to classify and present.
-     * @param Output $output The error output destination.
-     *
-     * @return int InvalidUsage for UsageException; Failure for every other failure.
-     *
-     * @throws Throwable When output fails, propagated unchanged.
+     * Replaces carriage returns, newlines, and escape bytes in usage messages with spaces.
+     * Returns `ExitCode::InvalidUsage` for `UsageException` and `ExitCode::Failure` for other failures.
      */
     #[Override]
     public function present(Throwable $exception, Output $output): int

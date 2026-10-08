@@ -32,9 +32,7 @@ final readonly class StringBody implements Body
     }
 
     /**
-     * Yields the complete content once, or no chunks when empty.
-     *
-     * @return iterable<string> The stored content as a byte chunk.
+     * {@inheritDoc}
      */
     #[Override]
     public function chunks(): iterable
@@ -45,9 +43,7 @@ final readonly class StringBody implements Body
     }
 
     /**
-     * Returns the length in bytes.
-     *
-     * @return int<0, max> The byte length.
+     * {@inheritDoc}
      */
     #[Override]
     public function size(): int

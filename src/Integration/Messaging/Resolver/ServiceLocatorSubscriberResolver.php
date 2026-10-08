@@ -44,16 +44,9 @@ final readonly class ServiceLocatorSubscriberResolver implements SubscriberResol
     }
 
     /**
-     * Resolves and validates only the service explicitly mapped to the requested subscriber.
+     * {@inheritDoc}
      *
-     * Subscriber identity is independent of service identity. Unknown identifiers never fall back to service lookup.
-     * The locator controls service lifetime; this resolver adds no cache and does not invoke the subscriber.
-     *
-     * @param non-empty-string $subscriberId The exact, case-sensitive subscriber identifier.
-     *
-     * @return MessageSubscriber The subscriber returned by the locator.
-     *
-     * @throws SubscriberResolutionException When a mapping is absent, lookup fails, or the service is not a subscriber.
+     * Unknown subscriber identifiers never fall back to service lookup. The locator controls service lifetime.
      */
     #[Override]
     public function resolve(string $subscriberId): MessageSubscriber

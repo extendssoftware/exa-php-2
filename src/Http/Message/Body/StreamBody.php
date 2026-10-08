@@ -52,9 +52,7 @@ final class StreamBody implements Body
     }
 
     /**
-     * Reads from the current position in chunks of at most 8192 bytes.
-     *
-     * @return iterable<string> Non-empty byte chunks.
+     * {@inheritDoc}
      *
      * @throws BodyReadException When iteration is repeated, the stream is closed, or reading fails to make progress.
      */
@@ -75,7 +73,7 @@ final class StreamBody implements Body
     }
 
     /**
-     * Returns an unknown length without inspecting or consuming the stream.
+     * {@inheritDoc}
      *
      * @return null Stream body lengths are not inferred.
      */

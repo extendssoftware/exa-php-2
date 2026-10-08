@@ -20,16 +20,12 @@ use function strcasecmp;
 final readonly class BearerTokenCredentialsExtractor implements RequestCredentialsExtractor
 {
     /**
-     * Parses a case-insensitive Bearer scheme followed by spaces and a Bearer token.
+     * {@inheritDoc}
      *
-     * Multiple header values and malformed input are rejected. Other schemes return null. Tokens are not decoded;
-     * query parameters and request bodies are not credential sources.
-     *
-     * @param Request $request The request containing sensitive authentication data.
+     * Accepts a case-insensitive Bearer scheme followed by spaces and a token. Repeated header values are rejected.
+     * Tokens are not decoded; other schemes return null.
      *
      * @return BearerTokenCredentials|null The token credentials, or null for absent or unsupported authentication.
-     *
-     * @throws MalformedCredentialsException When the header is malformed or repeated.
      */
     #[Override]
     public function extract(#[SensitiveParameter] Request $request): ?BearerTokenCredentials

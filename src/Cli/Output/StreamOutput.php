@@ -46,11 +46,7 @@ final readonly class StreamOutput implements Output
     }
 
     /**
-     * Writes all supplied bytes to the standard output stream.
-     *
-     * @param string $message The bytes to write without added delimiters.
-     *
-     * @return void
+     * {@inheritDoc}
      *
      * @throws InvalidOutputStreamException When stdout is no longer an open writable stream.
      * @throws OutputWriteException When writing fails; some bytes may already have been delivered.
@@ -62,11 +58,7 @@ final readonly class StreamOutput implements Output
     }
 
     /**
-     * Writes all supplied bytes to the standard error stream.
-     *
-     * @param string $message The bytes to write without added delimiters.
-     *
-     * @return void
+     * {@inheritDoc}
      *
      * @throws InvalidOutputStreamException When stderr is no longer an open writable stream.
      * @throws OutputWriteException When writing fails; some bytes may already have been delivered.

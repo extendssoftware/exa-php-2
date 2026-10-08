@@ -27,17 +27,10 @@ final readonly class ExceptionHandlingMiddleware implements Middleware
     }
 
     /**
-     * Delegates once and converts any thrown failure into a response.
+     * {@inheritDoc}
      *
      * The factory receives this middleware's request, not replacements made downstream. Factory failures propagate
-     * unchanged without retry or fallback. Deferred body reads and response emission occur outside this boundary.
-     *
-     * @param Request $request The incoming request.
-     * @param RequestHandler $next The downstream handler.
-     *
-     * @return Response The downstream response or the factory's failure response.
-     *
-     * @throws Throwable When the exception response factory fails, propagated unchanged.
+     * without retry or fallback. Deferred body reads and response emission occur outside this boundary.
      */
     #[Override]
     public function process(#[SensitiveParameter] Request $request, RequestHandler $next): Response

@@ -14,9 +14,7 @@ use Override;
 final readonly class SystemClock implements Clock
 {
     /**
-     * Returns the current system time in UTC independently of PHP's default timezone.
-     *
-     * @return DateTimeImmutable The current system time in UTC.
+     * {@inheritDoc}
      */
     #[Override]
     public function now(): DateTimeImmutable

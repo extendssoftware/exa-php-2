@@ -35,14 +35,10 @@ final readonly class CompositeLogWriter implements LogWriter
     }
 
     /**
-     * Attempts each writer, then reports any collected logging failures.
+     * {@inheritDoc}
      *
-     * An empty composite discards the record. Exceptions outside LoggingException immediately stop delivery and
-     * propagate unchanged. Successful deliveries are not rolled back and failed deliveries are not retried.
-     *
-     * @param LogRecord $record The original record to deliver to every writer.
-     *
-     * @return void
+     * An empty composite discards the record. Failures outside `LoggingException` stop delivery immediately.
+     * Successful deliveries are not rolled back and failed deliveries are not retried.
      *
      * @throws CompositeLogWriteException When any writers report logging failures.
      * @throws Throwable When a writer throws a failure outside LoggingException.
