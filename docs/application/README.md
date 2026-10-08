@@ -4,6 +4,22 @@
 hooks. The configuration and module types belong to `ExtendsSoftware\ExaPHP\Application`; the locator remains a separate
 component.
 
+## Set up application development instructions
+
+Use the [application AGENTS template](AGENTS.template.md) as a starting point for projects using ExaPHP. Copy it into
+your application's root as `AGENTS.md`, then adapt the module layout, tooling, and operational guidance to your project.
+The template contains application-focused architecture guidance and the framework's shared coding conventions.
+
+For a standard Composer installation, run this from the application root if it does not already have an `AGENTS.md`:
+
+```sh
+cp vendor/extendssoftware/exa-php-2/docs/application/AGENTS.template.md AGENTS.md
+```
+
+If an instructions file already exists, merge the relevant guidance instead of replacing it. Framework maintainers
+review shared conventions when updating their `AGENTS.md`; synchronization is not automatic. Application copies remain
+independent, so review template changes when upgrading the framework and preserve your application-specific rules.
+
 ## Bootstrap an application
 
 After installing Composer dependencies, create a bootstrap script in the project root. This example assumes an

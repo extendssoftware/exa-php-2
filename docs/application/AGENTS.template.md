@@ -2,11 +2,12 @@
 
 ## Project
 
-- This project targets PHP 8.5.
+- This application targets PHP 8.5 and uses ExaPHP.
+- Treat the installed framework version and application Composer configuration as the source of supported APIs.
 - Use modern PHP features where they improve clarity, type safety, or maintainability.
 - Keep implementations small, explicit, and easy to reason about.
 - Prefer simple designs over unnecessary abstraction.
-- Respect existing package boundaries and dependency direction.
+- Respect application module boundaries and dependency direction.
 - Do not introduce new dependencies unless they provide clear value.
 
 ## PHP
@@ -40,7 +41,7 @@
 - Prefer first-class callables over equivalent closures when no additional closure logic is required.
 - Prefer early returns over deeply nested conditionals.
 - Avoid setters where explicit behavior or immutable replacement is clearer.
-- Avoid magic behavior unless it is an intentional framework feature.
+- Use framework behavior explicitly; avoid application magic that hides dependencies or side effects.
 - Do not use deprecated PHP functionality.
 
 ## Code Style
@@ -81,30 +82,59 @@
 
 ## Project Structure
 
-- Organize directories and namespaces by domain or framework concept rather than by PHP language construct.
-- Nest by concept, not by class.
-- Keep only the primary component contract and types that belong directly to the component at the component root.
-- Place contracts for nested concepts inside the namespace of the concept they define.
-- Do not place a type at the component root merely because it is an interface, abstraction, or shared contract.
-- An interface and the implementations intrinsic to that interface should normally share the same conceptual namespace.
-- For example, `ServiceLocator` belongs to `ServiceLocator`, while `ServiceResolver`, `FactoryServiceResolver`, and
-  `InvokableServiceResolver` belong to `ServiceLocator\Resolver`.
-- Group related secondary concepts under descriptive namespaces such as `Resolver`, `Exception`, `Factory`,
-  `Middleware`, or `Attribute`.
-- Create a nested namespace only when it represents a meaningful sub-concept with multiple related types or a clear
-  expectation of growth.
-- Do not create a directory merely because a class name contains multiple words.
-- Prefer shallow structures initially and introduce additional namespace levels only when they clarify ownership or
-  separate a meaningful sub-concept.
-- Keep interfaces together with the concept they define. Do not create generic `Interface`, `Contract`, or
-  `Implementation` directories solely to separate language constructs.
-- Keep implementations close to their abstraction when those implementations are intrinsic to the same component or
-  concept.
-- Use namespaces to communicate conceptual ownership. A type placed within a namespace must clearly belong to that
-  concept.
+- Organize application code by business module or bounded context, such as Article, Account, or Billing.
+- Keep each module's use cases, business rules, adapters, configuration, and tests clearly owned by that module.
+- Follow the existing module layout. Do not create empty layers or directories merely to follow a template.
+- Separate domain behavior, application orchestration, and infrastructure where those responsibilities exist.
+- Domain code owns aggregates, entities, value objects, business invariants, and domain events.
+- Application code owns command/query handlers, use-case orchestration, and application authorization services.
+- Infrastructure code owns persistence, messaging transports, external-service clients, and framework wiring.
+- HTTP and CLI adapters translate transport input into application operations and translate results for their callers.
+- Keep repository contracts with the domain or application concept that consumes them; place concrete database
+  implementations in infrastructure. Read-model contracts may belong to the query use case.
+- Keep interfaces with the concepts they define. Do not create generic `Interface`, `Contract`, or `Implementation`
+  directories solely to separate PHP language constructs.
+- Nest by concept, not by class. Introduce namespace levels only when they clarify ownership or responsibilities.
+- Use descriptive secondary namespaces such as `Command`, `Query`, `Exception`, `Middleware`, or `Persistence` when
+  they represent meaningful concepts in the module.
 - Avoid catch-all namespaces or directories such as `Util`, `Helper`, `Common`, or `Misc`.
-- Directory structure must correspond exactly to the PSR-4 namespace structure.
-- Do not introduce additional namespace levels that provide no meaningful architectural distinction.
+- Share code across modules only when there is a real shared concept and a clear owner; avoid a growing shared directory
+  that couples otherwise independent modules.
+- Directory structure must correspond exactly to the application's configured PSR-4 namespaces.
+
+## Framework Usage and Module Boundaries
+
+- Use ExaPHP contracts and integration modules for the capabilities they provide. Check the installed API before using
+  it.
+- Implement application adapters and policies through framework extension points rather than duplicating framework code.
+- Do not edit Composer-managed files in `vendor/`. Address framework defects through a dependency update or an explicit,
+  documented application adapter when appropriate.
+- Register services, routes, middleware, handlers, and subscribers through module configuration and application
+  overrides.
+- Keep service-locator access in bootstrap and service factories. Inject collaborators into handlers, policies,
+  repositories, subscribers, and domain services.
+- Let each module own its service registrations and public application contracts.
+- Communicate across modules through explicit application contracts or events. Do not access another module's tables,
+  repository implementation, or private domain internals directly.
+- Prefer explicit dependencies to automatic discovery or naming conventions that conceal application wiring.
+- Keep domain code independent of HTTP, CLI, service-location, and concrete persistence concerns. Small framework domain
+  contracts and value types may be used when they express the domain without introducing infrastructure coupling.
+
+## Application Use Cases
+
+- Keep HTTP and CLI handlers thin: decode input, apply input validation, establish trusted context, and invoke use
+  cases.
+- Keep commands, queries, and result DTOs explicit and typed. Do not pass HTTP requests into domain or application
+  logic.
+- Command handlers coordinate loading aggregates, authorization, domain behavior, persistence, and event dispatch.
+- Query handlers authorize access and return read models or output DTOs. Load aggregates only when the query needs them.
+- Keep business invariants in aggregates or domain services so every entry point observes the same rules.
+- Prefer domain behavior methods, such as `publish()`, over generic state setters.
+- Pass already-loaded resources to authorization checks rather than loading them again solely for authorization.
+- Use a presenter only when it performs meaningful mapping to an output DTO; HTTP serialization belongs at the HTTP
+  boundary.
+- Apply visibility and tenant restrictions to list/search queries before pagination and counting.
+- Inject the framework clock when behavior depends on the current time, and use a deterministic clock in tests.
 
 ## Classes and Immutability
 
@@ -119,16 +149,16 @@
 
 ## Dependencies
 
-- Each package must depend only on components required for its own core responsibility.
-- Do not introduce dependencies merely for convenience.
-- Prefer PHP standard library functionality when it is sufficient.
-- Keep package dependency direction explicit.
-- Avoid circular package dependencies.
-- Treat package boundaries as architectural boundaries.
-- Before adding a dependency, consider whether composition at a higher layer is more appropriate.
-
-For example, an HTTP package should not automatically depend on a validation package merely because validation is
-commonly used together with HTTP.
+- Each module must depend only on capabilities required for its own responsibility.
+- Keep dependency direction explicit: infrastructure implements domain/application contracts, and application services
+  orchestrate domain behavior. Domain code must not depend on infrastructure implementations.
+- Avoid circular module dependencies. Use a coordinating application service or events when direct coupling is
+  unsuitable.
+- Prefer PHP standard library functionality and existing framework capabilities when sufficient.
+- Do not introduce dependencies merely for convenience or duplicate a library already serving the same purpose.
+- Keep third-party API types behind adapters when exposing them would couple business logic to a vendor.
+- Review dependency changes for PHP compatibility, maintenance, and operational impact. Commit Composer metadata and
+  lock-file changes together when updating application dependencies.
 
 ## PHPDoc
 
@@ -169,8 +199,10 @@ commonly used together with HTTP.
 - Document relevant exceptions using `@throws`.
 - Document generic types, array shapes, lists, refined scalar types, templates, and callable signatures where useful.
 - Format literal configuration keys and paths as inline code in PHPDoc prose, for example `cli.commands` and
-  `http.request.json.maxBytes`. Use backticks rather than ordinary quotation marks; apply the same convention in Markdown.
-- Use inline code for literal code references in prose, such as service identifiers, class or method names, command names,
+  `http.request.json.maxBytes`. Use backticks rather than ordinary quotation marks; apply the same convention in
+  Markdown.
+- Use inline code for literal code references in prose, such as service identifiers, class or method names, command
+  names,
   and file paths, when distinguishing them from ordinary language. Keep PHPDoc tag types and parameter names unquoted
   so tools can parse tags such as `@param`, `@return`, and `@throws` normally.
 - Keep PHPDoc synchronized with the implementation.
@@ -186,19 +218,15 @@ Example:
 
 ```php
 /**
- * Resolves a service by its identifier.
+ * Loads an article by its identifier.
  *
- * The configured resolver chain is evaluated until a resolver capable of
- * resolving the requested service is found. The current resolution context
- * is reused for nested resolutions so circular dependencies can be detected.
+ * @param non-empty-string $id The article identifier.
  *
- * @param non-empty-string $id The service identifier.
+ * @return Article The stored article.
  *
- * @return object The resolved service instance.
- *
- * @throws ServiceNotFoundException When no resolver can resolve the service.
+ * @throws ArticleNotFoundException When the article does not exist.
  */
-public function get(string $id): object
+public function get(string $id): Article
 {
 }
 ```
@@ -209,9 +237,9 @@ Example:
 
 ```php
 /**
- * Returns the service identifier.
+ * Returns the article identifier.
  *
- * @return non-empty-string The service identifier.
+ * @return non-empty-string The article identifier.
  */
 public function id(): string
 {
@@ -231,36 +259,69 @@ public function id(): string
 
 ## Error Handling
 
-- Each component must define its own root exception interface.
-- The root exception interface must extend `Throwable`.
-- Name the root exception interface after the component, for example `ServiceLocatorException`.
-- Keep the component root exception interface at the component root.
-- Place specific exceptions in an `Exception` subnamespace of the concept that owns the failure.
-- Use a component-level `Exception` namespace for failures shared across concepts or owned by the component as a whole.
-- Do not create an exception namespace per class; group exceptions by meaningful concept.
-- Every component-specific exception must implement the component root exception interface.
-- Specific exceptions should extend the most appropriate SPL exception type, such as `InvalidArgumentException`,
-  `LogicException`, or `RuntimeException`, while also implementing the component root exception interface.
-- Use specific exception types for distinct failure conditions.
-- Callers must be able to catch either a specific exception or the component root exception.
-- Do not use generic `Exception` or `RuntimeException` directly for component-specific failures when a more specific
-  exception can be defined.
+- Each business module should define a root exception interface extending `Throwable`, such as `ArticleException`.
+- Keep that interface at the module root and specific exceptions under the concept that owns the failure.
+- Application-owned module exceptions must implement their module's root exception interface.
+- Specific exceptions should extend the most appropriate SPL type, such as `InvalidArgumentException`, `LogicException`,
+  or `RuntimeException`, while implementing the module exception contract.
+- Use specific exception types for distinct failures. Do not use generic `Exception` or `RuntimeException` directly
+  for application failures that need a meaningful public contract.
+- Adapters implementing framework contracts must translate expected failures into the exceptions required by those
+  contracts. Preserve lower-level causes without exposing infrastructure details in public responses.
+- Keep domain exceptions independent of HTTP status codes, Problem Details, CLI output, and transport-specific metadata.
+- Map application exceptions to safe HTTP Problem Details through the framework's exception mapping infrastructure.
+- Distinguish permission denial, domain invariant failure, missing resources, and operational failure by their meaning,
+  not merely by the layer in which they were thrown.
 - Exceptions should represent exceptional situations rather than normal control flow.
 - Catch exceptions as narrowly as possible.
 - Do not catch `Throwable` unless errors such as `TypeError` and other engine-level failures are intentionally part of
   the recovery or translation behavior.
 - Do not wrap an exception merely to replace it with another exception to the same meaning.
 - Wrap an exception only when the current abstraction adds meaningful context, translates a lower-level failure into the
-  component's public exception contract, or changes the semantic meaning of the failure.
+  module's or framework's public exception contract, or changes the semantic meaning of the failure.
 - When wrapping an exception, preserve the original exception as the previous exception.
 - A wrapping exception message must add useful context that is not already obvious from the original exception.
 - Avoid repeated wrapping across multiple layers when each layer adds no meaningful information.
-- Prefer propagating an existing component exception unchanged when it already accurately represents the failure at the
-  current abstraction level.
-- Do not expose lower-level implementation exceptions through a public component API when those exceptions are not part
-  of that API's documented contract.
+- Prefer propagating an existing module or framework exception unchanged when it already accurately represents the
+  failure at the current abstraction level.
+- Do not expose lower-level implementation exceptions through a public application API when those exceptions are not
+  part of that API's documented contract.
 - Exception messages must be clear and useful for debugging.
 - Document publicly relevant exceptions using `@throws`.
+
+## Authentication and Authorization
+
+- Authentication verifies credentials and establishes an `Actor`; authorization evaluates that actor's permissions.
+- An actor is an identity reference, not a loaded user entity or proof that authentication occurred.
+- Obtain actors from successful authentication or trusted application entry points. Do not trust actor identifiers
+  supplied directly in request bodies, headers, or message payloads as proof of identity.
+- Attach required authentication middleware explicitly to protected routes or groups. Keep public endpoints outside
+  protected groups and test both access paths.
+- Application authenticators own token verification and account lookup; use established verification libraries rather
+  than implementing cryptographic verification algorithms.
+- Distinguish rejected credentials from operational verification failures. Failures must never grant access.
+- Enforce authorization in application use cases, including command/query handlers, so checks also apply outside HTTP.
+- Use focused application policies implementing `Authorizer`, optionally exposed through typed services such as
+  `ArticleAuthorization`. Share permission lookup through injected services rather than global actor state.
+- Deny unsupported actions or resource types. Include actor kind as well as identifier in identity comparisons.
+- Keep resource permissions separate from aggregate invariants: permission to publish does not make an invalid article
+  publishable. The aggregate must still enforce its business rules.
+- Authentication and authorization failures must not expose credentials, private account details, or sensitive
+  resources.
+
+## Persistence and External Adapters
+
+- Use repositories and read-model queries with explicit contracts; keep database queries out of transport handlers
+  and domain entities.
+- Parameterize queries, validate dynamic identifiers, and preserve tenant boundaries in reads and writes.
+- Use optimistic concurrency checks or appropriate locking where concurrent updates could invalidate business decisions.
+- Keep schema changes in versioned migrations. Consider existing data, deployed workers, and rolling deployments when
+  changing schemas or message formats.
+- Keep transactions scoped to the atomic application operation. Do not wrap worker lifecycles or external network calls
+  in long-lived database transactions.
+- Configure timeouts for external calls. Add retries only where failure semantics and idempotency make them safe.
+- Integration-test adapters against the actual infrastructure they implement, including rollback, concurrency, and
+  ambiguous outcomes where relevant.
 
 ## Transactions and Events
 
@@ -271,8 +332,35 @@ public function id(): string
 - Route deferred work and external side effects through a transactional outbox.
 - Persist outbox messages in the same transaction as the aggregate changes.
 - Process committed outbox messages asynchronously, with retries and duplicate-delivery handling.
-- Do not start nested transactions from handlers or synchronous listeners.
+- Use the configured transactional command middleware for command transaction ownership. Do not start nested
+  transactions from handlers or synchronous listeners.
 - Keep transaction management, synchronous event dispatch, and asynchronous delivery as separate responsibilities.
+
+## Asynchronous Processing
+
+- Use Outbox for reliable publication of work recorded with application changes, and Messaging for subscriber delivery.
+- Configure application persistence/transport adapters, subscriber mappings, and retry policies explicitly.
+- Subscribers must tolerate duplicate delivery. Protect non-idempotent side effects with durable deduplication or an
+  equivalent application guarantee.
+- Treat acquisition attempts, retry timing, stale ownership, and terminal failure as part of the adapter contract.
+- Choose retry policies according to application failure semantics; do not endlessly retry permanent failures.
+- Let subscribers propagate failures so processors can apply their configured retry or rejection behavior.
+- Version durable message types and payloads when compatibility changes. Consider messages already queued at deployment.
+- Keep actor context explicit in asynchronous operations. Decide whether execution uses a system actor or a verified
+  initiating actor, and whether current authorization must be reevaluated.
+- Use worker commands and process supervision for lifecycle management. Shared services must not retain mutable
+  per-request, per-actor, or per-message state between operations.
+
+## Configuration and Operations
+
+- Keep deployment-specific settings outside business logic and apply them through application configuration.
+- Do not commit real secrets, credentials, tokens, or production personal data. Provide safe example configuration.
+- Validate required configuration and fail with useful, redacted diagnostics when dependencies cannot be initialized.
+- Preserve request/message correlation identifiers across application boundaries when available.
+- Log operational context without dumping requests, credentials, or sensitive domain objects.
+- Keep health checks, migrations, and maintenance commands scoped to their operational purpose; do not add business
+  side effects to readiness checks or application bootstrap.
+- Document required services, extensions, worker processes, environment settings, and deployment steps.
 
 ## Testing
 
@@ -315,7 +403,7 @@ public function id(): string
 
 ### End-to-End Tests
 
-- Use end-to-end tests to verify complete externally observable flows through the application or framework.
+- Use end-to-end tests to verify complete externally observable flows through the application.
 - Exercise the system through its public entry points, such as HTTP or CLI interfaces.
 - Keep end-to-end tests focused on critical behavior and integration paths.
 - Do not duplicate every unit- or integration-level scenario as an end-to-end test.
@@ -331,8 +419,8 @@ public function id(): string
 ### Test Naming
 
 - Name unit test classes after the class or behavior under test using the `Test` suffix, for example
-  `ServiceLocatorTest`.
-- Name integration test classes using the `IntegrationTest` suffix, for example `ServiceLocatorIntegrationTest`.
+  `PublishArticleHandlerTest`.
+- Name integration test classes using the `IntegrationTest` suffix, for example `ArticleRepositoryIntegrationTest`.
 - Name end-to-end test classes using the `E2ETest` suffix, for example `HttpApplicationE2ETest`.
 - Do not use prefixes such as `Integration` or `E2E` in test class names.
 - Keep the subject under test at the beginning of the class name.
@@ -354,7 +442,8 @@ public function id(): string
 - Do not treat `CHANGELOG.md` as a replacement for Git history.
 - Describe the net change since the previous release, not the sequence of development steps or commits.
 - Before adding an entry, check whether an existing unreleased entry should be updated or consolidated.
-- Summarize a newly introduced component in one entry unless separate capabilities warrant independent mention.
+- Summarize a newly introduced application capability in one entry unless separate capabilities warrant independent
+  mention.
 - Fold revisions to unreleased functionality into its existing entry. Use `Changed`, `Fixed`, or `Removed` when
   describing differences from previously released behavior.
 - Do not add separate entries for tests accompanying a feature.
@@ -369,7 +458,7 @@ public function id(): string
     - repository housekeeping.
 - Add changes such as:
     - new public APIs;
-    - new framework capabilities;
+    - new application capabilities;
     - breaking changes;
     - changed public behavior;
     - compatibility changes;
@@ -390,11 +479,9 @@ Example:
 
 ### Added
 
-- Initial ExaPHP 2.0 project structure.
-- Composer package configuration requiring PHP 8.5.
-- PSR-4 autoloading for the `ExtendsSoftware\ExaPHP` namespace.
-- MIT license.
-- Initial project documentation.
+- Article publication workflow with authorization and deferred subscriber processing.
+- Protected HTTP endpoints for article management.
+- Database migrations and worker deployment instructions.
 ```
 
 Avoid entries such as:
@@ -410,31 +497,26 @@ unless those changes have meaningful impact outside normal repository maintenanc
 
 ## Documentation
 
-- When updating this file, review [the application AGENTS template](docs/application/AGENTS.template.md) and update
-  applicable shared conventions in the same change, including PHP, code style, PHPDoc, testing, and sensitive-data rules.
-- Keep framework-specific guidance in this file and application-specific guidance in the template. Preserve intentional
-  differences rather than copying every change mechanically. Template synchronization is a maintenance responsibility,
-  not an automated process; copies in consuming application repositories must be reviewed separately.
 - Keep documentation synchronized with the implementation.
-- Always present documented items in the same order as the corresponding source listing or structure. Component lists
+- Always present documented items in the same order as the corresponding source listing or structure. Module lists
   must follow the alphabetical directory order in `src/`; API and configuration lists must follow their declarations.
 - Keep this ordering consistent across documentation files and update it when the corresponding source order changes.
 - Update `README.md` files when installation, setup, public APIs, requirements, or usage change.
 - Keep the root `README.md` focused on project purpose, status, requirements, setup, a minimal usage example, and
   testing.
-- Summarize available components briefly and link to their detailed documentation.
-- Place detailed component usage, configuration, extension points, exceptions, and edge cases in dedicated
+- Summarize application modules briefly and link to their detailed documentation.
+- Place detailed module usage, configuration, extension points, exceptions, and edge cases in dedicated
   documentation.
 - Avoid duplicating API reference material or internal architectural explanations in the root `README.md`.
 - When functionality changes, update documentation at the appropriate level; do not automatically expand the
   `README.md`.
 - Prefer explaining intent and behavior rather than merely restating implementation details.
-- Write component documentation as a usage guide with relevant constraints, not a prose copy of the source or PHPDoc.
-- Keep each paragraph useful for configuring, using, extending, or troubleshooting the component. Remove material that
+- Write application documentation as a usage guide with relevant constraints, not a prose copy of the source or PHPDoc.
+- Keep each paragraph useful for configuring, using, extending, or troubleshooting the application. Remove material that
   serves none of these purposes.
 - Organize guides around user tasks: basic usage first, then relevant constraints, error handling, and extension points.
 - Explain guarantees and limitations that affect user decisions. Keep internal algorithms and architectural rationale
-  in code documentation unless users need them to extend the component.
+  in code documentation unless users need them to extend the application.
 - Explain each behavior once in its most relevant section and link to it rather than repeating it.
 - Use small, purposeful examples. State any application-specific prerequisites and demonstrate extension points with
   an example or a link to a complete implementation when useful.
