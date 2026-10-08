@@ -79,7 +79,7 @@ final readonly class RequestAttributes
     }
 
     /**
-     * Returns a attribute collection with metadata added or replaced by its concrete class.
+     * Returns an attribute collection with metadata added or replaced by its concrete class.
      *
      * @param object $metadata The metadata to add or replace.
      *
