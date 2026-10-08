@@ -6,6 +6,8 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- Authentication component with credential and authenticator contracts returning an Identity actor, and distinct
+  exceptions for rejected credentials, unsupported credential types, and operational verification failures.
 - Authorization component with actor-based access requests, an application authorizer contract, and a guard that
   enforces decisions while preserving evaluation failures. Includes request validation and denial exceptions, plus
   an opt-in integration module for guard wiring and generic HTTP 403 Problem Details responses.
