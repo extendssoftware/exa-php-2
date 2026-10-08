@@ -9,6 +9,7 @@ use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderExce
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use SensitiveParameter;
 
 use function count;
 use function is_string;
@@ -68,7 +69,7 @@ final readonly class ContentTypeRequestBodyDecoder implements RequestBodyDecoder
      * @throws HttpException When the selected decoder fails, propagated unchanged.
      */
     #[Override]
-    public function decode(Request $request): mixed
+    public function decode(#[SensitiveParameter] Request $request): mixed
     {
         $types = $request->headers->get('Content-Type');
         $token = '[\w!#$%&\x27*+.^`|\~-]+';

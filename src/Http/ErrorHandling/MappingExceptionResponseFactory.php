@@ -12,6 +12,7 @@ use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Override;
 use Throwable;
+use SensitiveParameter;
 
 use function array_is_list;
 
@@ -59,7 +60,7 @@ final readonly class MappingExceptionResponseFactory implements ExceptionRespons
      * @throws Throwable When mapping, encoding, or fallback creation fails, propagated unchanged.
      */
     #[Override]
-    public function create(Throwable $exception, Request $request): Response
+    public function create(Throwable $exception, #[SensitiveParameter] Request $request): Response
     {
         foreach ($this->mappers as $mapper) {
             $problem = $mapper->map($exception, $request);

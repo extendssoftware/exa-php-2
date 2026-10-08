@@ -3,6 +3,15 @@
 The `ExtendsSoftware\ExaPHP\Integration` namespace contains application modules and adapters that connect framework components.
 `IntegrationException` is the root exception contract for integration failures.
 
+## Register the Authentication module
+
+Register `Integration\Authentication\AuthenticationModule` alongside `HttpModule` and supply an application
+`Authentication\Authenticator`. Attach `Integration\Authentication\Http\AuthenticationMiddleware` to protected routes
+or groups; it is not global by default. The module wires Bearer header extraction and challenge responses, and successful
+verification attaches an `Identity\Actor` to the downstream request. See the
+[Authentication HTTP guide](../authentication/README.md#require-bearer-authentication-on-http-routes) for service wiring,
+public routes, actor access, error handling, and custom schemes.
+
 ## Register the Authorization module
 
 `Integration\Authorization\AuthorizationModule` registers a shared `AuthorizationGuard` using an application-provided

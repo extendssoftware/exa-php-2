@@ -158,6 +158,11 @@ or clone its resources. Request and response construction never takes ownership 
 
 ## Implement handlers and middleware
 
+Mark concrete request parameters with `#[SensitiveParameter]` (import `SensitiveParameter`) so stack traces do not
+expose request contents. Apply it to each implementation; interface attributes are not inherited. Framework request
+consumers use this protection, but application handlers and middleware must do so too. Explicit logging and object
+dumps still need separate redaction.
+
 Handlers implement `Handler\RequestHandler::handle(Request): Response`. Middleware implements
 `Middleware\Middleware::process(Request, RequestHandler): Response` and can delegate or return a response directly.
 

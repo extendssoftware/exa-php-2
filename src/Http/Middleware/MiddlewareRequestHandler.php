@@ -9,6 +9,7 @@ use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Throwable;
+use SensitiveParameter;
 
 /**
  * Connects one middleware to the remaining handler chain.
@@ -37,7 +38,7 @@ final readonly class MiddlewareRequestHandler implements RequestHandler
      * @throws Throwable When execution fails, propagated unchanged.
      */
     #[Override]
-    public function handle(Request $request): Response
+    public function handle(#[SensitiveParameter] Request $request): Response
     {
         return $this->middleware->process($request, $this->next);
     }

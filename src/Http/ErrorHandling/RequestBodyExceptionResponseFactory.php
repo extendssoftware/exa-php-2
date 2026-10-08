@@ -15,6 +15,7 @@ use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use Throwable;
+use SensitiveParameter;
 
 /**
  * Maps request decoding failures to safe 400, 413, or 415 responses and delegates other failures.
@@ -41,7 +42,7 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
      * @throws Throwable When encoding or the fallback fails, propagated unchanged.
      */
     #[Override]
-    public function create(Throwable $exception, Request $request): Response
+    public function create(Throwable $exception, #[SensitiveParameter] Request $request): Response
     {
         [$status, $message] = match (true) {
             $exception instanceof MalformedRequestBodyException => [StatusCode::BadRequest, 'Bad Request'],

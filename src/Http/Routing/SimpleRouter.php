@@ -7,6 +7,7 @@ namespace ExtendsSoftware\ExaPHP\Http\Routing;
 use Override;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use SensitiveParameter;
 
 use function array_map;
 use function usort;
@@ -47,7 +48,7 @@ final readonly class SimpleRouter implements Router
      * @return RouteMatch|null The route match, or null for an unknown path or unsupported method.
      */
     #[Override]
-    public function match(Request $request): ?RouteMatch
+    public function match(#[SensitiveParameter] Request $request): ?RouteMatch
     {
         foreach ($this->matchingRoutes($request) as $candidate) {
             if ($candidate['route']->method === $request->method) {
@@ -66,7 +67,7 @@ final readonly class SimpleRouter implements Router
      * @return list<Method> The supported methods, or an empty list for an unrouted target.
      */
     #[Override]
-    public function allowedMethods(Request $request): array
+    public function allowedMethods(#[SensitiveParameter] Request $request): array
     {
         return array_map(
             static fn(array $candidate): Method => $candidate['route']->method,
@@ -81,7 +82,7 @@ final readonly class SimpleRouter implements Router
      *
      * @return list<array{route: Route, parameters: array<string, non-empty-string>}> Matching registrations.
      */
-    private function matchingRoutes(Request $request): array
+    private function matchingRoutes(#[SensitiveParameter] Request $request): array
     {
         if ($request->method === Method::Connect) {
             return [];

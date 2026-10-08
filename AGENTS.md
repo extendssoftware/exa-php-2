@@ -214,6 +214,16 @@ public function id(): string
 }
 ```
 
+## Sensitive Data
+
+- Mark every HTTP `Request` parameter on concrete production methods and closures with `#[SensitiveParameter]`,
+  including middleware, handlers, routing, decoding, and response factories, regardless of visibility.
+- Import `SensitiveParameter` explicitly. Attributes on interface declarations do not protect implementation arguments;
+  apply the attribute to each concrete implementation.
+- Use the same protection for parameters receiving credentials or secrets.
+- `SensitiveParameter` redacts arguments in stack traces only. Do not log or dump request headers, bodies, or credential
+  values without explicit redaction; the attribute does not protect other references or explicit logging.
+
 ## Error Handling
 
 - Each component must define its own root exception interface.

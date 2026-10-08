@@ -8,6 +8,7 @@ use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Override;
 use Throwable;
+use SensitiveParameter;
 
 /**
  * Defers handler resolution until execution reaches the final handler.
@@ -34,7 +35,7 @@ final readonly class ResolvingRequestHandler implements RequestHandler
      * @throws Throwable When resolution or execution fails.
      */
     #[Override]
-    public function handle(Request $request): Response
+    public function handle(#[SensitiveParameter] Request $request): Response
     {
         return $this->resolver->resolve($this->handlerId)->handle($request);
     }

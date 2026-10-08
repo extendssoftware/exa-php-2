@@ -12,6 +12,7 @@ use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
 use Override;
 use Throwable;
+use SensitiveParameter;
 
 /**
  * Represents every failure as a generic Problem Details 500 response without exception details.
@@ -31,7 +32,7 @@ final readonly class DefaultExceptionResponseFactory implements ExceptionRespons
      * @throws ResponseEncodingException When encoding fails.
      */
     #[Override]
-    public function create(Throwable $exception, Request $request): Response
+    public function create(Throwable $exception, #[SensitiveParameter] Request $request): Response
     {
         return new ProblemDetailsResponseFactory()->create(
             new ProblemDetails(StatusCode::InternalServerError, 'Internal Server Error'),

@@ -7,7 +7,9 @@ All notable changes to ExaPHP will be documented in this file.
 ### Added
 
 - Authentication component with credential and authenticator contracts returning an Identity actor, and distinct
-  exceptions for rejected credentials, unsupported credential types, and operational verification failures.
+  exceptions for rejected credentials, unsupported credential types, and operational verification failures. Includes
+  Bearer credentials with debug redaction and serialization prevention, plus opt-in HTTP integration for protected
+  routes, actor propagation, strict header extraction, and scheme-specific challenges with generic Problem Details.
 - Authorization component with actor-based access requests, an application authorizer contract, and a guard that
   enforces decisions while preserving evaluation failures. Includes request validation and denial exceptions, plus
   an opt-in integration module for guard wiring and generic HTTP 403 Problem Details responses.
@@ -46,7 +48,8 @@ All notable changes to ExaPHP will be documented in this file.
   responses. Route middleware executes after matching and can short-circuit before handler resolution; nested groups
   share path prefixes and inherited middleware, with expanded routes also supporting URL generation. Includes
   single-use stream bodies, PHP request creation and response emission adapters, and
-  exception-handling middleware with customizable response factories and a generic 500 default. Immutable RFC 9457
+  exception-handling middleware with customizable response factories and a generic 500 default. Concrete HTTP request
+  parameters are marked sensitive to redact their values from stack traces. Immutable RFC 9457
   Problem Details and JSON response creation provide default 400/404/405/406/413/415/500 error bodies with safe generic
   titles. Named module `ExceptionProblemDetailsMapper` services compose in configuration order, rendering the first
   match before framework fallbacks. Content negotiation selects registered response factories using Accept preferences,

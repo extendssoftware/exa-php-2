@@ -19,6 +19,7 @@ use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewarePipeline;
 use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
 use Override;
 use Throwable;
+use SensitiveParameter;
 
 use function array_map;
 use function implode;
@@ -57,7 +58,7 @@ final readonly class RoutingRequestHandler implements RequestHandler
      * @throws Throwable When routing, middleware or handler resolution, or execution fails, propagated unchanged.
      */
     #[Override]
-    public function handle(Request $request): Response
+    public function handle(#[SensitiveParameter] Request $request): Response
     {
         $match = $this->router->match($request);
         if ($match !== null) {

@@ -11,6 +11,7 @@ use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use Override;
 use Throwable;
+use SensitiveParameter;
 
 /**
  * Maps access denials to generic forbidden problem details.
@@ -28,7 +29,7 @@ final readonly class AccessDeniedProblemDetailsMapper implements ExceptionProble
      * @return ProblemDetails|null A generic 403 problem for access denial, or null for unrelated failures.
      */
     #[Override]
-    public function map(Throwable $exception, Request $request): ?ProblemDetails
+    public function map(Throwable $exception, #[SensitiveParameter] Request $request): ?ProblemDetails
     {
         if (!$exception instanceof AccessDeniedException) {
             return null;

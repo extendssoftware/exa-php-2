@@ -10,6 +10,7 @@ use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Throwable;
+use SensitiveParameter;
 
 /**
  * Converts downstream exceptions and engine errors into responses through an injected factory.
@@ -39,7 +40,7 @@ final readonly class ExceptionHandlingMiddleware implements Middleware
      * @throws Throwable When the exception response factory fails, propagated unchanged.
      */
     #[Override]
-    public function process(Request $request, RequestHandler $next): Response
+    public function process(#[SensitiveParameter] Request $request, RequestHandler $next): Response
     {
         try {
             return $next->handle($request);

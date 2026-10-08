@@ -11,6 +11,7 @@ use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use JsonException;
+use SensitiveParameter;
 
 use function json_decode;
 use function strlen;
@@ -54,7 +55,7 @@ final readonly class JsonRequestBodyDecoder implements RequestBodyDecoder
      * @throws HttpException When reading fails, propagated unchanged.
      */
     #[Override]
-    public function decode(Request $request): mixed
+    public function decode(#[SensitiveParameter] Request $request): mixed
     {
         $content = '';
         $length = 0;

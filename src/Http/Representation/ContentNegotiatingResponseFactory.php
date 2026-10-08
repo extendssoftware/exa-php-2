@@ -12,6 +12,7 @@ use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
 use Throwable;
+use SensitiveParameter;
 
 use function array_key_exists;
 use function count;
@@ -89,7 +90,7 @@ final readonly class ContentNegotiatingResponseFactory
      * @throws Throwable When the selected factory fails, propagated unchanged.
      */
     public function create(
-        Request $request,
+        #[SensitiveParameter] Request $request,
         mixed $data,
         StatusCode $statusCode = StatusCode::Ok,
         Headers $headers = new Headers(),
