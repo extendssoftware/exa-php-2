@@ -8,7 +8,6 @@ use Override;
 use Closure;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Command;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use Throwable;
 
 /**
  * Adapts a pipeline closure to command execution.
@@ -27,14 +26,7 @@ final readonly class ClosureCommandExecution implements CommandExecution
     }
 
     /**
-     * Executes the step with the supplied command and context.
-     *
-     * @param Command $command The command to execute.
-     * @param DispatchContext $context The execution metadata.
-     *
-     * @return void
-     *
-     * @throws Throwable When the step fails, propagated unchanged.
+     * {@inheritDoc}
      */
     #[Override]
     public function execute(Command $command, DispatchContext $context): void

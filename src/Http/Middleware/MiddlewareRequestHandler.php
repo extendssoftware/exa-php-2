@@ -8,7 +8,6 @@ use Override;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use Throwable;
 use SensitiveParameter;
 
 /**
@@ -29,13 +28,7 @@ final readonly class MiddlewareRequestHandler implements RequestHandler
     }
 
     /**
-     * Executes middleware with the remaining chain available for delegation.
-     *
-     * @param Request $request The incoming request.
-     *
-     * @return Response The middleware's response.
-     *
-     * @throws Throwable When execution fails, propagated unchanged.
+     * {@inheritDoc}
      */
     #[Override]
     public function handle(#[SensitiveParameter] Request $request): Response

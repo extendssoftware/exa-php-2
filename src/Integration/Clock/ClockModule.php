@@ -14,9 +14,7 @@ use Override;
 final readonly class ClockModule implements Module, ConfigurableModule
 {
     /**
-     * Returns the clock service configuration directory.
-     *
-     * @return non-empty-string The absolute configuration directory path.
+     * {@inheritDoc}
      */
     #[Override]
     public function configDirectory(): string

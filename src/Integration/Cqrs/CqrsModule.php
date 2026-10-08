@@ -14,9 +14,7 @@ use ExtendsSoftware\ExaPHP\Application\Module\Module;
 final readonly class CqrsModule implements Module, ConfigurableModule
 {
     /**
-     * Returns the CQRS service configuration directory.
-     *
-     * @return non-empty-string The absolute configuration directory path.
+     * {@inheritDoc}
      */
     #[Override]
     public function configDirectory(): string

@@ -19,11 +19,7 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
 final readonly class AliasServiceResolver implements ServiceResolver
 {
     /**
-     * Checks whether the definition describes an alias.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     *
-     * @return bool Whether the definition is supported.
+     * {@inheritDoc}
      */
     #[Override]
     public function supports(ServiceDefinition $definition): bool

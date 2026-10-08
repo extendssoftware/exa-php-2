@@ -14,9 +14,7 @@ use Override;
 final readonly class OutboxModule implements Module, ConfigurableModule
 {
     /**
-     * Returns the outbox service and command configuration directory.
-     *
-     * @return non-empty-string The absolute configuration directory.
+     * {@inheritDoc}
      */
     #[Override]
     public function configDirectory(): string

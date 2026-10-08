@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Ddd\Specification;
 
 use Override;
-use Throwable;
 
 /**
  * Requires either condition, evaluating the right operand only when the left fails.
@@ -26,13 +25,7 @@ final class OrSpecification extends AbstractSpecification
     }
 
     /**
-     * Evaluates the condition for the supplied candidate.
-     *
-     * @param T $candidate The object to evaluate.
-     *
-     * @return bool Whether the composite condition is satisfied.
-     *
-     * @throws Throwable When an evaluated operand fails, propagated unchanged.
+     * {@inheritDoc}
      */
     #[Override]
     public function isSatisfiedBy(object $candidate): bool

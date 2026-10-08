@@ -14,9 +14,7 @@ use ExtendsSoftware\ExaPHP\Application\Module\Module;
 final readonly class LoggingModule implements Module, ConfigurableModule
 {
     /**
-     * Returns the logging service configuration directory.
-     *
-     * @return non-empty-string The absolute configuration directory path.
+     * {@inheritDoc}
      */
     #[Override]
     public function configDirectory(): string

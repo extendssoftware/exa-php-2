@@ -28,13 +28,7 @@ final readonly class ServiceLocatorMiddlewareResolver implements MiddlewareResol
     }
 
     /**
-     * Resolves and validates the requested middleware service.
-     *
-     * @param non-empty-string $id The middleware service identifier.
-     *
-     * @return Middleware The resolved middleware.
-     *
-     * @throws MiddlewareResolutionException When service resolution fails or the service is not middleware.
+     * {@inheritDoc}
      */
     #[Override]
     public function resolve(string $id): Middleware

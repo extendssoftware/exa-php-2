@@ -14,9 +14,7 @@ use Override;
 final readonly class MessagingModule implements Module, ConfigurableModule
 {
     /**
-     * Returns the messaging service and command configuration directory.
-     *
-     * @return non-empty-string The absolute configuration directory.
+     * {@inheritDoc}
      */
     #[Override]
     public function configDirectory(): string

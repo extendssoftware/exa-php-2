@@ -28,13 +28,7 @@ final readonly class ServiceLocatorHandlerResolver implements HandlerResolver
     }
 
     /**
-     * Resolves and validates the requested handler service.
-     *
-     * @param non-empty-string $id The handler service identifier.
-     *
-     * @return CommandHandler The resolved handler.
-     *
-     * @throws HandlerResolutionException When service resolution fails or the service is not a command handler.
+     * {@inheritDoc}
      */
     #[Override]
     public function resolve(string $id): CommandHandler

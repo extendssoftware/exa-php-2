@@ -14,9 +14,7 @@ use Override;
 final readonly class AuthenticationModule implements Module, ConfigurableModule
 {
     /**
-     * Returns the authentication integration configuration directory.
-     *
-     * @return non-empty-string The absolute configuration directory path.
+     * {@inheritDoc}
      */
     #[Override]
     public function configDirectory(): string

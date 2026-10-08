@@ -16,11 +16,7 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 final readonly class InstanceServiceResolver implements ServiceResolver
 {
     /**
-     * Checks whether the definition contains an existing service instance.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     *
-     * @return bool Whether the definition is supported.
+     * {@inheritDoc}
      */
     #[Override]
     public function supports(ServiceDefinition $definition): bool

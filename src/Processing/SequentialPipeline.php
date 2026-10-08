@@ -23,13 +23,7 @@ final class SequentialPipeline implements Pipeline
     private array $steps = [];
 
     /**
-     * Appends a step without executing it.
-     *
-     * @param Transformer<mixed, mixed>|Validator<mixed> $step The step to run after existing steps.
-     *
-     * @return void
-     *
-     * @throws AmbiguousPipelineStepException When the step implements both contracts; registration is unchanged.
+     * {@inheritDoc}
      */
     #[Override]
     public function append(Transformer|Validator $step): void

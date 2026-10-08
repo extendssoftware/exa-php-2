@@ -54,13 +54,7 @@ final readonly class RegisteredCommands implements CommandRegistry
     }
 
     /**
-     * Returns the definition registered under an exact name.
-     *
-     * @param string $name The case-sensitive command name.
-     *
-     * @return CommandDefinition The registered definition, retaining its identity.
-     *
-     * @throws CommandNotFoundException When the command name is absent.
+     * {@inheritDoc}
      */
     #[Override]
     public function get(string $name): CommandDefinition

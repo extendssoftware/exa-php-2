@@ -8,7 +8,6 @@ use Override;
 use Closure;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use Throwable;
 
 /**
  * Adapts a pipeline closure to query execution.
@@ -27,16 +26,7 @@ final readonly class ClosureQueryExecution implements QueryExecution
     }
 
     /**
-     * Executes the step with the supplied query and context.
-     *
-     * @template TResult
-     *
-     * @param Query<TResult> $query The query to execute.
-     * @param DispatchContext $context The execution metadata.
-     *
-     * @return TResult The query result.
-     *
-     * @throws Throwable When the step fails, propagated unchanged.
+     * {@inheritDoc}
      */
     #[Override]
     public function execute(Query $query, DispatchContext $context): mixed

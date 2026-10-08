@@ -27,11 +27,7 @@ use function sprintf;
 final readonly class FactoryServiceResolver implements ServiceResolver
 {
     /**
-     * Checks whether the definition describes a factory service.
-     *
-     * @param ServiceDefinition $definition The service definition.
-     *
-     * @return bool Whether the definition is supported.
+     * {@inheritDoc}
      */
     #[Override]
     public function supports(ServiceDefinition $definition): bool

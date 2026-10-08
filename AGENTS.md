@@ -132,6 +132,12 @@ commonly used together with HTTP.
 
 ## PHPDoc
 
+- For methods implementing an interface or overriding an inherited method, use a PHPDoc block containing only
+  `{@inheritDoc}` when the inherited documentation fully describes the method.
+- Do not repeat inherited documentation. Add explicit PHPDoc only when the implementation introduces relevant
+  behavior, constraints, exceptions, or more precise types that the inherited documentation does not describe.
+- PHPDoc blocks containing only `{@inheritDoc}` are exempt from the summary, `@param`, and `@return` requirements below.
+- Keep complete contract documentation on the interface or parent method.
 - Add complete PHPDoc to all public classes, interfaces, traits, enums, methods, properties, and constants.
 - Add PHPDoc to every non-promoted property, regardless of visibility.
 - Include an `@var` tag in every non-promoted property's PHPDoc, even when it repeats the native type. Use refined

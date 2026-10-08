@@ -47,11 +47,7 @@ abstract class AbstractAggregateRoot implements AggregateRoot
     }
 
     /**
-     * Returns recorded events in order and clears the pending events.
-     *
-     * Event identity and repeated occurrences are preserved. Releasing events does not publish them.
-     *
-     * @return list<DomainEvent> The recorded events, or an empty list when none are pending.
+     * {@inheritDoc}
      */
     #[Override]
     final public function releaseEvents(): array
