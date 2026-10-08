@@ -353,6 +353,7 @@ The module supplies these shared services:
 | --- | --- |
 | `Http\Handler\RequestHandler` | `MiddlewarePipeline` wrapping the routing handler |
 | `Http\Routing\Router` | `SimpleRouter` using `http.routes` |
+| `Http\Middleware\MiddlewareResolver` | Lazy service-locator middleware resolution |
 | `Http\Handler\HandlerResolver` | `ServiceLocatorHandlerResolver` |
 | `Http\Routing\RoutingRequestHandler` | Routing and lazy handler dispatch |
 | `Http\Middleware\ExceptionHandlingMiddleware` | Configured exception response factory |
@@ -363,7 +364,8 @@ The module supplies these shared services:
 
 Identifiers above are relative to `ExtendsSoftware\ExaPHP`. Override service definitions in application configuration
 for custom routers, exception responses, or server adapters. Resolving the pipeline validates configuration and resolves
-middleware eagerly; handler services are resolved only after a route matches. An empty router returns 404.
+global middleware eagerly. Route middleware is resolved after matching, and the handler only when its middleware
+delegates to it. An empty router returns 404.
 
 ### Configure routes and middleware
 
@@ -404,11 +406,36 @@ new names append in source order. An explicit empty array replaces the section a
 default exception middleware when applied to `http.middleware`. To rebuild an order entirely, clear the section in an
 earlier application configuration file and supply the replacement map in a later file.
 
-Do not use a numeric list for routes or middleware. Factories reject malformed sections or entries with
+Do not use a numeric list for the top-level `http.routes` or `http.middleware` maps. Factories reject malformed sections or entries with
 `InvalidHttpConfigurationException`, which implements `IntegrationException`. They propagate HTTP registration errors
 and service resolution failures unchanged. When invoked through the service locator, non-locator factory failures
 are wrapped in `ServiceResolutionException`, with the original cause available through `getPrevious()`. Failures
 constructing the pipeline occur before its exception middleware can run.
+
+### Configure route middleware and groups
+
+Named `http.routes` entries accept either `Route` or `RouteGroup`. Register group and route middleware identifiers as
+services implementing `Http\Middleware\Middleware`. For example, with application services `AuthenticationMiddleware`
+and `ArticleHandler` registered:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Routing\Route;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteGroup;
+
+return ['http' => ['routes' => [
+    'admin' => new RouteGroup('/admin', [AuthenticationMiddleware::class], [
+        new Route('admin.article', Method::Get, '/articles/{id}', ArticleHandler::class),
+    ]),
+]]];
+```
+
+These middleware lists are numeric lists, unlike the named global `http.middleware` map. Groups expand during collection
+construction, preserving route names for URL generation. `HttpModule` registers `MiddlewareResolver` through
+`ServiceLocatorMiddlewareResolver`; applications can override that contract. Resolution is limited to middleware on the
+matched route, with service-locator failures translated into `MiddlewareResolutionException` and their causes retained.
+A short-circuit response prevents handler resolution. See [route middleware and groups](../http/README.md#attach-route-middleware)
+for execution order, prefix rules, and direct construction.
 
 ### Configure request body decoding
 

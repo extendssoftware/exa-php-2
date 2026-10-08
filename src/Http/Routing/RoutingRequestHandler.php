@@ -4,16 +4,20 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
+use ExtendsSoftware\ExaPHP\Http\Handler\ResolvingRequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\MiddlewareResolutionException;
+use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewarePipeline;
+use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
+use Override;
 use Throwable;
 
 use function array_map;
@@ -29,9 +33,13 @@ final readonly class RoutingRequestHandler implements RequestHandler
      *
      * @param Router $router The route selector.
      * @param HandlerResolver $resolver The resolver for the selected handler.
+     * @param MiddlewareResolver|null $middlewareResolver Required when a matched route declares middleware.
      */
-    public function __construct(private Router $router, private HandlerResolver $resolver)
-    {
+    public function __construct(
+        private Router $router,
+        private HandlerResolver $resolver,
+        private ?MiddlewareResolver $middlewareResolver = null,
+    ) {
     }
 
     /**
@@ -39,20 +47,31 @@ final readonly class RoutingRequestHandler implements RequestHandler
      *
      * Existing RouteMatch metadata is replaced without changing the original request. Other attributes are retained.
      * A missing path produces 404; an unsupported method produces 405 with Allow.
-     * Neither response resolves or invokes a handler.
+     * Neither response resolves middleware or handlers. Matched middleware runs in declaration order; the handler
+     * is resolved only when reached. Missing middleware resolution fails rather than bypassing the chain.
      *
      * @param Request $request The incoming request.
      *
      * @return Response The selected handler's response, or a Problem Details routing error response.
      *
-     * @throws Throwable When routing, handler resolution, or execution fails, propagated unchanged.
+     * @throws Throwable When routing, middleware or handler resolution, or execution fails, propagated unchanged.
      */
     #[Override]
     public function handle(Request $request): Response
     {
         $match = $this->router->match($request);
         if ($match !== null) {
-            return $this->resolver->resolve($match->route->handlerId)->handle($request->withAttribute($match));
+            $middleware = [];
+            foreach ($match->route->middleware as $id) {
+                if ($this->middlewareResolver === null) {
+                    throw new MiddlewareResolutionException('Route middleware requires a middleware resolver.');
+                }
+                $middleware[] = $this->middlewareResolver->resolve($id);
+            }
+
+            return new MiddlewarePipeline(
+                new ResolvingRequestHandler($this->resolver, $match->route->handlerId), $middleware,
+            )->handle($request->withAttribute($match));
         }
         $methods = $this->router->allowedMethods($request);
         if ($methods === []) {
@@ -61,7 +80,7 @@ final readonly class RoutingRequestHandler implements RequestHandler
                 protocolVersion: $request->protocolVersion,
             );
         }
-        $allow = implode(', ', array_map(static fn(Method $method): string => $method->value, $methods));
+        $allow = implode(', ', array_map(static fn (Method $method): string => $method->value, $methods));
 
         return new ProblemDetailsResponseFactory()->create(
             new ProblemDetails(StatusCode::MethodNotAllowed, 'Method Not Allowed'),

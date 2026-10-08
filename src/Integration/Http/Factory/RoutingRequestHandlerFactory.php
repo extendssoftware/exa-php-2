@@ -6,6 +6,7 @@ namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Routing\Router;
+use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
@@ -37,6 +38,11 @@ final readonly class RoutingRequestHandlerFactory
             throw new InvalidHttpConfigurationException('The HandlerResolver service must implement HandlerResolver.');
         }
 
-        return new RoutingRequestHandler($router, $resolver);
+        $middleware = $serviceLocator->get(MiddlewareResolver::class);
+        if (!$middleware instanceof MiddlewareResolver) {
+            throw new InvalidHttpConfigurationException('The MiddlewareResolver service must implement MiddlewareResolver.');
+        }
+
+        return new RoutingRequestHandler($router, $resolver, $middleware);
     }
 }

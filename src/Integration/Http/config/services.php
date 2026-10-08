@@ -5,6 +5,8 @@ declare(strict_types=1);
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
+use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewareResolverFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
 use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
@@ -63,6 +65,7 @@ return [
         RouteCollection::class => new FactoryDefinition(new RouteCollectionFactory()->create(...)),
         UrlGenerator::class => new FactoryDefinition(new UrlGeneratorFactory()->create(...)),
         Router::class => new FactoryDefinition(new RouterFactory()->create(...)),
+        MiddlewareResolver::class => new FactoryDefinition(new MiddlewareResolverFactory()->create(...)),
         HandlerResolver::class => new FactoryDefinition(new HandlerResolverFactory()->create(...)),
         RoutingRequestHandler::class => new FactoryDefinition(new RoutingRequestHandlerFactory()->create(...)),
         RequestHandler::class => new FactoryDefinition(new MiddlewarePipelineFactory()->create(...)),

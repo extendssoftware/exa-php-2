@@ -5,16 +5,10 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
 use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
-use ExtendsSoftware\ExaPHP\Http\Message\Exception\InvalidUriException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
-use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 
-use function array_keys;
 use function count;
 use function explode;
-use function implode;
-use function preg_match;
-use function str_contains;
 use function str_starts_with;
 
 /**
@@ -50,16 +44,19 @@ final readonly class Route
      * @param Method $method The method matched exactly; CONNECT is not supported by path routing.
      * @param string $path The encoded absolute path pattern, or a bare asterisk for OPTIONS.
      * @param non-empty-string $handlerId The handler identifier resolved on a successful match.
+     * @param list<non-empty-string> $middleware Middleware identifiers in request execution order.
      *
-     * @throws InvalidRouteException When the identifier is empty, the pattern is invalid, or the method is unsupported.
+     * @throws InvalidRouteException When names, paths, methods, or middleware registrations are invalid.
      */
     public function __construct(
         public string $name,
         public Method $method,
         public string $path,
         public string $handlerId,
+        public array $middleware = [],
     )
     {
+        new MiddlewareIdentifiersValidator()->validate($middleware);
         if ($name === '') {
             throw new InvalidRouteException('Route names must not be empty.');
         }
@@ -72,42 +69,10 @@ final readonly class Route
                 'Routes require a slash-prefixed path or OPTIONS asterisk; CONNECT is unsupported.',
             );
         }
-        if (str_contains($path, '?') || str_contains($path, '#')) {
-            throw new InvalidRouteException('Route patterns must not contain a query or fragment.');
-        }
-        $segments = [];
-        $names = [];
-        $signature = [];
-        $example = [];
-        foreach (explode('/', $path) as $segment) {
-            if (preg_match('/\A\{([A-Za-z_][A-Za-z0-9_]*)}\z/', $segment, $matches) === 1) {
-                $name = $matches[1];
-                if (isset($names[$name])) {
-                    throw new InvalidRouteException('Route parameter names must be unique.');
-                }
-                $names[$name] = true;
-                $segments[] = ['literal' => null, 'parameter' => $name];
-                $signature[] = '{}';
-                $example[] = 'parameter';
-            } else {
-                if (str_contains($segment, '{') || str_contains($segment, '}')) {
-                    throw new InvalidRouteException(
-                        'Route placeholders must occupy a full segment and have a valid name.',
-                    );
-                }
-                $segments[] = ['literal' => $segment, 'parameter' => null];
-                $signature[] = $segment;
-                $example[] = $segment;
-            }
-        }
-        try {
-            new Uri('http://routing.invalid' . ($path === '*' ? '/' : implode('/', $example)));
-        } catch (InvalidUriException $exception) {
-            throw new InvalidRouteException('Route literals must form a valid encoded URI path.', 0, $exception);
-        }
-        $this->segments = $segments;
-        $this->names = array_keys($names);
-        $this->signature = implode('/', $signature);
+        $pattern = new RoutePatternParser()->parse($path);
+        $this->segments = $pattern['segments'];
+        $this->names = $pattern['names'];
+        $this->signature = $pattern['signature'];
     }
 
     /**

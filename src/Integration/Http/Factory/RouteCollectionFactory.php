@@ -7,13 +7,13 @@ namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteGroup;
 use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
 
 use function array_key_exists;
-use function array_values;
 use function is_array;
 use function is_string;
 
@@ -26,7 +26,7 @@ final readonly class RouteCollectionFactory
      * Creates the service from http.routes in configuration order.
      *
      * Missing sections produce empty registrations. Names identify configuration entries only.
-     * Route matching never resolves handler services.
+     * Groups expand in declaration order before duplicate validation. Matching never resolves middleware or handlers.
      *
      * @param ServiceLocator $serviceLocator The locator providing configuration and HTTP services.
      *
@@ -51,13 +51,20 @@ final readonly class RouteCollectionFactory
             throw new InvalidHttpConfigurationException('Configuration section "http.routes" must be an array.');
         }
         foreach ($registrations as $name => $value) {
-            if (!is_string($name) || $name === '' || !$value instanceof Route) {
+            if (!is_string($name) || $name === '' || (!$value instanceof Route && !$value instanceof RouteGroup)) {
                 throw new InvalidHttpConfigurationException(
-                    'HTTP routes must map non-empty names to Route values.',
+                    'HTTP routes must map non-empty names to Route or RouteGroup values.',
                 );
             }
         }
 
-        return new RouteCollection(array_values($registrations));
+        $routes = [];
+        foreach ($registrations as $entry) {
+            foreach ($entry instanceof RouteGroup ? $entry->expand() : [$entry] as $route) {
+                $routes[] = $route;
+            }
+        }
+
+        return new RouteCollection($routes);
     }
 }

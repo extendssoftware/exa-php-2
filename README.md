@@ -33,7 +33,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 - [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
 - [Event](docs/event/README.md): event messages, generic listeners, and synchronous event dispatch.
 - [HTTP](docs/http/README.md): immutable messages, middleware, named routing and URL generation, JSON request decoding,
-  response negotiation, Problem Details, and PHP server adapters.
+  response negotiation, Problem Details, route groups and middleware, and PHP server adapters.
 - [Identity](docs/identity/README.md): immutable actors identifying the principal performing an operation.
 - [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
   command execution.

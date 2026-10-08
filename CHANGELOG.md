@@ -41,7 +41,9 @@ All notable changes to ExaPHP will be documented in this file.
   string bodies, body and handler contracts, ordered middleware execution, and method/path routing with typed matches,
   immutable request attributes, required unique route names, an explicit shared route collection for router
   construction, and encoded URL generation, lazy handler resolution with a service locator adapter, and 404/405
-  responses. Includes single-use stream bodies, PHP request creation and response emission adapters, and
+  responses. Route middleware executes after matching and can short-circuit before handler resolution; nested groups
+  share path prefixes and inherited middleware, with expanded routes also supporting URL generation. Includes
+  single-use stream bodies, PHP request creation and response emission adapters, and
   exception-handling middleware with customizable response factories and a generic 500 default. Immutable RFC 9457
   Problem Details and JSON response creation provide default 400/404/405/406/413/415/500 error bodies with safe generic
   titles. Named module `ExceptionProblemDetailsMapper` services compose in configuration order, rendering the first

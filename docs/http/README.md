@@ -247,8 +247,65 @@ shows service locator wiring. Identifiers can be class names or application-defi
 
 Routers only match routes. Dispatch resolves the selected handler; 404 and 405 responses never invoke the resolver.
 Handler lifetime is controlled by the resolver. Resolution failures use `HandlerResolutionException` and propagate
-through dispatch unchanged. A handler identifier can resolve to a `MiddlewarePipeline` for route-specific middleware
-that needs access to `RouteMatch`. Global middleware runs before routing, so it does not yet have the match.
+through dispatch unchanged. Global middleware runs before routing, so it does not yet have the match.
+
+### Attach route middleware
+
+Pass middleware identifiers in execution order when constructing a route:
+
+```php
+$route = new Route('articles.show', Method::Get, '/articles/{id}', ArticleHandler::class, middleware: [
+    'authentication',
+    'audit',
+]);
+```
+
+For direct construction, supply a `Middleware\MiddlewareResolver` as the third `RoutingRequestHandler` argument.
+`HttpModule` supplies a service-locator resolver automatically; register each listed identifier as a service implementing
+`Middleware`. Routes without middleware retain their existing behavior. A matched route declaring middleware without
+a resolver raises `Middleware\Exception\MiddlewareResolutionException` rather than bypassing the middleware.
+
+After matching, dispatch resolves all middleware for that route and executes the existing pipeline with `RouteMatch`
+attached to the request. The first middleware runs outermost. Request replacements flow to subsequent middleware and
+the handler; responses unwind in reverse order. Repeated identifiers run once per occurrence. Middleware can return a
+response without delegating, in which case the final handler is never resolved or invoked.
+
+Middleware on unmatched routes is not resolved, including for 404 and 405 responses. Resolution and execution failures
+propagate to the enclosing exception boundary. Instances follow resolver service lifetimes; do not retain per-request
+state in shared middleware.
+
+### Group routes
+
+Use `RouteGroup` to share a prefix and middleware. Names remain explicit and globally unique:
+
+```php
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteGroup;
+
+$group = new RouteGroup(
+    prefix: '/admin',
+    middleware: ['authentication'],
+    routes: [
+        new RouteGroup(prefix: '/articles', routes: [
+            new Route('admin.articles.show', Method::Get, '/{id}', ArticleHandler::class, ['audit']),
+        ]),
+    ],
+);
+$collection = new RouteCollection($group->expand());
+```
+
+This produces `/admin/articles/{id}` with `authentication` followed by `audit`. `HttpModule` accepts groups directly
+as named `http.routes` entries and expands them before constructing the shared collection for routing and URL generation.
+For direct construction, call `expand()` as above; `RouteCollection` accepts ordinary routes.
+
+The constructor accepts `prefix`, `middleware`, and `routes`. A prefix is empty or starts with `/` and has no trailing
+slash; use an empty prefix for a group that only supplies middleware. Child paths start with `/` and concatenate exactly,
+so `/admin` plus `/` produces `/admin/`. Placeholders are supported in prefixes and must remain unique in the combined
+path. Asterisk routes may only belong to groups whose effective prefix is empty.
+
+Expansion preserves declaration order and combines outer-group, inner-group, and route middleware without deduplication.
+Children cannot remove inherited middleware. Put public routes outside a protected group. Duplicate route names and
+method/pattern combinations are rejected by the resulting collection. In configuration, a named group is replaced as
+one value; its child list is not merged across modules.
 
 ### Path patterns and precedence
 
@@ -515,6 +572,7 @@ Use [exception-handling middleware](#convert-application-failures-into-responses
 - `InvalidUriException` for malformed URI references, retaining the native parser exception as the previous exception.
 - `InvalidRequestException` for a URI incompatible with the request method or HTTP target rules.
 - `InvalidMiddlewareException` for malformed middleware lists or invalid entries.
+- `MiddlewareResolutionException` when route middleware cannot be resolved or its resolver is missing.
 - `InvalidRouteException` for malformed patterns or registration lists, and `DuplicateRouteException` for duplicates.
 - `InvalidRouteMatchException` for parameters inconsistent with the selected route.
 - `RouteParameterNotFoundException` for an absent route parameter.
