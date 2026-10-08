@@ -23,7 +23,7 @@ use function is_string;
 final readonly class CommandRegistryFactory
 {
     /**
-     * Creates the service from cli.commands in configuration order.
+     * Creates the service from `cli.commands` in configuration order.
      *
      * Missing sections produce empty registrations. Names identify configuration entries only.
      * Command lookup never resolves handler services.

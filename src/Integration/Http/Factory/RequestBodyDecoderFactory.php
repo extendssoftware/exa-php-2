@@ -24,7 +24,7 @@ use function is_string;
 final readonly class RequestBodyDecoderFactory
 {
     /**
-     * Resolves decoders registered under http.request.decoders.
+     * Resolves decoders registered under `http.request.decoders`.
      *
      * @param ServiceLocator $services The application service locator.
      *
@@ -52,7 +52,7 @@ final readonly class RequestBodyDecoderFactory
     }
 
     /**
-     * Creates the JSON decoder with http.request.json.maxBytes, defaulting to one MiB.
+     * Creates the JSON decoder with `http.request.json.maxBytes`, defaulting to one MiB.
      *
      * @param ServiceLocator $services The application service locator.
      *

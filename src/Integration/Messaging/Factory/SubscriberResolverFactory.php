@@ -19,7 +19,7 @@ use function is_array;
 final readonly class SubscriberResolverFactory
 {
     /**
-     * Reads messaging.subscribers without constructing mapped services.
+     * Reads `messaging.subscribers` without constructing mapped services.
      *
      * @param ServiceLocator $serviceLocator The locator providing configuration and subscriber services.
      *

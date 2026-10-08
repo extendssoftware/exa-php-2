@@ -22,7 +22,7 @@ use function is_string;
 final readonly class SubscriptionRegistryFactory
 {
     /**
-     * Reads messaging.subscriptions without resolving subscriber services.
+     * Reads `messaging.subscriptions` without resolving subscriber services.
      *
      * Configuration entry names identify mergeable registrations; Subscription supplies the subscriber identity.
      *

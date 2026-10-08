@@ -93,7 +93,7 @@ final readonly class ConfigurationMerger
      *
      * @return array<array-key, mixed> The service definitions, or an empty array when omitted.
      *
-     * @throws InvalidConfigurationException When the services section is not an array.
+     * @throws InvalidConfigurationException When the `services` section is not an array.
      */
     private function services(array $configuration, string $source): array
     {

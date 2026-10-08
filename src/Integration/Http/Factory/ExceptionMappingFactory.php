@@ -26,7 +26,7 @@ use function is_string;
 final readonly class ExceptionMappingFactory
 {
     /**
-     * Creates the service from http.exceptionMappers in configuration order.
+     * Creates the service from `http.exceptionMappers` in configuration order.
      *
      * Missing sections produce empty registrations. Names identify configuration entries only.
      * Mapper services are resolved eagerly. Configured mappers run before decoding and generic error defaults.

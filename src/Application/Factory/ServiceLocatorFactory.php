@@ -31,7 +31,7 @@ final readonly class ServiceLocatorFactory
     /**
      * Creates a locator with configured definitions and the supplied configuration registered as a service.
      *
-     * The optional services section must contain ServiceDefinition objects. Configuration::class is reserved.
+     * The optional `services` section must contain ServiceDefinition objects. Configuration::class is reserved.
      * Services are resolved lazily; creation does not execute factories or validate dependency graphs.
      * Each call creates an independent locator without modifying the supplied configuration.
      *
@@ -39,7 +39,7 @@ final readonly class ServiceLocatorFactory
      *
      * @return ServiceLocator The locator with instance, alias, factory, invokable, and reflection resolvers.
      *
-     * @throws InvalidConfigurationException When the services section is not an array.
+     * @throws InvalidConfigurationException When the `services` section is not an array.
      * @throws InvalidServiceDefinitionException When a service entry does not implement ServiceDefinition.
      * @throws ReservedServiceDefinitionException When configuration defines the reserved configuration service.
      */

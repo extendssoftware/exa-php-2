@@ -25,7 +25,7 @@ use function is_string;
 final readonly class MiddlewarePipelineFactory
 {
     /**
-     * Creates the service from http.middleware in configuration order.
+     * Creates the service from `http.middleware` in configuration order.
      *
      * Missing sections produce empty registrations. Names identify configuration entries only.
      * Middleware services are resolved eagerly; route handler services remain lazy.

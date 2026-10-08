@@ -168,6 +168,11 @@ commonly used together with HTTP.
 - Document every return value using `@return`, including `void`, except constructors.
 - Document relevant exceptions using `@throws`.
 - Document generic types, array shapes, lists, refined scalar types, templates, and callable signatures where useful.
+- Format literal configuration keys and paths as inline code in PHPDoc prose, for example `cli.commands` and
+  `http.request.json.maxBytes`. Use backticks rather than ordinary quotation marks; apply the same convention in Markdown.
+- Use inline code for literal code references in prose, such as service identifiers, class or method names, command names,
+  and file paths, when distinguishing them from ordinary language. Keep PHPDoc tag types and parameter names unquoted
+  so tools can parse tags such as `@param`, `@return`, and `@throws` normally.
 - Keep PHPDoc synchronized with the implementation.
 - Update PHPDoc whenever related behavior changes.
 - Do not leave outdated or inaccurate documentation.

@@ -19,7 +19,7 @@ final readonly class HelpRenderer
      * Renders available commands in registration order with a trailing newline.
      *
      * @param list<CommandDefinition> $commands The available command definitions.
-     * @param string $script The invocation label, such as bin/console.php.
+     * @param string $script The invocation label, such as `bin/console.php`.
      *
      * @return string The listing, including global help usage and descriptions.
      */
@@ -47,7 +47,7 @@ final readonly class HelpRenderer
      * Renders command usage, arguments, and options with a trailing newline.
      *
      * @param CommandDefinition $command The selected command definition.
-     * @param string $script The invocation label, such as bin/console.php.
+     * @param string $script The invocation label, such as `bin/console.php`.
      *
      * @return string The command's plain-text help.
      */

@@ -25,7 +25,7 @@ final readonly class EventDispatcherFactory
     /**
      * Resolves configured listeners and creates an independent dispatcher.
      *
-     * The optional events section maps event classes to named listener service identifiers. Missing configuration
+     * The optional `events` section maps event classes to named listener service identifiers. Missing configuration
      * produces an empty dispatcher. Listeners are resolved eagerly in configuration order; keys identify registrations.
      * The dispatcher validates event classes and resolved listener contracts. Resolution failures propagate unchanged.
      *

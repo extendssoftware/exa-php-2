@@ -19,7 +19,7 @@ use function is_int;
 final readonly class WorkerSettingsFactory
 {
     /**
-     * Creates validated worker settings from messaging.worker configuration.
+     * Creates validated worker settings from `messaging.worker` configuration.
      *
      * @param ServiceLocator $serviceLocator The locator providing application configuration.
      *

@@ -23,7 +23,7 @@ use function is_string;
 final readonly class RouteCollectionFactory
 {
     /**
-     * Creates the service from http.routes in configuration order.
+     * Creates the service from `http.routes` in configuration order.
      *
      * Missing sections produce empty registrations. Names identify configuration entries only.
      * Groups expand in declaration order before duplicate validation. Matching never resolves middleware or handlers.

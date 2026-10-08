@@ -23,7 +23,7 @@ use function is_string;
 final readonly class ResponseNegotiationFactory
 {
     /**
-     * Resolves available response factories from http.response configuration.
+     * Resolves available response factories from `http.response` configuration.
      *
      * @param ServiceLocator $serviceLocator The application service locator.
      *
