@@ -26,7 +26,7 @@ final class DefinitionServiceLocator implements ServiceLocator
     /**
      * Successfully resolved services indexed by identifier.
      *
-     * @var array<string, object>
+     * @var array<array-key, object>
      */
     private array $services = [];
 
@@ -38,7 +38,9 @@ final class DefinitionServiceLocator implements ServiceLocator
     /**
      * Creates a locator with fixed registrations and resolver order.
      *
-     * @param array<string, ServiceDefinition> $definitions Definitions indexed by service identifier.
+     * Integer keys represent the corresponding string service identifiers, such as `0` for `'0'`.
+     *
+     * @param array<array-key, ServiceDefinition> $definitions Definitions indexed by service identifier.
      * @param list<ServiceResolver> $resolvers Resolvers in selection order.
      */
     public function __construct(private readonly array $definitions, private readonly array $resolvers)
