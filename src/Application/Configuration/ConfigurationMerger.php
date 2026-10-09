@@ -118,11 +118,13 @@ final readonly class ConfigurationMerger
      * @param array<array-key, mixed> $services The incoming service definitions.
      *
      * @return array<array-key, mixed> The merged values.
+     *
+     * @throws InvalidConfigurationException When the accumulated `services` section is not an array.
      */
     private function mergeSource(array $values, array $configuration, array $services): array
     {
         if (array_key_exists('services', $configuration)) {
-            $values['services'] = array_replace($values['services'] ?? [], $services);
+            $values['services'] = array_replace($this->services($values, 'accumulated configuration'), $services);
             unset($configuration['services']);
         }
 
