@@ -16,7 +16,7 @@ final readonly class OptionDefinition
     /**
      * Creates an option definition; the option itself may be omitted regardless of its mode.
      *
-     * @param string $name Case-sensitive ASCII name starting with a letter, followed by letters, digits, or hyphens.
+     * @param non-empty-string $name Case-sensitive ASCII name starting with a letter, followed by letters, digits, or hyphens.
      * @param string $description Human-readable help description.
      * @param OptionMode $mode Whether a supplied option takes a value.
      * @param string|null $shortAlias An optional single ASCII letter, without a leading hyphen.

@@ -20,7 +20,7 @@ final readonly class CommandDefinition
      * Names are case-sensitive. Argument and option names occupy separate namespaces. Short aliases are distinct
      * from long option names. All required arguments must precede optional arguments.
      *
-     * @param string $name ASCII command segments separated by colons, each starting with a letter.
+     * @param non-empty-string $name ASCII command segments separated by colons, each starting with a letter.
      * @param non-empty-string $handlerId The lazily resolved handler service identifier.
      * @param string $description Human-readable help description.
      * @param list<ArgumentDefinition> $arguments Positional arguments in declaration order.

@@ -16,7 +16,7 @@ final readonly class ArgumentDefinition
     /**
      * Creates an argument definition without assigning or converting a value.
      *
-     * @param string $name Case-sensitive ASCII name starting with a letter, followed by letters, digits, or hyphens.
+     * @param non-empty-string $name Case-sensitive ASCII name starting with a letter, followed by letters, digits, or hyphens.
      * @param string $description Human-readable help description.
      * @param ArgumentMode $mode Whether the argument must be supplied.
      *
