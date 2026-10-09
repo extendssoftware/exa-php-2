@@ -97,17 +97,24 @@ final readonly class ReflectionServiceResolver implements ServiceResolver
      */
     private function resolveParameter(ReflectionParameter $parameter, ServiceLocator $serviceLocator): mixed
     {
+        $declaringClass = $parameter->getDeclaringClass();
+        if ($declaringClass === null) {
+            throw new UnresolvableParameterException(
+                sprintf('Cannot resolve parameter $%s without a declaring class.', $parameter->getName()),
+            );
+        }
+
         if (!$parameter->isPassedByReference()) {
             $type = $parameter->getType();
             if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
-                $declaringClass = $parameter->getDeclaringClass();
+                $parentClass = $declaringClass->getParentClass();
                 $id = match ($type->getName()) {
                     'self' => $declaringClass->getName(),
-                    'parent' => $declaringClass->getParentClass()->getName(),
+                    'parent' => $parentClass === false ? null : $parentClass->getName(),
                     default => $type->getName(),
                 };
 
-                if (!$parameter->isDefaultValueAvailable() || $serviceLocator->has($id)) {
+                if ($id !== null && (!$parameter->isDefaultValueAvailable() || $serviceLocator->has($id))) {
                     return $serviceLocator->get($id);
                 }
             }
@@ -121,7 +128,7 @@ final readonly class ReflectionServiceResolver implements ServiceResolver
             sprintf(
                 'Cannot resolve constructor parameter $%s of "%s"; use a factory definition.',
                 $parameter->getName(),
-                $parameter->getDeclaringClass()->getName(),
+                $declaringClass->getName(),
             ),
         );
     }
