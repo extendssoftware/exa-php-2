@@ -12,6 +12,7 @@ use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
 use FilesystemIterator;
 use RuntimeException;
+use SplFileInfo;
 use Throwable;
 use ValueError;
 
@@ -106,7 +107,7 @@ final readonly class ConfigurationLoader
         try {
             $files = [];
             foreach (new FilesystemIterator($directory, FilesystemIterator::SKIP_DOTS) as $file) {
-                if ($file->isFile()) {
+                if ($file instanceof SplFileInfo && $file->isFile()) {
                     $files[] = $file->getPathname();
                 }
             }
