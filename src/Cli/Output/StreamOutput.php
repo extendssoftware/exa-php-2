@@ -72,7 +72,7 @@ final readonly class StreamOutput implements Output
     /**
      * Validates the destination and completes positive partial writes.
      *
-     * @param mixed $stream The borrowed destination.
+     * @param resource $stream The borrowed destination.
      * @param string $message The bytes to write.
      * @param string $channel The channel name used in failure messages.
      *
