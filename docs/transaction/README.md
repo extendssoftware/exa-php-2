@@ -80,4 +80,4 @@ The middleware does not dispatch domain events or schedule after-commit callback
 events synchronously after saving aggregates and before this middleware commits. Listener failures must propagate so
 the transaction can roll back, and all listener persistence must participate in the same transaction. Route external
 side effects and deferred work through an application-provided transactional outbox. See the
-[DDD guide](../ddd/README.md#save-and-dispatch-within-one-transaction) for dispatch and outbox guidance.
+[DDD guide](../domain/README.md#save-and-dispatch-within-one-transaction) for dispatch and outbox guidance.

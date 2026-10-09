@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Ddd\Event;
+namespace ExtendsSoftware\ExaPHP\Domain\Event;
 
 use ExtendsSoftware\ExaPHP\Event\Event;
 

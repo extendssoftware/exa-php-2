@@ -63,9 +63,10 @@ All notable changes to ExaPHP will be documented in this file.
   delivery with aggregated failures, immutable log records, and NDJSON formatting with UTC timestamps and inline
   exception details, severity enum, component exceptions, injectable clocks for record timestamps, and application
   integration with configurable writer and clock services, without PSR dependencies.
-- DDD component with aggregate and domain event contracts, optional abstract aggregate roots, a reusable recorded-event
-  collection, composable generic specifications, and an article example. Documents atomic command and synchronous
-  listener execution, with application-provided transactional outboxes for deferred work and external side effects.
+- Domain component with aggregate and domain event contracts, optional abstract aggregate roots, a reusable
+  recorded-event collection, composable generic specifications, and an article example. Documents atomic command and
+  synchronous listener execution, with application-provided transactional outboxes for deferred work and external side
+  effects.
 - Event component with event and listener contracts, synchronous dispatch to ordered listener lists, validated
   registrations, and component exceptions.
 - PHP 8.5 CLI development container and just recipes for dependency installation and full or targeted test runs.

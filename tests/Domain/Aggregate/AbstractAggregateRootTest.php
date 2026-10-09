@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Tests\Ddd\Aggregate;
+namespace ExtendsSoftware\ExaPHP\Tests\Domain\Aggregate;
 
-use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
-use ExtendsSoftware\ExaPHP\Tests\Ddd\Aggregate\Fixture\RecordingAggregate;
+use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Tests\Domain\Aggregate\Fixture\RecordingAggregate;
 use PHPUnit\Framework\TestCase;
 
 final class AbstractAggregateRootTest extends TestCase

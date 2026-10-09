@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Ddd\Event;
+namespace ExtendsSoftware\ExaPHP\Domain\Event;
 
 /**
  * Collects pending domain events for an aggregate.

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Ddd\Aggregate;
+namespace ExtendsSoftware\ExaPHP\Domain\Aggregate;
 
-use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
 
 /**
  * Exposes domain events recorded by an aggregate root.

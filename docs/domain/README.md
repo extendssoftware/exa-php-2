@@ -16,7 +16,7 @@ declare(strict_types=1);
 
 namespace App\Article;
 
-use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
 
 /**
  * Records that an article was created.
@@ -48,7 +48,7 @@ declare(strict_types=1);
 
 namespace App\Article;
 
-use ExtendsSoftware\ExaPHP\Ddd\Aggregate\AbstractAggregateRoot;
+use ExtendsSoftware\ExaPHP\Domain\Aggregate\AbstractAggregateRoot;
 
 /**
  * Represents an article and records its creation.
@@ -167,7 +167,7 @@ declare(strict_types=1);
 
 namespace App\Article;
 
-use ExtendsSoftware\ExaPHP\Ddd\Specification\AbstractSpecification;
+use ExtendsSoftware\ExaPHP\Domain\Specification\AbstractSpecification;
 
 /**
  * Checks that an article has a non-empty title.
@@ -223,6 +223,6 @@ Domain operations must still enforce their business rules when called.
 
 ## Exceptions
 
-`DddException` extends `Throwable` as the component's root exception contract. Recording and releasing valid domain
+`DomainException` extends `Throwable` as the component's root exception contract. Recording and releasing valid domain
 events have no component-specific failure conditions. Business-rule exceptions belong to the application's domain;
-they do not need to implement `DddException`.
+they do not need to implement `DomainException`.

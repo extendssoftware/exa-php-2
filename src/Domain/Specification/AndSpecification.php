@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Ddd\Specification;
+namespace ExtendsSoftware\ExaPHP\Domain\Specification;
 
 use Override;
 
 /**
- * Requires either condition, evaluating the right operand only when the left fails.
+ * Requires both conditions, evaluating the right operand only when the left succeeds.
  *
  * @template T of object
  * @extends AbstractSpecification<T>
  */
-final class OrSpecification extends AbstractSpecification
+final class AndSpecification extends AbstractSpecification
 {
     /**
      * Creates the composite without evaluating its operands.
@@ -30,6 +30,6 @@ final class OrSpecification extends AbstractSpecification
     #[Override]
     public function isSatisfiedBy(object $candidate): bool
     {
-        return $this->left->isSatisfiedBy($candidate) || $this->right->isSatisfiedBy($candidate);
+        return $this->left->isSatisfiedBy($candidate) && $this->right->isSatisfiedBy($candidate);
     }
 }

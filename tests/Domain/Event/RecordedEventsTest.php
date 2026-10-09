@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Tests\Ddd\Event;
+namespace ExtendsSoftware\ExaPHP\Tests\Domain\Event;
 
-use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
-use ExtendsSoftware\ExaPHP\Ddd\Event\RecordedEvents;
+use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Domain\Event\RecordedEvents;
 use PHPUnit\Framework\TestCase;
 
 final class RecordedEventsTest extends TestCase

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Ddd\Aggregate;
+namespace ExtendsSoftware\ExaPHP\Domain\Aggregate;
 
 use Override;
-use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
-use ExtendsSoftware\ExaPHP\Ddd\Event\RecordedEvents;
+use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Domain\Event\RecordedEvents;
 
 /**
  * Provides event recording for aggregate roots through inheritance.

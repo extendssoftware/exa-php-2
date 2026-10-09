@@ -32,7 +32,7 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
 - [CLI](docs/cli/README.md): command definitions, parsing and dispatch, help, immutable input, stream output, and named exit codes.
 - [Clock](docs/clock/README.md): a clock contract with UTC system time and immutable frozen time implementations.
 - [CQRS](docs/cqrs/README.md): command and typed query contracts, synchronous buses, middleware, and dispatch metadata.
-- [DDD](docs/ddd/README.md): aggregate event recording, domain events, and composable specifications.
+- [Domain](docs/domain/README.md): aggregate event recording, domain events, and composable specifications.
 - [Event](docs/event/README.md): event messages, generic listeners, and synchronous event dispatch.
 - [HTTP](docs/http/README.md): immutable messages, middleware, named routing and URL generation, JSON request decoding,
   response negotiation, Problem Details, route groups and middleware, and PHP server adapters.

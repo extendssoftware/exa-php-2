@@ -40,7 +40,7 @@ the application owns the payload schema and its interpretation.
 
 Inject `OutboxWriter` into a synchronous domain-event listener or into a command handler whose explicit purpose is to
 schedule deferred work. Convert domain events into messages in the application, selecting the data the consumer needs.
-See the [DDD guide](../ddd/README.md#defer-work-through-a-transactional-outbox) for the listener flow.
+See the [DDD guide](../domain/README.md#defer-work-through-a-transactional-outbox) for the listener flow.
 
 Call `$writer->append($message)` while the transaction is active. The writer must participate in the same transaction
 as the aggregate repository and must not start, commit, or roll back a transaction itself. Successful append leaves the

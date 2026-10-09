@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Ddd\Specification;
+namespace ExtendsSoftware\ExaPHP\Domain\Specification;
 
 /**
  * Provides fluent composition for domain specifications.

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Tests\Ddd\Specification;
+namespace ExtendsSoftware\ExaPHP\Tests\Domain\Specification;
 
-use ExtendsSoftware\ExaPHP\Ddd\Specification\AbstractSpecification;
-use ExtendsSoftware\ExaPHP\Ddd\Specification\AndSpecification;
-use ExtendsSoftware\ExaPHP\Ddd\Specification\NotSpecification;
-use ExtendsSoftware\ExaPHP\Ddd\Specification\OrSpecification;
-use ExtendsSoftware\ExaPHP\Ddd\Specification\Specification;
+use ExtendsSoftware\ExaPHP\Domain\Specification\AbstractSpecification;
+use ExtendsSoftware\ExaPHP\Domain\Specification\AndSpecification;
+use ExtendsSoftware\ExaPHP\Domain\Specification\NotSpecification;
+use ExtendsSoftware\ExaPHP\Domain\Specification\OrSpecification;
+use ExtendsSoftware\ExaPHP\Domain\Specification\Specification;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;

@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ExtendsSoftware\ExaPHP\Tests\Ddd\Aggregate\Fixture;
+namespace ExtendsSoftware\ExaPHP\Tests\Domain\Aggregate\Fixture;
 
-use ExtendsSoftware\ExaPHP\Ddd\Aggregate\AbstractAggregateRoot;
-use ExtendsSoftware\ExaPHP\Ddd\Event\DomainEvent;
+use ExtendsSoftware\ExaPHP\Domain\Aggregate\AbstractAggregateRoot;
+use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
 
 /**
  * Exercises aggregate event recording through public behavior.
