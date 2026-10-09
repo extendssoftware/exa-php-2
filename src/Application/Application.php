@@ -8,16 +8,17 @@ use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationLoader;
 use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationMerger;
 use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
+use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
+use ExtendsSoftware\ExaPHP\Application\Module\BootstrapModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\DuplicateModuleException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\InvalidModuleException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleBootstrapException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleInstantiationException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleShutdownException;
-use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
-use ExtendsSoftware\ExaPHP\Application\Module\BootstrapModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
 use ExtendsSoftware\ExaPHP\Application\Module\ShutdownModule;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
+use LogicException;
 use ReflectionClass;
 use ReflectionException;
 use Throwable;
@@ -143,7 +144,7 @@ final class Application
     public function bootstrap(): ServiceLocator
     {
         if ($this->state === ApplicationState::Running) {
-            return $this->serviceLocator;
+            return $this->requireServiceLocator();
         }
 
         if ($this->state !== ApplicationState::Configuring) {
@@ -190,7 +191,7 @@ final class Application
         }
 
         $this->state = ApplicationState::ShuttingDown;
-        $failures = $this->shutdownModules($this->serviceLocator);
+        $failures = $this->shutdownModules($this->requireServiceLocator());
         $this->state = ApplicationState::Stopped;
 
         if ($failures !== []) {
@@ -297,5 +298,17 @@ final class Application
         }
 
         return $modules;
+    }
+
+    /**
+     * Returns the initialized application service locator.
+     *
+     * @return ServiceLocator The initialized service locator.
+     *
+     * @throws LogicException When the service locator is not initialized.
+     */
+    private function requireServiceLocator(): ServiceLocator
+    {
+        return $this->serviceLocator ?? throw new LogicException('Application service locator is not initialized.');
     }
 }
