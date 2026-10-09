@@ -93,7 +93,7 @@ final class PcntlWorkerControl implements WorkerControl
     public function wait(int $seconds): void
     {
         for ($second = 0 ; $second < $seconds && !$this->stopped ; ++$second) {
-            for ($tick = 0 ; $tick < 10 && !$this->stopped ; ++$tick) {
+            for ($tick = 0 ; $tick < 10 ; ++$tick) {
                 usleep(100_000);
             }
         }
