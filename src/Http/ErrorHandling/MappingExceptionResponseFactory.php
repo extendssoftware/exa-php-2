@@ -22,29 +22,39 @@ use function array_is_list;
 final readonly class MappingExceptionResponseFactory implements ExceptionResponseFactory
 {
     /**
+     * Validated mappers in evaluation order.
+     *
+     * @var list<ExceptionProblemDetailsMapper>
+     */
+    private array $mappers;
+
+    /**
      * Creates an ordered exception mapping policy.
      *
-     * @param list<object> $mappers The mappers in evaluation order.
+     * @param array<array-key, mixed> $mappers The mappers to validate, in evaluation order.
      * @param ExceptionResponseFactory $fallback The policy for exceptions no mapper handles.
      * @param ProblemDetailsResponseFactory $problems The problem response encoder.
      *
      * @throws InvalidExceptionProblemDetailsMapperException When mappers are not a list of mapper instances.
      */
     public function __construct(
-        private array $mappers,
+        array $mappers,
         private ExceptionResponseFactory $fallback,
         private ProblemDetailsResponseFactory $problems = new ProblemDetailsResponseFactory(),
     ) {
         if (!array_is_list($mappers)) {
             throw new InvalidExceptionProblemDetailsMapperException('Problem Details mappers must be a list.');
         }
+        $validatedMappers = [];
         foreach ($mappers as $mapper) {
             if (!$mapper instanceof ExceptionProblemDetailsMapper) {
                 throw new InvalidExceptionProblemDetailsMapperException(
                     'Each mapper must implement ExceptionProblemDetailsMapper.',
                 );
             }
+            $validatedMappers[] = $mapper;
         }
+        $this->mappers = $validatedMappers;
     }
 
     /**
