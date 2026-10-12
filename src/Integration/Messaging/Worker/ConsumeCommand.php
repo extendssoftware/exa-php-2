@@ -54,6 +54,7 @@ final readonly class ConsumeCommand implements CommandHandler
         try {
             while (!$this->control->stopRequested()) {
                 $processed = $this->processor->process();
+                // @phpstan-ignore booleanNot.alwaysTrue (Shutdown can be requested between calls.)
                 if (!$processed && !$this->control->stopRequested()) {
                     $this->control->wait($this->settings->idleDelaySeconds);
                 }

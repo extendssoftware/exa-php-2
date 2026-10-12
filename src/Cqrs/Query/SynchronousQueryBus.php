@@ -14,19 +14,15 @@ use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
 use ReflectionClass;
-use ReflectionException;
 use Throwable;
 
 use function array_is_list;
 use function array_key_exists;
 use function array_reverse;
-use function class_exists;
 use function get_debug_type;
-use function interface_exists;
 use function is_a;
 use function is_string;
 use function sprintf;
-use function trait_exists;
 
 /**
  * Answers queries immediately to handlers registered for their exact class.
@@ -71,9 +67,7 @@ final readonly class SynchronousQueryBus implements QueryBus
             }
 
             try {
-                if (!class_exists($queryClass) && !interface_exists($queryClass) && !trait_exists($queryClass)) {
-                    throw new ReflectionException(sprintf('Class "%s" does not exist.', $queryClass));
-                }
+                // @phpstan-ignore argument.type (Reflection validates the name; failures are translated below.)
                 $class = new ReflectionClass($queryClass);
             } catch (Throwable $exception) {
                 throw new InvalidQueryRegistrationException(

@@ -14,19 +14,15 @@ use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\CommandHandlerNotFoundExceptio
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\DuplicateCommandHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandRegistrationException;
 use ReflectionClass;
-use ReflectionException;
 use Throwable;
 
 use function array_is_list;
 use function array_key_exists;
 use function array_reverse;
-use function class_exists;
 use function get_debug_type;
-use function interface_exists;
 use function is_a;
 use function is_string;
 use function sprintf;
-use function trait_exists;
 
 /**
  * Dispatches commands immediately to handlers registered for their exact class.
@@ -71,9 +67,7 @@ final readonly class SynchronousCommandBus implements CommandBus
             }
 
             try {
-                if (!class_exists($commandClass) && !interface_exists($commandClass) && !trait_exists($commandClass)) {
-                    throw new ReflectionException(sprintf('Class "%s" does not exist.', $commandClass));
-                }
+                // @phpstan-ignore argument.type (Reflection validates the name; failures are translated below.)
                 $class = new ReflectionClass($commandClass);
             } catch (Throwable $exception) {
                 throw new InvalidCommandRegistrationException(

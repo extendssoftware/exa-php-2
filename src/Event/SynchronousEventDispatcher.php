@@ -9,19 +9,15 @@ use ExtendsSoftware\ExaPHP\Event\Exception\DuplicateEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Exception\InvalidEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Listener\EventListener;
 use ReflectionClass;
-use ReflectionException;
 use Throwable;
 
 use function array_is_list;
 use function array_key_exists;
-use function class_exists;
 use function get_debug_type;
-use function interface_exists;
 use function is_a;
 use function is_array;
 use function is_string;
 use function sprintf;
-use function trait_exists;
 
 /**
  * Dispatches events immediately to listeners registered for their exact class.
@@ -56,10 +52,7 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
             }
 
             try {
-                if (!class_exists($eventClass) && !interface_exists($eventClass) && !trait_exists($eventClass)) {
-                    throw new ReflectionException(sprintf('Class "%s" does not exist.', $eventClass));
-                }
-
+                // @phpstan-ignore argument.type (Reflection validates the name; failures are translated below.)
                 $class = new ReflectionClass($eventClass);
             } catch (Throwable $exception) {
                 throw new InvalidEventRegistrationException(

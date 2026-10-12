@@ -74,6 +74,7 @@ final readonly class DispatchContext
      */
     public function get(string $class): object
     {
+        // @phpstan-ignore return.type (Construction and with() index objects by their exact concrete class.)
         return $this->metadata[$class]
             ?? throw new DispatchMetadataNotFoundException(sprintf('Dispatch metadata "%s" is not present.', $class));
     }

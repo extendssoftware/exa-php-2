@@ -56,6 +56,7 @@ final readonly class WorkCommand implements CommandHandler
         try {
             while (!$this->control->stopRequested()) {
                 $processed = $this->processor->process($lease);
+                // @phpstan-ignore booleanNot.alwaysTrue (Shutdown can be requested between calls.)
                 if (!$processed && !$this->control->stopRequested()) {
                     $this->control->wait($this->settings->idleDelaySeconds);
                 }

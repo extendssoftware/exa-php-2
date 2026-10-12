@@ -104,6 +104,7 @@ final class Application
 
         try {
             $class = new ReflectionClass($moduleClass);
+            // @phpstan-ignore catch.neverThrown (Reflection can reject a class name supplied at runtime.)
         } catch (ReflectionException $exception) {
             throw new InvalidModuleException(sprintf('Module class "%s" does not exist.', $moduleClass), 0, $exception);
         }
