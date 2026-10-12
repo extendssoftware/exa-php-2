@@ -46,8 +46,8 @@ final readonly class SynchronousCommandBus implements CommandBus
     /**
      * Creates a bus with validated command handler registrations.
      *
-     * @param array<class-string<Command>, CommandHandler> $handlers Handlers indexed by concrete command class.
-     * @param list<CommandMiddleware> $middleware Middleware in execution order, first entry outermost.
+     * @param array<array-key, mixed> $handlers Handlers indexed by concrete command class.
+     * @param array<array-key, mixed> $middleware Middleware in execution order, first entry outermost.
      *
      * @throws InvalidCommandRegistrationException When a key is not a concrete Command class or a handler is invalid.
      * @throws DuplicateCommandHandlerException When multiple keys identify the same canonical command class.
