@@ -14,14 +14,19 @@ use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\CommandHandlerNotFoundExceptio
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\DuplicateCommandHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandRegistrationException;
 use ReflectionClass;
+use ReflectionException;
 use Throwable;
 
 use function array_is_list;
 use function array_key_exists;
 use function array_reverse;
+use function class_exists;
 use function get_debug_type;
+use function interface_exists;
+use function is_a;
 use function is_string;
 use function sprintf;
+use function trait_exists;
 
 /**
  * Dispatches commands immediately to handlers registered for their exact class.
@@ -34,12 +39,14 @@ final readonly class SynchronousCommandBus implements CommandBus
     /**
      * Handler instances indexed by canonical command class.
      *
-     * @var array<class-string<Command>, CommandHandler>
+     * @var array<class-string<Command>, CommandHandler<Command>>
      */
     private array $handlers;
 
     /**
      * Fixed execution chain, reused without retaining per-dispatch context.
+     *
+     * @var CommandExecution
      */
     private CommandExecution $execution;
 
@@ -64,6 +71,9 @@ final readonly class SynchronousCommandBus implements CommandBus
             }
 
             try {
+                if (!class_exists($commandClass) && !interface_exists($commandClass) && !trait_exists($commandClass)) {
+                    throw new ReflectionException(sprintf('Class "%s" does not exist.', $commandClass));
+                }
                 $class = new ReflectionClass($commandClass);
             } catch (Throwable $exception) {
                 throw new InvalidCommandRegistrationException(
@@ -73,7 +83,8 @@ final readonly class SynchronousCommandBus implements CommandBus
                 );
             }
 
-            if ($class->isInterface() || $class->isAbstract() || !$class->implementsInterface(Command::class)) {
+            $name = $class->getName();
+            if ($class->isInterface() || $class->isAbstract() || !is_a($name, Command::class, true)) {
                 throw new InvalidCommandRegistrationException(
                     sprintf('Registered class "%s" must be a concrete Command.', $commandClass),
                 );
@@ -89,7 +100,6 @@ final readonly class SynchronousCommandBus implements CommandBus
                 );
             }
 
-            $name = $class->getName();
             if (array_key_exists($name, $registrations)) {
                 throw new DuplicateCommandHandlerException(
                     sprintf('A handler is already registered for command "%s".', $name),

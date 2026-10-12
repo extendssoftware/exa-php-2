@@ -14,14 +14,19 @@ use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
 use ReflectionClass;
+use ReflectionException;
 use Throwable;
 
 use function array_is_list;
 use function array_key_exists;
 use function array_reverse;
+use function class_exists;
 use function get_debug_type;
+use function interface_exists;
+use function is_a;
 use function is_string;
 use function sprintf;
+use function trait_exists;
 
 /**
  * Answers queries immediately to handlers registered for their exact class.
@@ -34,12 +39,14 @@ final readonly class SynchronousQueryBus implements QueryBus
     /**
      * Handler instances indexed by canonical query class.
      *
-     * @var array<class-string<Query>, QueryHandler>
+     * @var array<class-string<Query<mixed>>, QueryHandler<Query<mixed>, mixed>>
      */
     private array $handlers;
 
     /**
      * Fixed execution chain, reused without retaining per-dispatch context.
+     *
+     * @var QueryExecution
      */
     private QueryExecution $execution;
 
@@ -64,6 +71,9 @@ final readonly class SynchronousQueryBus implements QueryBus
             }
 
             try {
+                if (!class_exists($queryClass) && !interface_exists($queryClass) && !trait_exists($queryClass)) {
+                    throw new ReflectionException(sprintf('Class "%s" does not exist.', $queryClass));
+                }
                 $class = new ReflectionClass($queryClass);
             } catch (Throwable $exception) {
                 throw new InvalidQueryRegistrationException(
@@ -73,7 +83,8 @@ final readonly class SynchronousQueryBus implements QueryBus
                 );
             }
 
-            if ($class->isInterface() || $class->isAbstract() || !$class->implementsInterface(Query::class)) {
+            $name = $class->getName();
+            if ($class->isInterface() || $class->isAbstract() || !is_a($name, Query::class, true)) {
                 throw new InvalidQueryRegistrationException(
                     sprintf('Registered class "%s" must be a concrete Query.', $queryClass),
                 );
@@ -89,7 +100,6 @@ final readonly class SynchronousQueryBus implements QueryBus
                 );
             }
 
-            $name = $class->getName();
             if (array_key_exists($name, $registrations)) {
                 throw new DuplicateQueryHandlerException(
                     sprintf('A handler is already registered for query "%s".', $name),

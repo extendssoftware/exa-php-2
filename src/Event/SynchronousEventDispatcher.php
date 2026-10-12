@@ -9,14 +9,19 @@ use ExtendsSoftware\ExaPHP\Event\Exception\DuplicateEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Exception\InvalidEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Listener\EventListener;
 use ReflectionClass;
+use ReflectionException;
 use Throwable;
 
 use function array_is_list;
 use function array_key_exists;
+use function class_exists;
 use function get_debug_type;
+use function interface_exists;
+use function is_a;
 use function is_array;
 use function is_string;
 use function sprintf;
+use function trait_exists;
 
 /**
  * Dispatches events immediately to listeners registered for their exact class.
@@ -30,7 +35,7 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
     /**
      * Ordered listener lists indexed by canonical event class.
      *
-     * @var array<class-string<Event>, list<EventListener>>
+     * @var array<class-string<Event>, list<EventListener<Event>>>
      */
     private array $listeners;
 
@@ -51,6 +56,10 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
             }
 
             try {
+                if (!class_exists($eventClass) && !interface_exists($eventClass) && !trait_exists($eventClass)) {
+                    throw new ReflectionException(sprintf('Class "%s" does not exist.', $eventClass));
+                }
+
                 $class = new ReflectionClass($eventClass);
             } catch (Throwable $exception) {
                 throw new InvalidEventRegistrationException(
@@ -60,7 +69,8 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
                 );
             }
 
-            if ($class->isInterface() || $class->isAbstract() || !$class->implementsInterface(Event::class)) {
+            $name = $class->getName();
+            if ($class->isInterface() || $class->isAbstract() || !is_a($name, Event::class, true)) {
                 throw new InvalidEventRegistrationException(
                     sprintf('Registered class "%s" must be a concrete Event.', $eventClass),
                 );
@@ -88,7 +98,6 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
                 $validatedListeners[] = $listener;
             }
 
-            $name = $class->getName();
             if (array_key_exists($name, $registrations)) {
                 throw new DuplicateEventRegistrationException(
                     sprintf('A listener list is already registered for event "%s".', $name),
