@@ -47,7 +47,7 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
             ],
             default => [null, null],
         };
-        if ($status === null) {
+        if ($status === null || $message === null) {
             return $this->fallback->create($exception, $request);
         }
 
