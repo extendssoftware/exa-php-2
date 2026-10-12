@@ -46,8 +46,8 @@ final readonly class SynchronousQueryBus implements QueryBus
     /**
      * Creates a bus with validated query handler registrations.
      *
-     * @param array<class-string<Query>, QueryHandler> $handlers Handlers indexed by concrete query class.
-     * @param list<QueryMiddleware> $middleware Middleware in execution order, first entry outermost.
+     * @param array<array-key, mixed> $handlers Handlers indexed by concrete query class.
+     * @param array<array-key, mixed> $middleware Middleware in execution order, first entry outermost.
      *
      * @throws InvalidQueryRegistrationException When a key is not a concrete Query class or a handler is invalid.
      * @throws DuplicateQueryHandlerException When multiple keys identify the same canonical query class.
