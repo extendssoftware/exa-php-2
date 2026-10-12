@@ -11,7 +11,8 @@
   "require-dev": {
     "ext-pcntl": "*",
     "ext-posix": "*",
-    "phpunit/phpunit": "^13.4"
+    "phpunit/phpunit": "^13.4",
+    "phpstan/phpstan": "^2.3"
   },
   "suggest": {
     "ext-pcntl": "Enables graceful SIGTERM/SIGINT shutdown for persistent CLI workers."

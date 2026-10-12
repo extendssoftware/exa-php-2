@@ -18,3 +18,7 @@ install:
 # Run all tests, a test file/directory, or additional PHPUnit arguments.
 test *args:
     docker compose run --build --rm php vendor/bin/phpunit "$@"
+
+# Run static analysis or pass additional PHPStan arguments.
+analyse *args:
+    docker compose run --build --rm php vendor/bin/phpstan analyse "$@"
