@@ -30,7 +30,7 @@ final readonly class MiddlewarePipeline implements RequestHandler
      * Builds the chain without handling a request.
      *
      * @param RequestHandler $handler The final handler invoked when all middleware delegate.
-     * @param list<Middleware> $middleware Middleware in request execution order; repeated instances run per occurrence.
+     * @param list<object> $middleware Middleware in request execution order; repeated instances run per occurrence.
      *
      * @throws InvalidMiddlewareException When middleware is not a list or contains an invalid entry.
      */
