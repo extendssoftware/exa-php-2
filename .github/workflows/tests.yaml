@@ -1,4 +1,4 @@
-name: Tests
+name: Tests and static analysis
 
 on:
   push:
@@ -13,7 +13,7 @@ concurrency:
 
 jobs:
   tests:
-    name: PHP 8.5 test suite
+    name: PHP 8.5 tests and static analysis
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -30,3 +30,6 @@ jobs:
 
       - name: Run all tests
         run: just test
+
+      - name: Run analyse
+        run: just analyse --no-progress
