@@ -45,7 +45,7 @@ final readonly class ContentNegotiatingResponseFactory
     /**
      * Creates a negotiator over explicitly available representations.
      *
-     * @param array<string, ResponseFactory> $factories Concrete parameterless media types mapped to their encoders.
+     * @param array<string, object> $factories Concrete parameterless media types mapped to their encoders.
      * @param string $defaultMediaType The registered media type preferred when client preferences are equal or absent.
      *
      * @throws InvalidResponseFactoryException When registrations are invalid, duplicated, or lack the default.
