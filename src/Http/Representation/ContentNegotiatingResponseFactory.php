@@ -11,10 +11,11 @@ use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
-use Throwable;
 use SensitiveParameter;
+use Throwable;
 
 use function array_key_exists;
+use function array_key_last;
 use function count;
 use function explode;
 use function implode;
@@ -184,16 +185,15 @@ final readonly class ContentNegotiatingResponseFactory
     private function split(string $value, string $delimiter): array
     {
         $parts = [''];
-        $index = 0;
         $quoted = false;
         $escaped = false;
         for ($offset = 0, $length = strlen($value) ; $offset < $length ; ++$offset) {
             $character = $value[$offset];
             if ($character === $delimiter && !$quoted) {
-                $parts[++$index] = '';
+                $parts[] = '';
                 continue;
             }
-            $parts[$index] .= $character;
+            $parts[array_key_last($parts)] .= $character;
             if ($escaped) {
                 $escaped = false;
             } elseif ($quoted && $character === '\\') {
