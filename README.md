@@ -98,26 +98,27 @@ Run PHPStan against `src/` using `phpstan.neon.dist`:
 vendor/bin/phpstan analyse
 ```
 
-GitHub Actions runs `just install`, `just test`, and `just analyse --no-progress` on pushes and pull requests using the
-same recipes and PHP container as local development. All test categories and static analysis run in one job.
+GitHub Actions runs `just install`, `just test`, `just analyse --no-progress`, and `just check-style` on pushes and pull
+requests using the same recipes and PHP container as local development. Tests, static analysis, and code style checks
+run in one job.
 
 ### Container workflow
 
-With Docker Compose and [just](https://just.systems/) installed, run Composer, PHPUnit, and PHPStan in the PHP 8.5 CLI
-container:
+With Docker Compose and [just](https://just.systems/) installed, run Composer, PHPUnit, PHPStan, and PHP-CS-Fixer in the
+PHP 8.5 CLI container:
 
 ```sh
 just install
 just test
-just test tests/Integration/Cqrs/CqrsModuleIntegrationTest.php
-just test --filter 'testApplicationBootstrapsWithTheCqrsModule'
 just analyse
-just analyse --no-progress
+just check-style
 ```
 
 `just test` forwards all arguments to PHPUnit, including quoted filters; `just analyse` forwards arguments to PHPStan.
-Run `just` to list recipes or `just build` to build the image explicitly. Install, test, and analysis recipes build the
-image as needed and remove their containers afterward.
+`just check-style` previews required formatting changes and exits unsuccessfully when any are found.
+Use `just fix` to apply formatting with `.php-cs-fixer.dist.php`; additional arguments are forwarded to PHP-CS-Fixer.
+Run `just` to list recipes or `just build` to build the image explicitly. Install, test, analysis, and formatting recipes
+build the image as needed and remove their containers afterward.
 The repository, including `vendor/`, is mounted into the container. Recipes use your host user and group IDs so generated
 files retain your ownership. The native PHP workflow remains available.
 
