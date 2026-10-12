@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
-use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
+use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
 
 use function count;
 use function explode;
@@ -54,8 +54,7 @@ final readonly class Route
         public string $path,
         public string $handlerId,
         public array $middleware = [],
-    )
-    {
+    ) {
         new MiddlewareIdentifiersValidator()->validate($middleware);
         if ($name === '') {
             throw new InvalidRouteException('Route names must not be empty.');
@@ -92,7 +91,15 @@ final readonly class Route
      */
     public function specificity(): int
     {
-        return count($this->segments) - count($this->names);
+        $count = 0;
+
+        foreach ($this->segments as $segment) {
+            if ($segment['literal'] !== null) {
+                $count++;
+            }
+        }
+
+        return $count;
     }
 
     /**
