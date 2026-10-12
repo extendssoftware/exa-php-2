@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Transformation\Shape;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\Exception\ProcessingValueUnavailableException;
-use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Collection\EachItem;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\ArrayShape;
@@ -129,7 +129,7 @@ final class ShapesTest extends TestCase
     {
         $violation = new Violation('invalid', 'Message', ['leaf'], ['limit' => 2]);
         $step = $this->createStub(Transformer::class);
-        $step->method('transform')->willReturn(ProcessingResult::failure($violation));
+        $step->method('transform')->willReturn(new FailedProcessingResult($violation));
         $result = new ArrayShape(['parent' => new Field($step)])->transform(['parent' => 1]);
         $prefixed = $result->violations()[0];
         $this->assertNotSame($violation, $prefixed);

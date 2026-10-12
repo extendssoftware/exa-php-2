@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Transformation;
 
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
-use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Collection\EachItem;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\ArrayShape;
@@ -33,7 +33,7 @@ final class StepTransformerTest extends TestCase
 
     public function testTransformerResultsArePreserved(): void
     {
-        $result = ProcessingResult::success(null);
+        $result = new SuccessfulProcessingResult(null);
         $step = $this->createMock(Transformer::class);
         $step->expects($this->once())->method('transform')->with('input')->willReturn($result);
         $this->assertSame($result, new StepTransformer($step)->transform('input'));

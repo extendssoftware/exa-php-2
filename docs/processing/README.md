@@ -1,7 +1,7 @@
 # Processing
 
 The `ExtendsSoftware\ExaPHP\Processing` component defines contracts for transformation, validation, and ordered
-composition, with final readonly violation and result classes. Use the provided validators and transformers directly, or
+composition, with immutable violations and results. Use the provided validators and transformers directly, or
 implement their contracts for application-specific rules. `SequentialPipeline` implements the ordered composition
 contract.
 
@@ -14,7 +14,8 @@ Implement `Validation\Validator<TInput>::validate()` to check a value and return
 must not change the input. Transformers must also leave their original input and nested objects unchanged, producing
 an output value instead.
 
-Both result classes expose `isValid()` and `violations()`. A result is valid exactly when its violation list is empty.
+Processing and validation results expose `isValid()` and `violations()`. A result is valid exactly when its violation list
+is empty.
 A `Violation` exposes a stable code, diagnostic message, named parameters, and a path represented by property
 names or collection keys. An empty path identifies the whole input; `['articles', 0, 'title']` identifies a nested value.
 
@@ -24,7 +25,8 @@ Only read `ProcessingResult::value()` after checking `isValid()`. Reading an inv
 Create results explicitly:
 
 ```php
-use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
 
@@ -36,12 +38,14 @@ $violation = new Violation(
 
 $valid = new ValidationResult();
 $invalid = new ValidationResult($violation);
-$converted = ProcessingResult::success(42);
-$failed = ProcessingResult::failure($violation);
+$converted = new SuccessfulProcessingResult(42);
+$failed = new FailedProcessingResult($violation);
 ```
 
-`ProcessingResult::failure()` requires at least one violation. `ProcessingResult` uses composition rather than extending
-`ValidationResult`; both expose the same validity and violation methods. Values and parameter objects are retained
+`FailedProcessingResult` requires at least one violation; its `value()` always throws.
+`SuccessfulProcessingResult<T>` retains the supplied value, including null. Both are final readonly implementations
+of the `ProcessingResult<T>` interface. Construct either outcome directly and use `ProcessingResult<T>` in contracts
+that accept or return either outcome. Values and parameter objects are retained
 without cloning or freezing them, so prefer immutable objects when a stable snapshot is required.
 
 A violation requires a non-empty code, a list of string or integer path segments, and string parameter keys. Invalid

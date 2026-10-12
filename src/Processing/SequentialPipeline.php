@@ -57,11 +57,11 @@ final class SequentialPipeline implements Pipeline
             } else {
                 $result = $step->validate($value);
                 if (!$result->isValid()) {
-                    return ProcessingResult::failure(...$result->violations());
+                    return new FailedProcessingResult(...$result->violations());
                 }
             }
         }
 
-        return ProcessingResult::success($value);
+        return new SuccessfulProcessingResult($value);
     }
 }

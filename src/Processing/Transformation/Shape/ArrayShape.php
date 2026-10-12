@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Shape;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
@@ -65,7 +67,7 @@ final readonly class ArrayShape implements Transformer
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_array($value)) {
-            return ProcessingResult::failure(new Violation(self::CODE_NOT_ARRAY, 'Value must be an array.'));
+            return new FailedProcessingResult(new Violation(self::CODE_NOT_ARRAY, 'Value must be an array.'));
         }
         $output = [];
         $violations = [];
@@ -97,7 +99,7 @@ final readonly class ArrayShape implements Transformer
         }
 
         return $violations === []
-            ? ProcessingResult::success($output)
-            : ProcessingResult::failure(...$violations);
+            ? new SuccessfulProcessingResult($output)
+            : new FailedProcessingResult(...$violations);
     }
 }

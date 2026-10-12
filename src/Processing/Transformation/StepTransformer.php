@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
@@ -54,7 +56,7 @@ final readonly class StepTransformer implements Transformer
         $result = $this->step->validate($value);
 
         return $result->isValid()
-            ? ProcessingResult::success($value)
-            : ProcessingResult::failure(...$result->violations());
+            ? new SuccessfulProcessingResult($value)
+            : new FailedProcessingResult(...$result->violations());
     }
 }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\String;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use Override;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
@@ -33,9 +35,9 @@ final readonly class TrimString implements Transformer
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_string($value)) {
-            return ProcessingResult::failure(new Violation(self::CODE_NOT_STRING, 'Value must be a string.'));
+            return new FailedProcessingResult(new Violation(self::CODE_NOT_STRING, 'Value must be a string.'));
         }
 
-        return ProcessingResult::success(trim($value));
+        return new SuccessfulProcessingResult(trim($value));
     }
 }

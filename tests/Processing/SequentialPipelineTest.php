@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Exception\AmbiguousPipelineStepException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
@@ -65,7 +67,7 @@ final class SequentialPipelineTest extends TestCase
 
     public function testFailedTransformationStopsAndPreservesResult(): void
     {
-        $failure = ProcessingResult::failure(new Violation('invalid', 'Invalid'));
+        $failure = new FailedProcessingResult(new Violation('invalid', 'Invalid'));
         $transformer = $this->createMock(Transformer::class);
         $transformer->expects($this->once())->method('transform')->willReturn($failure);
         $later = $this->createMock(Validator::class);
@@ -94,7 +96,7 @@ final class SequentialPipelineTest extends TestCase
     {
         $step = $this->createMock(Transformer::class);
         $step->expects($this->exactly(4))->method('transform')->willReturnCallback(
-            static fn(int $value): ProcessingResult => ProcessingResult::success($value + 1),
+            static fn(int $value): ProcessingResult => new SuccessfulProcessingResult($value + 1),
         );
         $pipeline = new SequentialPipeline();
         $pipeline->append($step);

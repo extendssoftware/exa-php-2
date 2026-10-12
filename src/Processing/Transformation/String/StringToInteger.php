@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\String;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use Override;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
@@ -50,10 +52,10 @@ final readonly class StringToInteger implements Transformer
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_string($value)) {
-            return ProcessingResult::failure(new Violation(self::CODE_NOT_STRING, 'Value must be a string.'));
+            return new FailedProcessingResult(new Violation(self::CODE_NOT_STRING, 'Value must be a string.'));
         }
         if (preg_match('/\A[+-]?[0-9]+\z/', $value) !== 1) {
-            return ProcessingResult::failure(
+            return new FailedProcessingResult(
                 new Violation(
                     self::CODE_INVALID_INTEGER_FORMAT,
                     'Value must be a decimal integer string.',
@@ -66,7 +68,7 @@ final readonly class StringToInteger implements Transformer
         $limit = $negative ? substr((string) PHP_INT_MIN, 1) : (string) PHP_INT_MAX;
         if (strlen($digits) > strlen($limit)
             || (strlen($digits) === strlen($limit) && strcmp($digits, $limit) > 0)) {
-            return ProcessingResult::failure(
+            return new FailedProcessingResult(
                 new Violation(
                     self::CODE_INTEGER_OVERFLOW,
                     'Value exceeds the platform integer range.',
@@ -75,6 +77,6 @@ final readonly class StringToInteger implements Transformer
             );
         }
 
-        return ProcessingResult::success((int) ($negative ? '-' . ($digits ?: '0') : ($digits ?: '0')));
+        return new SuccessfulProcessingResult((int) ($negative ? '-' . ($digits ?: '0') : ($digits ?: '0')));
     }
 }

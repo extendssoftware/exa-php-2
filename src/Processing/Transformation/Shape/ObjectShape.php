@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Shape;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
@@ -75,7 +77,7 @@ final readonly class ObjectShape implements Transformer
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_object($value)) {
-            return ProcessingResult::failure(new Violation(self::CODE_NOT_OBJECT, 'Value must be an object.'));
+            return new FailedProcessingResult(new Violation(self::CODE_NOT_OBJECT, 'Value must be an object.'));
         }
         $properties = [];
         foreach (get_mangled_object_vars($value) as $key => $entry) {
@@ -85,7 +87,7 @@ final readonly class ObjectShape implements Transformer
         }
         $result = $this->shape->transform($properties);
         if ($result->isValid()) {
-            return ProcessingResult::success((object) $result->value());
+            return new SuccessfulProcessingResult((object) $result->value());
         }
         $violations = [];
         foreach ($result->violations() as $violation) {
@@ -94,6 +96,6 @@ final readonly class ObjectShape implements Transformer
             $violations[] = new Violation($violation->code(), $violation->message(), $path, $violation->parameters());
         }
 
-        return ProcessingResult::failure(...$violations);
+        return new FailedProcessingResult(...$violations);
     }
 }

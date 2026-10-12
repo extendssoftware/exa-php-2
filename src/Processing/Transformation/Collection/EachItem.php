@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Collection;
 
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use Override;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
@@ -68,10 +70,10 @@ final readonly class EachItem implements Transformer
     public function transform(mixed $value): ProcessingResult
     {
         if (!is_array($value)) {
-            return ProcessingResult::failure(new Violation(self::CODE_NOT_ARRAY, 'Value must be an array.'));
+            return new FailedProcessingResult(new Violation(self::CODE_NOT_ARRAY, 'Value must be an array.'));
         }
         if ($this->keys === CollectionKeys::RequireList && !array_is_list($value)) {
-            return ProcessingResult::failure(new Violation(self::CODE_NOT_LIST, 'Value must be a list.'));
+            return new FailedProcessingResult(new Violation(self::CODE_NOT_LIST, 'Value must be a list.'));
         }
         $output = [];
         $violations = [];
@@ -87,7 +89,7 @@ final readonly class EachItem implements Transformer
         }
 
         return $violations === []
-            ? ProcessingResult::success($output)
-            : ProcessingResult::failure(...$violations);
+            ? new SuccessfulProcessingResult($output)
+            : new FailedProcessingResult(...$violations);
     }
 }

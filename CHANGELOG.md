@@ -57,7 +57,9 @@ All notable changes to ExaPHP will be documented in this file.
   bounded JSON input and maps decoding failures to 400, 413, and 415. Requires PHP’s native `ext-uri` extension.
 - Processing component with transformation, validation, and pipeline contracts, sequential execution with unambiguous
   step roles, immutable shared violations and results, null, string, pattern, strict-membership, and integer-range
-  validators, collecting `AllOf` validation, string trimming and integer conversion, and nested object/array shapes and
+  validators, collecting `AllOf` validation, a `ProcessingResult` interface with directly constructed
+  `FailedProcessingResult` and `SuccessfulProcessingResult` implementations, string trimming and integer conversion,
+  and nested object/array shapes and
   collection processing with explicit field policies and prefixed violation paths.
 - Logging component with logger, writer, and formatter contracts, stream output, predicate filtering, multi-destination
   delivery with aggregated failures, immutable log records, and NDJSON formatting with UTC timestamps and inline
