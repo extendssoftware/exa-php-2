@@ -305,6 +305,18 @@ public function id(): string
 - Prefer the current documented PHPUnit API over legacy equivalents.
 - Treat PHPUnit deprecation warnings as issues that must be fixed rather than ignored.
 
+### Verification
+
+- New and modified PHP code must pass the PHPUnit suite and PHPStan analysis using the project's configuration.
+- Run both checks before completing a code change; focused checks during development do not replace the final checks.
+- Use `just test` and `just analyse`, or the native equivalents `vendor/bin/phpunit` and `vendor/bin/phpstan analyse`.
+- Fix failures introduced by the change. Do not weaken types, remove runtime validation, lower the analysis level, or
+  exclude files merely to make the checks pass.
+- For a confirmed analysis limitation or deliberately invalid test input, use a narrowly scoped `@phpstan-ignore`
+  with the specific error identifier and a factual explanation. Do not suppress genuine defects.
+- Report which checks ran and their results. If a check cannot run or unrelated failures remain, state that explicitly
+  rather than claiming the checks passed.
+
 ### Unit Tests
 
 - Use unit tests for isolated behavior of individual classes, value objects, services, and other small units.
