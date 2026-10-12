@@ -34,7 +34,7 @@ final readonly class ContentTypeRequestBodyDecoder implements RequestBodyDecoder
     /**
      * Creates a dispatcher with exact, parameterless media type registrations.
      *
-     * @param array<string, RequestBodyDecoder> $decoders Available media types and their decoders.
+     * @param array<string, object> $decoders Available media types and their decoders.
      *
      * @throws InvalidRequestBodyDecoderException When a registration is invalid or repeated ignoring case.
      */
