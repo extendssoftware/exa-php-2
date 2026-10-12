@@ -49,6 +49,7 @@ final readonly class EventDispatcherFactory
             throw new InvalidEventConfigurationException('Configuration section "events" must be an array.');
         }
 
+        $listeners = [];
         foreach ($registrations as $eventClass => $listenerServices) {
             if (!is_string($eventClass) || $eventClass === '' || !is_array($listenerServices)) {
                 throw new InvalidEventConfigurationException(
@@ -66,10 +67,7 @@ final readonly class EventDispatcherFactory
                     );
                 }
             }
-        }
 
-        $listeners = [];
-        foreach ($registrations as $eventClass => $listenerServices) {
             $listeners[$eventClass] = array_values(array_map($serviceLocator->get(...), $listenerServices));
         }
 
