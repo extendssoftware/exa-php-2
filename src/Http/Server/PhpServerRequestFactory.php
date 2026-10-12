@@ -65,7 +65,7 @@ final readonly class PhpServerRequestFactory implements ServerRequestFactory
     /**
      * Creates a request from an explicit PHP server snapshot and body without consuming either.
      *
-     * @param array<string, mixed> $server PHP server variables, including method, target, and protocol.
+     * @param array<array-key, mixed> $server PHP server variables, including method, target, and protocol.
      * @param Body $body The incoming body.
      *
      * @return Request The adapted request.
@@ -99,7 +99,7 @@ final readonly class PhpServerRequestFactory implements ServerRequestFactory
         }
         $headers = [];
         foreach ($server as $name => $value) {
-            if (str_starts_with($name, 'HTTP_')) {
+            if (is_string($name) && str_starts_with($name, 'HTTP_')) {
                 if (!is_string($value)) {
                     throw new RequestCreationException('Server header values must be strings.');
                 }
@@ -122,7 +122,7 @@ final readonly class PhpServerRequestFactory implements ServerRequestFactory
      * Builds an origin URI without treating a leading double slash as an authority.
      *
      * @param non-empty-string $target The origin-form request target.
-     * @param array<string, mixed> $server The server snapshot.
+     * @param array<array-key, mixed> $server The server snapshot.
      *
      * @return Uri The request URI.
      *
@@ -153,7 +153,7 @@ final readonly class PhpServerRequestFactory implements ServerRequestFactory
     /**
      * Reads a required non-empty server variable.
      *
-     * @param array<string, mixed> $server The server snapshot.
+     * @param array<array-key, mixed> $server The server snapshot.
      * @param string $name The variable name.
      *
      * @return non-empty-string The variable value.
