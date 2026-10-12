@@ -24,7 +24,7 @@ final readonly class MappingExceptionResponseFactory implements ExceptionRespons
     /**
      * Creates an ordered exception mapping policy.
      *
-     * @param list<ExceptionProblemDetailsMapper> $mappers The mappers in evaluation order.
+     * @param list<object> $mappers The mappers in evaluation order.
      * @param ExceptionResponseFactory $fallback The policy for exceptions no mapper handles.
      * @param ProblemDetailsResponseFactory $problems The problem response encoder.
      *
