@@ -37,7 +37,7 @@ final readonly class SynchronousEventDispatcher implements EventDispatcher
     /**
      * Creates a dispatcher with validated event listener lists.
      *
-     * @param array<class-string<Event>, list<EventListener>> $listeners Listener lists indexed by concrete event class.
+     * @param array<array-key, mixed> $listeners Listener lists indexed by concrete event class.
      *
      * @throws InvalidEventRegistrationException When a key is not a concrete Event class or a listener list is invalid.
      * @throws DuplicateEventRegistrationException When multiple keys identify the same canonical event class.
