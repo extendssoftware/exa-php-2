@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Resolver;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Handler\Exception\HandlerResolutionException;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
+use Override;
 
 use function sprintf;
 
@@ -23,9 +23,7 @@ final readonly class ServiceLocatorHandlerResolver implements HandlerResolver
      *
      * @param ServiceLocator $serviceLocator The locator supplying handler services.
      */
-    public function __construct(private ServiceLocator $serviceLocator)
-    {
-    }
+    public function __construct(private ServiceLocator $serviceLocator) {}
 
     /**
      * {@inheritDoc}

@@ -4,31 +4,30 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Validation\Number;
 
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Number\IntegerRange;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-
-use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 
 final class IntegerRangeTest extends TestCase
 {
     public function testViolationCodesRemainStable(): void
     {
-        $this->assertSame('not_integer', IntegerRange::CODE_NOT_INTEGER);
-        $this->assertSame('integer_out_of_range', IntegerRange::CODE_INTEGER_OUT_OF_RANGE);
+        self::assertSame('not_integer', IntegerRange::CODE_NOT_INTEGER);
+        self::assertSame('integer_out_of_range', IntegerRange::CODE_INTEGER_OUT_OF_RANGE);
     }
 
     #[DataProvider('inputs')]
     public function testInput(mixed $input, ?string $code): void
     {
         $result = new IntegerRange(-2, 2)->validate($input);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code !== null) {
-            $this->assertCount(1, $result->violations());
-            $this->assertSame($code, $result->violations()[0]->code());
-            $this->assertSame([], $result->violations()[0]->path());
+            self::assertCount(1, $result->violations());
+            self::assertSame($code, $result->violations()[0]->code());
+            self::assertSame([], $result->violations()[0]->path());
         } else {
-            $this->assertSame([], $result->violations());
+            self::assertSame([], $result->violations());
 
         }
     }
@@ -42,8 +41,8 @@ final class IntegerRangeTest extends TestCase
     public function testEqualBoundsAndFailureParameters(): void
     {
         $validator = new IntegerRange(1, 1);
-        $this->assertTrue($validator->validate(1)->isValid());
-        $this->assertSame(['minimum' => 1, 'maximum' => 1], $validator->validate(0)->violations()[0]->parameters());
+        self::assertTrue($validator->validate(1)->isValid());
+        self::assertSame(['minimum' => 1, 'maximum' => 1], $validator->validate(0)->violations()[0]->parameters());
     }
 
     /**

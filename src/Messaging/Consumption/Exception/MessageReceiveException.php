@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates failure to receive a subscriber delivery.
  */
-final class MessageReceiveException extends RuntimeException implements MessagingException
-{
-}
+final class MessageReceiveException extends RuntimeException implements MessagingException {}

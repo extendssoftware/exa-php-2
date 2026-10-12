@@ -20,9 +20,7 @@ final class AndSpecification extends AbstractSpecification
      * @param Specification<T> $left The first condition to evaluate.
      * @param Specification<T> $right The second condition to evaluate when needed.
      */
-    public function __construct(private readonly Specification $left, private readonly Specification $right)
-    {
-    }
+    public function __construct(private readonly Specification $left, private readonly Specification $right) {}
 
     /**
      * {@inheritDoc}

@@ -32,8 +32,7 @@ final readonly class OutboxProcessor
         private MessageDelivery $delivery,
         private RetryPolicy $retryPolicy,
         private Clock $clock,
-    ) {
-    }
+    ) {}
 
     /**
      * Claims at most one message, attempts delivery, and records its outcome.

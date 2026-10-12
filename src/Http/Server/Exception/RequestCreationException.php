@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that the server environment cannot produce a request.
  */
-final class RequestCreationException extends RuntimeException implements HttpException
-{
-}
+final class RequestCreationException extends RuntimeException implements HttpException {}

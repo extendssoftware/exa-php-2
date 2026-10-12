@@ -6,11 +6,11 @@ namespace ExtendsSoftware\ExaPHP\Tests\Cqrs\Command;
 
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Command;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\CommandHandler;
-use ExtendsSoftware\ExaPHP\Cqrs\Command\SynchronousCommandBus;
-use ExtendsSoftware\ExaPHP\Cqrs\CqrsException;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\CommandHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\DuplicateCommandHandlerException;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\SynchronousCommandBus;
+use ExtendsSoftware\ExaPHP\Cqrs\CqrsException;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Command\Fixture\ChildCommand;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Command\Fixture\ParentCommand;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -79,7 +79,7 @@ final class SynchronousCommandBusTest extends TestCase
     public function testRejectsInvalidCommandClasses(int|string $class): void
     {
         $this->expectException(InvalidCommandRegistrationException::class);
-        new SynchronousCommandBus([$class => $this->createStub(CommandHandler::class)]);
+        new SynchronousCommandBus([$class => self::createStub(CommandHandler::class)]);
     }
 
     /**
@@ -98,7 +98,7 @@ final class SynchronousCommandBusTest extends TestCase
     public function testPreservesTheCauseOfClassInspectionFailures(): void
     {
         try {
-            new SynchronousCommandBus(['ExaPHP\\MissingCommand' => $this->createStub(CommandHandler::class)]);
+            new SynchronousCommandBus(['ExaPHP\\MissingCommand' => self::createStub(CommandHandler::class)]);
             self::fail('Expected an invalid registration failure.');
         } catch (InvalidCommandRegistrationException $exception) {
             self::assertInstanceOf(CqrsException::class, $exception);
@@ -126,8 +126,7 @@ final class SynchronousCommandBusTest extends TestCase
         yield 'boolean' => [false];
         yield 'object' => [new stdClass()];
         yield 'class name' => [CommandHandler::class];
-        yield 'callable' => [static function (): void {
-        }];
+        yield 'callable' => [static function (): void {}];
     }
 
     public function testNormalizesClassNameCasing(): void
@@ -148,7 +147,7 @@ final class SynchronousCommandBusTest extends TestCase
 
     public function testRejectsDuplicateCanonicalRegistrations(): void
     {
-        $handler = $this->createStub(CommandHandler::class);
+        $handler = self::createStub(CommandHandler::class);
         $this->expectException(DuplicateCommandHandlerException::class);
         new SynchronousCommandBus([
             ParentCommand::class => $handler,
@@ -196,7 +195,7 @@ final class SynchronousCommandBusTest extends TestCase
         $handler->expects(self::once())->method('handle');
         $registrations = [ParentCommand::class => &$handler];
         $bus = new SynchronousCommandBus($registrations);
-        $handler = $this->createStub(CommandHandler::class);
+        $handler = self::createStub(CommandHandler::class);
         $registrations = [];
 
         $bus->dispatch(new ParentCommand());

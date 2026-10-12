@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
-use Override;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LoggingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
+use Override;
 use Throwable;
 
 use function array_values;

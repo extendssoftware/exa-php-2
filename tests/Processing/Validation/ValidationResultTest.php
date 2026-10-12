@@ -13,8 +13,8 @@ final class ValidationResultTest extends TestCase
     public function testEmptyResultIsValid(): void
     {
         $result = new ValidationResult();
-        $this->assertTrue($result->isValid());
-        $this->assertSame([], $result->violations());
+        self::assertTrue($result->isValid());
+        self::assertSame([], $result->violations());
     }
 
     public function testViolationsRetainOrderAndIdentity(): void
@@ -22,7 +22,7 @@ final class ValidationResultTest extends TestCase
         $first = new Violation('required', 'Required');
         $second = new Violation('invalid', 'Invalid');
         $result = new ValidationResult($first, $second);
-        $this->assertFalse($result->isValid());
-        $this->assertSame([$first, $second], $result->violations());
+        self::assertFalse($result->isValid());
+        self::assertSame([$first, $second], $result->violations());
     }
 }

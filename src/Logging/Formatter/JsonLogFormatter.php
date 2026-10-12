@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Formatter;
 
-use Override;
 use BackedEnum;
 use DateTimeImmutable;
 use DateTimeInterface;
@@ -12,6 +11,7 @@ use DateTimeZone;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\Exception\LogFormattingException;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use JsonException;
+use Override;
 use Throwable;
 use UnitEnum;
 
@@ -69,7 +69,7 @@ final readonly class JsonLogFormatter implements LogFormatter
             'timestamp' => $this->formatTimestamp($record->timestamp),
             'level' => $record->level->value,
             'message' => $record->message,
-            'context' => (object)$this->normalize($record->context, 0),
+            'context' => (object) $this->normalize($record->context, 0),
         ];
 
         try {
@@ -131,9 +131,7 @@ final readonly class JsonLogFormatter implements LogFormatter
             return $value->name;
         }
         if (is_array($value)) {
-            return array_map(function ($entry) use ($depth) {
-                return $this->normalize($entry, $depth + 1);
-            }, $value);
+            return array_map(fn($entry) => $this->normalize($entry, $depth + 1), $value);
         }
         if (is_object($value)) {
             return ['class' => $value::class];

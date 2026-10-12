@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that requested dispatch metadata is absent.
  */
-final class DispatchMetadataNotFoundException extends RuntimeException implements CqrsException
-{
-}
+final class DispatchMetadataNotFoundException extends RuntimeException implements CqrsException {}

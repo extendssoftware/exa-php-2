@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
-use Override;
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
+use Override;
 
 use function header;
 use function header_remove;

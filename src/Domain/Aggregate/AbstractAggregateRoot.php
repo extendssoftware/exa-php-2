@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Domain\Aggregate;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Domain\Event\DomainEvent;
 use ExtendsSoftware\ExaPHP\Domain\Event\RecordedEvents;
+use Override;
 
 /**
  * Provides event recording for aggregate roots through inheritance.
@@ -35,6 +35,15 @@ abstract class AbstractAggregateRoot implements AggregateRoot
     }
 
     /**
+     * {@inheritDoc}
+     */
+    #[Override]
+    final public function releaseEvents(): array
+    {
+        return $this->events?->release() ?? [];
+    }
+
+    /**
      * Records an event without publishing it.
      *
      * @param DomainEvent $event The event that occurred.
@@ -44,14 +53,5 @@ abstract class AbstractAggregateRoot implements AggregateRoot
     final protected function recordEvent(DomainEvent $event): void
     {
         ($this->events ??= new RecordedEvents())->record($event);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    #[Override]
-    final public function releaseEvents(): array
-    {
-        return $this->events?->release() ?? [];
     }
 }

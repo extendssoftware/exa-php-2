@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a message contains invalid envelope data.
  */
-final class InvalidMessageException extends InvalidArgumentException implements MessagingException
-{
-}
+final class InvalidMessageException extends InvalidArgumentException implements MessagingException {}

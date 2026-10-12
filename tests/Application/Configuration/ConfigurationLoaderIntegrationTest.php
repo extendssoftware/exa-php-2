@@ -251,7 +251,7 @@ final class ConfigurationLoaderIntegrationTest extends TestCase
     public function testPropagatesModuleDirectoryFailuresUnchanged(): void
     {
         $failure = new RuntimeException('Directory unavailable.');
-        $module = new readonly class($failure) implements Module, ConfigurableModule {
+        $module = new readonly class ($failure) implements Module, ConfigurableModule {
             /**
              * Creates a module with a directory lookup failure.
              *
@@ -332,7 +332,7 @@ final class ConfigurationLoaderIntegrationTest extends TestCase
 
     private function module(): Module
     {
-        return new readonly class($this->directory . '/module') implements Module, ConfigurableModule {
+        return new readonly class ($this->directory . '/module') implements Module, ConfigurableModule {
             /**
              * Creates a module using the supplied directory.
              *
@@ -354,7 +354,7 @@ final class ConfigurationLoaderIntegrationTest extends TestCase
 
     private function secondModule(): Module
     {
-        return new readonly class($this->directory . '/application') implements Module, ConfigurableModule {
+        return new readonly class ($this->directory . '/application') implements Module, ConfigurableModule {
             /**
              * Creates a second module using the supplied directory.
              *

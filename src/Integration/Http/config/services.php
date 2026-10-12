@@ -2,21 +2,20 @@
 
 declare(strict_types=1);
 
+use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Decoding\RequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
-use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
-use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewareResolverFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Middleware\ExceptionHandlingMiddleware;
-use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
-use ExtendsSoftware\ExaPHP\Http\Decoding\RequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
 use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
-use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
+use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
+use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
@@ -25,12 +24,13 @@ use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ExceptionHandlingMiddlewareF
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ExceptionMappingFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\HandlerResolverFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewarePipelineFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\MiddlewareResolverFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RequestBodyDecoderFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\ResponseNegotiationFactory;
-use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouterFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouteCollectionFactory;
-use ExtendsSoftware\ExaPHP\Integration\Http\Factory\UrlGeneratorFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RouterFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Factory\RoutingRequestHandlerFactory;
+use ExtendsSoftware\ExaPHP\Integration\Http\Factory\UrlGeneratorFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 

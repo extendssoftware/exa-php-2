@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use Throwable;
+use Override;
 use SensitiveParameter;
+use Throwable;
 
 /**
  * Converts downstream exceptions and engine errors into responses through an injected factory.
@@ -22,9 +22,7 @@ final readonly class ExceptionHandlingMiddleware implements Middleware
      *
      * @param ExceptionResponseFactory $factory The factory responsible for representing failures.
      */
-    public function __construct(private ExceptionResponseFactory $factory)
-    {
-    }
+    public function __construct(private ExceptionResponseFactory $factory) {}
 
     /**
      * {@inheritDoc}

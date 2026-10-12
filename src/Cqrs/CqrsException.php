@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies command and query dispatch failures.
  */
-interface CqrsException extends Throwable
-{
-}
+interface CqrsException extends Throwable {}

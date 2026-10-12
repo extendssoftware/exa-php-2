@@ -161,7 +161,7 @@ final class SynchronousEventDispatcherTest extends TestCase
         $list = [&$listener];
         $registrations = [ParentEvent::class => &$list];
         $dispatcher = new SynchronousEventDispatcher($registrations);
-        $listener = $this->createStub(EventListener::class);
+        $listener = self::createStub(EventListener::class);
         $list = [];
         $registrations = [];
         $dispatcher->dispatch(new ParentEvent());

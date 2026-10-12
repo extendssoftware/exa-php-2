@@ -17,9 +17,7 @@ final class RecordingAggregate extends AbstractAggregateRoot
      *
      * @param DomainEvent $event The event recorded by the aggregate's behavior.
      */
-    public function __construct(private readonly DomainEvent $event)
-    {
-    }
+    public function __construct(private readonly DomainEvent $event) {}
 
     /**
      * Performs behavior that records the supplied event.

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that the request body exceeds the configured decoding limit.
  */
-final class RequestBodyTooLargeException extends RuntimeException implements HttpException
-{
-}
+final class RequestBodyTooLargeException extends RuntimeException implements HttpException {}

@@ -33,16 +33,16 @@ final class OutboxProcessorTest extends TestCase
     {
         $lease = new DateInterval('PT30S');
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->with($lease)->willReturn(null);
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('retry');
-        $store->expects($this->never())->method('fail');
+        $store->expects(self::once())->method('claim')->with($lease)->willReturn(null);
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('retry');
+        $store->expects(self::never())->method('fail');
         $delivery = $this->createMock(MessageDelivery::class);
-        $delivery->expects($this->never())->method('deliver');
+        $delivery->expects(self::never())->method('deliver');
         $policy = $this->createMock(RetryPolicy::class);
-        $policy->expects($this->never())->method('delay');
+        $policy->expects(self::never())->method('delay');
         $clock = $this->createMock(Clock::class);
-        $clock->expects($this->never())->method('now');
+        $clock->expects(self::never())->method('now');
 
         self::assertFalse(new OutboxProcessor($store, $delivery, $policy, $clock)->process($lease));
     }
@@ -52,24 +52,24 @@ final class OutboxProcessorTest extends TestCase
         $claim = $this->claim();
         $delivered = false;
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($claim);
-        $store->expects($this->once())->method('complete')->with($claim)->willReturnCallback(
-            function () use (&$delivered): void {
+        $store->expects(self::once())->method('claim')->willReturn($claim);
+        $store->expects(self::once())->method('complete')->with($claim)->willReturnCallback(
+            static function () use (&$delivered): void {
                 self::assertTrue($delivered);
             },
         );
-        $store->expects($this->never())->method('retry');
-        $store->expects($this->never())->method('fail');
+        $store->expects(self::never())->method('retry');
+        $store->expects(self::never())->method('fail');
         $delivery = $this->createMock(MessageDelivery::class);
-        $delivery->expects($this->once())->method('deliver')->with($claim->message)->willReturnCallback(
+        $delivery->expects(self::once())->method('deliver')->with($claim->message)->willReturnCallback(
             static function () use (&$delivered): void {
                 $delivered = true;
             },
         );
         $policy = $this->createMock(RetryPolicy::class);
-        $policy->expects($this->never())->method('delay');
+        $policy->expects(self::never())->method('delay');
         $clock = $this->createMock(Clock::class);
-        $clock->expects($this->never())->method('now');
+        $clock->expects(self::never())->method('now');
 
         self::assertTrue(new OutboxProcessor($store, $delivery, $policy, $clock)->process(new DateInterval('PT30S')));
     }
@@ -81,15 +81,15 @@ final class OutboxProcessorTest extends TestCase
         $now = new DateTimeImmutable('2026-10-06T12:00:20.123456Z');
         $failure = new MessageDeliveryException('Timed out.');
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($claim);
-        $store->expects($this->once())->method('retry')->with($claim, $now->add(new DateInterval('PT' . $delay . 'S')));
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('fail');
-        $delivery = $this->createStub(MessageDelivery::class);
+        $store->expects(self::once())->method('claim')->willReturn($claim);
+        $store->expects(self::once())->method('retry')->with($claim, $now->add(new DateInterval('PT' . $delay . 'S')));
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('fail');
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willThrowException($failure);
         $policy = $this->createMock(RetryPolicy::class);
-        $policy->expects($this->once())->method('delay')
-            ->with($this->identicalTo($claim), $this->identicalTo($failure))->willReturn($delay);
+        $policy->expects(self::once())->method('delay')
+            ->with(self::identicalTo($claim), self::identicalTo($failure))->willReturn($delay);
 
         $processor = new OutboxProcessor($store, $delivery, $policy, new FrozenClock($now));
 
@@ -107,14 +107,14 @@ final class OutboxProcessorTest extends TestCase
     {
         $claim = $this->claim();
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($claim);
-        $store->expects($this->once())->method('fail')->with($claim);
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('retry');
-        $delivery = $this->createStub(MessageDelivery::class);
+        $store->expects(self::once())->method('claim')->willReturn($claim);
+        $store->expects(self::once())->method('fail')->with($claim);
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('retry');
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willThrowException(new MessageDeliveryException('Timed out.'));
         $clock = $this->createMock(Clock::class);
-        $clock->expects($this->never())->method('now');
+        $clock->expects(self::never())->method('now');
 
         $processor = new OutboxProcessor($store, $delivery, new FixedDelayRetryPolicy(60, 1), $clock);
 
@@ -127,24 +127,24 @@ final class OutboxProcessorTest extends TestCase
         $claim = $this->claim();
         $store = $this->createMock(OutboxStore::class);
         if ($operation === 'claim') {
-            $store->expects($this->once())->method('claim')->willThrowException($failure);
+            $store->expects(self::once())->method('claim')->willThrowException($failure);
         } else {
-            $store->expects($this->once())->method('claim')->willReturn($claim);
+            $store->expects(self::once())->method('claim')->willReturn($claim);
         }
         foreach (['complete', 'retry', 'fail'] as $outcome) {
             if ($outcome === $operation) {
-                $store->expects($this->once())->method($outcome)->willThrowException($failure);
+                $store->expects(self::once())->method($outcome)->willThrowException($failure);
             } else {
-                $store->expects($this->never())->method($outcome);
+                $store->expects(self::never())->method($outcome);
             }
         }
         $delivery = $this->createMock(MessageDelivery::class);
         if ($operation === 'claim') {
-            $delivery->expects($this->never())->method('deliver');
+            $delivery->expects(self::never())->method('deliver');
         } elseif ($operation === 'complete') {
-            $delivery->expects($this->once())->method('deliver');
+            $delivery->expects(self::once())->method('deliver');
         } else {
-            $delivery->expects($this->once())->method('deliver')
+            $delivery->expects(self::once())->method('deliver')
                 ->willThrowException(new MessageDeliveryException('Timed out.'));
         }
         $policy = new FixedDelayRetryPolicy(60, $operation === 'fail' ? 1 : 3);
@@ -173,15 +173,15 @@ final class OutboxProcessorTest extends TestCase
     public function testUnexpectedDeliveryFailuresPropagateWithoutRecordingAnOutcome(Throwable $failure): void
     {
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($this->claim());
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('retry');
-        $store->expects($this->never())->method('fail');
-        $delivery = $this->createStub(MessageDelivery::class);
+        $store->expects(self::once())->method('claim')->willReturn($this->claim());
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('retry');
+        $store->expects(self::never())->method('fail');
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willThrowException($failure);
         $policy = $this->createMock(RetryPolicy::class);
-        $policy->expects($this->never())->method('delay');
-        $processor = new OutboxProcessor($store, $delivery, $policy, $this->createStub(Clock::class));
+        $policy->expects(self::never())->method('delay');
+        $processor = new OutboxProcessor($store, $delivery, $policy, self::createStub(Clock::class));
 
         try {
             $processor->process(new DateInterval('PT30S'));
@@ -200,16 +200,15 @@ final class OutboxProcessorTest extends TestCase
 
     public function testClockFailurePreservesItsCauseWithoutRecordingAnOutcome(): void
     {
-        $failure = new class ('Clock unavailable.') extends RuntimeException implements ClockException {
-        };
+        $failure = new class ('Clock unavailable.') extends RuntimeException implements ClockException {};
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($this->claim());
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('retry');
-        $store->expects($this->never())->method('fail');
-        $delivery = $this->createStub(MessageDelivery::class);
+        $store->expects(self::once())->method('claim')->willReturn($this->claim());
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('retry');
+        $store->expects(self::never())->method('fail');
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willThrowException(new MessageDeliveryException('Timed out.'));
-        $clock = $this->createStub(Clock::class);
+        $clock = self::createStub(Clock::class);
         $clock->method('now')->willThrowException($failure);
         $processor = new OutboxProcessor($store, $delivery, new FixedDelayRetryPolicy(60, 3), $clock);
 
@@ -224,15 +223,15 @@ final class OutboxProcessorTest extends TestCase
     public function testRejectsNegativePolicyDelayWithoutRecordingAnOutcome(): void
     {
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($this->claim());
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('retry');
-        $store->expects($this->never())->method('fail');
-        $delivery = $this->createStub(MessageDelivery::class);
+        $store->expects(self::once())->method('claim')->willReturn($this->claim());
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('retry');
+        $store->expects(self::never())->method('fail');
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willThrowException(new MessageDeliveryException('Timed out.'));
-        $policy = $this->createStub(RetryPolicy::class);
+        $policy = self::createStub(RetryPolicy::class);
         $policy->method('delay')->willReturn(-1);
-        $processor = new OutboxProcessor($store, $delivery, $policy, $this->createStub(Clock::class));
+        $processor = new OutboxProcessor($store, $delivery, $policy, self::createStub(Clock::class));
 
         $this->expectException(InvalidRetryPolicyException::class);
 
@@ -243,16 +242,16 @@ final class OutboxProcessorTest extends TestCase
     {
         $failure = new InvalidRetryPolicyException('Policy cannot evaluate this attempt.');
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($this->claim());
-        $store->expects($this->never())->method('complete');
-        $store->expects($this->never())->method('retry');
-        $store->expects($this->never())->method('fail');
-        $delivery = $this->createStub(MessageDelivery::class);
+        $store->expects(self::once())->method('claim')->willReturn($this->claim());
+        $store->expects(self::never())->method('complete');
+        $store->expects(self::never())->method('retry');
+        $store->expects(self::never())->method('fail');
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willThrowException(new MessageDeliveryException('Timed out.'));
-        $policy = $this->createStub(RetryPolicy::class);
+        $policy = self::createStub(RetryPolicy::class);
         $policy->method('delay')->willThrowException($failure);
         $clock = $this->createMock(Clock::class);
-        $clock->expects($this->never())->method('now');
+        $clock->expects(self::never())->method('now');
         $processor = new OutboxProcessor($store, $delivery, $policy, $clock);
 
         try {

@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies failures belonging to the Identity component.
  */
-interface IdentityException extends Throwable
-{
-}
+interface IdentityException extends Throwable {}

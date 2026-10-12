@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid or duplicate dispatch metadata.
  */
-final class InvalidDispatchMetadataException extends InvalidArgumentException implements CqrsException
-{
-}
+final class InvalidDispatchMetadataException extends InvalidArgumentException implements CqrsException {}

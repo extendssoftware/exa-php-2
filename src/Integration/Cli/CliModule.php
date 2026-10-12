@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Cli;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
+use Override;
 
 /**
  * Provides CLI command dispatch, stream output, and worker control service configuration.

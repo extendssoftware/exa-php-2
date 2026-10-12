@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid regular expression.
  */
-final class InvalidPatternException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class InvalidPatternException extends InvalidArgumentException implements ProcessingException {}

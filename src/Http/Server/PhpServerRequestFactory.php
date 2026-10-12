@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Server;
 
-use Override;
 use ErrorException;
+use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\StreamBody;
-use ExtendsSoftware\ExaPHP\Http\Server\Exception\RequestCreationException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
-use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\RequestCreationException;
+use Override;
 
 use function fopen;
 use function is_string;
@@ -22,8 +22,8 @@ use function restore_error_handler;
 use function set_error_handler;
 use function str_replace;
 use function str_starts_with;
-use function substr;
 use function strtolower;
+use function substr;
 
 use const E_WARNING;
 

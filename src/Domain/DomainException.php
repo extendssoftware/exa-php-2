@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies domain component failures.
  */
-interface DomainException extends Throwable
-{
-}
+interface DomainException extends Throwable {}

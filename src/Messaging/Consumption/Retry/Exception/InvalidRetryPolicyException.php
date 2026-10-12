@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid retry policy configuration, input, or delay.
  */
-final class InvalidRetryPolicyException extends InvalidArgumentException implements MessagingException
-{
-}
+final class InvalidRetryPolicyException extends InvalidArgumentException implements MessagingException {}

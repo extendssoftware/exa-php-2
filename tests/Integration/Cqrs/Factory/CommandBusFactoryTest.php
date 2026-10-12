@@ -7,8 +7,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Cqrs\Factory;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\CommandHandler;
-use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Exception\InvalidCqrsConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Factory\CommandBusFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
@@ -102,7 +102,7 @@ final class CommandBusFactoryTest extends TestCase
 
     public function testRejectsAnIncorrectConfigurationService(): void
     {
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $locator->method('get')->willReturn(new stdClass());
         $this->expectException(InvalidCqrsConfigurationException::class);
         new CommandBusFactory()->create($locator);

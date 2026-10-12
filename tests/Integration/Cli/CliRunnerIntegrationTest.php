@@ -43,34 +43,34 @@ final class CliRunnerIntegrationTest extends TestCase
         $directory = sys_get_temp_dir() . '/exa-cli-' . bin2hex(random_bytes(8));
         mkdir($directory);
         $config = <<<'PHP'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Cli\Definition\ArgumentDefinition;
-use ExtendsSoftware\ExaPHP\Cli\Definition\CommandDefinition;
-use ExtendsSoftware\ExaPHP\Cli\Output\Output;
-use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
-use ExtendsSoftware\ExaPHP\Tests\Integration\Cli\Fixture\RunnerHandler;
+            use ExtendsSoftware\ExaPHP\Cli\Definition\ArgumentDefinition;
+            use ExtendsSoftware\ExaPHP\Cli\Definition\CommandDefinition;
+            use ExtendsSoftware\ExaPHP\Cli\Output\Output;
+            use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+            use ExtendsSoftware\ExaPHP\Tests\Integration\Cli\Fixture\RunnerHandler;
 
-PHP;
+            PHP;
         $config .= '$handler = new RunnerHandler(' . var_export($scenario === 'failure', true) . ', '
             . var_export($shutdownFails, true) . ");\n";
         $config .= <<<'PHP'
-$streams = new stdClass();
-$streams->output = fopen('php://memory', 'w+');
-return [
-    'cli' => ['commands' => [
-        'greet' => new CommandDefinition('greet', RunnerHandler::class, arguments: [new ArgumentDefinition('name')]),
-    ]],
-    'services' => [
-        RunnerHandler::class => new InstanceDefinition($handler),
-        'streams' => new InstanceDefinition($streams),
-        Output::class => new InstanceDefinition(new StreamOutput($streams->output, $streams->output)),
-    ],
-];
-PHP;
+            $streams = new stdClass();
+            $streams->output = fopen('php://memory', 'w+');
+            return [
+                'cli' => ['commands' => [
+                    'greet' => new CommandDefinition('greet', RunnerHandler::class, arguments: [new ArgumentDefinition('name')]),
+                ]],
+                'services' => [
+                    RunnerHandler::class => new InstanceDefinition($handler),
+                    'streams' => new InstanceDefinition($streams),
+                    Output::class => new InstanceDefinition(new StreamOutput($streams->output, $streams->output)),
+                ],
+            ];
+            PHP;
         file_put_contents($directory . '/cli.global.php', $config);
         $stream = null;
         try {
@@ -87,12 +87,12 @@ PHP;
             $failure = null;
             try {
                 $code = new CliRunner()->run($application, $argv);
-                $this->assertSame(17, $code);
+                self::assertSame(17, $code);
             } catch (Throwable $exception) {
                 $failure = $exception;
             }
             $handler = $services->get(RunnerHandler::class);
-            $this->assertSame(
+            self::assertSame(
                 $scenario === 'unknown' || $scenario === 'parse' ? ['shutdown'] : ['handle', 'shutdown'],
                 $handler->calls,
             );
@@ -103,17 +103,17 @@ PHP;
                 default => null,
             };
             if ($shutdownFails && $expected !== null) {
-                $this->assertInstanceOf(CliRunException::class, $failure);
-                $this->assertInstanceOf($expected, $failure->getPrevious());
-                $this->assertInstanceOf(ModuleShutdownException::class, $failure->shutdownFailure);
+                self::assertInstanceOf(CliRunException::class, $failure);
+                self::assertInstanceOf($expected, $failure->getPrevious());
+                self::assertInstanceOf(ModuleShutdownException::class, $failure->shutdownFailure);
             } elseif ($shutdownFails) {
-                $this->assertInstanceOf(ModuleShutdownException::class, $failure);
+                self::assertInstanceOf(ModuleShutdownException::class, $failure);
             } elseif ($expected !== null) {
-                $this->assertInstanceOf($expected, $failure);
+                self::assertInstanceOf($expected, $failure);
             } else {
-                $this->assertNull($failure);
+                self::assertNull($failure);
                 rewind($stream);
-                $this->assertSame('World', stream_get_contents($stream));
+                self::assertSame('World', stream_get_contents($stream));
             }
             $this->expectException(ApplicationStateException::class);
             $application->bootstrap();
@@ -164,27 +164,27 @@ PHP;
         $directory = sys_get_temp_dir() . '/exa-runner-' . bin2hex(random_bytes(8));
         mkdir($directory);
         file_put_contents($directory . '/runner.global.php', <<<'PHP'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Cli\Routing\CommandDispatcher;
-use ExtendsSoftware\ExaPHP\Cli\Output\Output;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+            use ExtendsSoftware\ExaPHP\Cli\Routing\CommandDispatcher;
+            use ExtendsSoftware\ExaPHP\Cli\Output\Output;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 
-$invalid = new InstanceDefinition(new stdClass());
-return ['services' => [
-    CommandDispatcher::class => $invalid,
-    Output::class => $invalid,
-]];
-PHP);
+            $invalid = new InstanceDefinition(new stdClass());
+            return ['services' => [
+                CommandDispatcher::class => $invalid,
+                Output::class => $invalid,
+            ]];
+            PHP);
         try {
             $application = new Application($directory);
             try {
                 new CliRunner()->run($application, ['console.php', 'greet']);
-                $this->fail('Expected invalid CLI service failure.');
+                self::fail('Expected invalid CLI service failure.');
             } catch (InvalidCliConfigurationException $exception) {
-                $this->assertStringContainsString('Output', $exception->getMessage());
+                self::assertStringContainsString('Output', $exception->getMessage());
             }
             $this->expectException(ApplicationStateException::class);
             $application->bootstrap();

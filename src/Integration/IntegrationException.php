@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies component integration failures.
  */
-interface IntegrationException extends Throwable
-{
-}
+interface IntegrationException extends Throwable {}

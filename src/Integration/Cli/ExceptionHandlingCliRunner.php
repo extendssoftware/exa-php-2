@@ -24,8 +24,7 @@ final readonly class ExceptionHandlingCliRunner
     public function __construct(
         private CliRunner $runner = new CliRunner(),
         private ExceptionPresenter $presenter = new DefaultExceptionPresenter(),
-    ) {
-    }
+    ) {}
 
     /**
      * Runs the application and converts lifecycle failures into error output and exit codes.

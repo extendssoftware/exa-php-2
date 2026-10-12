@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Query;
 
-use Override;
+use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\ClosureQueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
-use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryMiddlewareException;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
+use Override;
 use ReflectionClass;
 use Throwable;
 
@@ -127,9 +127,7 @@ final readonly class SynchronousQueryBus implements QueryBus
         foreach (array_reverse($middleware) as $entry) {
             $next = $execution;
             $execution = new ClosureQueryExecution(
-                static function (Query $query, DispatchContext $context) use ($entry, $next): mixed {
-                    return $entry->process($query, $context, $next);
-                },
+                static fn(Query $query, DispatchContext $context): mixed => $entry->process($query, $context, $next),
             );
         }
         $this->execution = $execution;

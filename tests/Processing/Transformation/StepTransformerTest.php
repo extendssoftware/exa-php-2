@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Transformation;
 
-use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
-use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Collection\EachItem;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\ArrayShape;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\Field;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\StepTransformer;
@@ -28,15 +28,15 @@ final class StepTransformerTest extends TestCase
         $inner->append(new TrimString());
         $outer = new SequentialPipeline();
         $outer->append(new StepTransformer($inner));
-        $this->assertSame('value', $outer->process(' value ')->value());
+        self::assertSame('value', $outer->process(' value ')->value());
     }
 
     public function testTransformerResultsArePreserved(): void
     {
         $result = new SuccessfulProcessingResult(null);
         $step = $this->createMock(Transformer::class);
-        $step->expects($this->once())->method('transform')->with('input')->willReturn($result);
-        $this->assertSame($result, new StepTransformer($step)->transform('input'));
+        $step->expects(self::once())->method('transform')->with('input')->willReturn($result);
+        self::assertSame($result, new StepTransformer($step)->transform('input'));
     }
 
     /**
@@ -45,7 +45,7 @@ final class StepTransformerTest extends TestCase
     #[DataProvider('roles')]
     public function testRejectsEveryMultipleRoleCombination(array $roles): void
     {
-        $step = $this->createStubForIntersectionOfInterfaces($roles);
+        $step = self::createStubForIntersectionOfInterfaces($roles);
         $this->expectException(AmbiguousProcessingStepException::class);
         new StepTransformer($step);
     }
@@ -63,14 +63,14 @@ final class StepTransformerTest extends TestCase
 
     public function testFieldRejectsAmbiguousStep(): void
     {
-        $step = $this->createStubForIntersectionOfInterfaces([Transformer::class, Validator::class]);
+        $step = self::createStubForIntersectionOfInterfaces([Transformer::class, Validator::class]);
         $this->expectException(AmbiguousProcessingStepException::class);
         new Field($step);
     }
 
     public function testCollectionRejectsAmbiguousStep(): void
     {
-        $step = $this->createStubForIntersectionOfInterfaces([Transformer::class, Validator::class]);
+        $step = self::createStubForIntersectionOfInterfaces([Transformer::class, Validator::class]);
         $this->expectException(AmbiguousProcessingStepException::class);
         new EachItem($step);
     }
@@ -79,15 +79,15 @@ final class StepTransformerTest extends TestCase
     {
         $failure = new TypeError('Unexpected');
         $first = $this->createMock(Validator::class);
-        $first->expects($this->once())->method('validate')->willThrowException($failure);
+        $first->expects(self::once())->method('validate')->willThrowException($failure);
         $later = $this->createMock(Validator::class);
-        $later->expects($this->never())->method('validate');
+        $later->expects(self::never())->method('validate');
         $shape = new ArrayShape(['first' => new Field($first), 'later' => new Field($later)]);
         try {
             $shape->transform(['first' => 1, 'later' => 2]);
-            $this->fail('Expected exception.');
+            self::fail('Expected exception.');
         } catch (Throwable $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 
@@ -95,12 +95,12 @@ final class StepTransformerTest extends TestCase
     {
         $failure = new TypeError('Unexpected');
         $step = $this->createMock(Validator::class);
-        $step->expects($this->once())->method('validate')->willThrowException($failure);
+        $step->expects(self::once())->method('validate')->willThrowException($failure);
         try {
             new EachItem($step)->transform([1, 2]);
-            $this->fail('Expected exception.');
+            self::fail('Expected exception.');
         } catch (Throwable $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 }

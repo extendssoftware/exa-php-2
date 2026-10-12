@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that parser input is not a list of string tokens.
  */
-final class InvalidTokensException extends InvalidArgumentException implements UsageException
-{
-}
+final class InvalidTokensException extends InvalidArgumentException implements UsageException {}

@@ -33,17 +33,18 @@ final class ConsumeCommandTest extends TestCase
     {
         $delivery = $available ? $this->delivery() : null;
         $consumer = $this->createMock(MessageConsumer::class);
-        $consumer->expects($this->once())->method('receive')->willReturn($delivery);
-        $consumer->expects($available ? $this->once() : $this->never())->method('acknowledge');
+        $consumer->expects(self::once())->method('receive')->willReturn($delivery);
+        $consumer->expects($available ? self::once() : self::never())->method('acknowledge');
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->never())->method('start');
-        $control->expects($this->never())->method('wait');
-        $control->expects($this->never())->method('finish');
+        $control->expects(self::never())->method('start');
+        $control->expects(self::never())->method('wait');
+        $control->expects(self::never())->method('finish');
 
         $command = $this->command($consumer, $control);
 
         self::assertSame(0, $command->handle(
-            new Input('messaging:consume', options: ['once' => true]), $this->createStub(Output::class),
+            new Input('messaging:consume', options: ['once' => true]),
+            self::createStub(Output::class),
         ));
     }
 
@@ -59,23 +60,24 @@ final class ConsumeCommandTest extends TestCase
         $delivery = $this->delivery();
         $stopped = false;
         $consumer = $this->createMock(MessageConsumer::class);
-        $consumer->expects($this->exactly(3))->method('receive')->willReturn($delivery, $delivery, null);
-        $consumer->expects($this->exactly(2))->method('acknowledge')->with($delivery);
+        $consumer->expects(self::exactly(3))->method('receive')->willReturn($delivery, $delivery, null);
+        $consumer->expects(self::exactly(2))->method('acknowledge')->with($delivery);
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start');
+        $control->expects(self::once())->method('start');
         // Capture by reference so a stop during the wait is visible to the next loop check.
         $control->method('stopRequested')->willReturnCallback(static function () use (&$stopped): bool {
             return $stopped;
         });
-        $control->expects($this->once())->method('wait')->with(2)->willReturnCallback(
+        $control->expects(self::once())->method('wait')->with(2)->willReturnCallback(
             static function () use (&$stopped): void {
                 $stopped = true;
             },
         );
-        $control->expects($this->once())->method('finish');
+        $control->expects(self::once())->method('finish');
 
         self::assertSame(0, $this->command($consumer, $control)->handle(
-            new Input('messaging:consume'), $this->createStub(Output::class),
+            new Input('messaging:consume'),
+            self::createStub(Output::class),
         ));
     }
 
@@ -84,20 +86,20 @@ final class ConsumeCommandTest extends TestCase
         $delivery = $this->delivery();
         $stopped = false;
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start');
+        $control->expects(self::once())->method('start');
         $control->method('stopRequested')->willReturnCallback(static function () use (&$stopped): bool {
             return $stopped;
         });
-        $control->expects($this->never())->method('wait');
-        $control->expects($this->once())->method('finish');
+        $control->expects(self::never())->method('wait');
+        $control->expects(self::once())->method('finish');
         $consumer = $this->createMock(MessageConsumer::class);
-        $consumer->expects($this->once())->method('receive')->willReturn($delivery);
-        $consumer->expects($this->once())->method('acknowledge')->with($delivery)->willReturnCallback(
+        $consumer->expects(self::once())->method('receive')->willReturn($delivery);
+        $consumer->expects(self::once())->method('acknowledge')->with($delivery)->willReturnCallback(
             static function () use (&$stopped): void {
                 self::assertTrue($stopped);
             },
         );
-        $subscriber = $this->createStub(MessageSubscriber::class);
+        $subscriber = self::createStub(MessageSubscriber::class);
         $subscriber->method('handle')->willReturnCallback(static function () use (&$stopped): void {
             $stopped = true;
         });
@@ -109,21 +111,21 @@ final class ConsumeCommandTest extends TestCase
         );
         $command = new ConsumeCommand($processor, new WorkerSettings(), $control);
 
-        self::assertSame(0, $command->handle(new Input('messaging:consume'), $this->createStub(Output::class)));
+        self::assertSame(0, $command->handle(new Input('messaging:consume'), self::createStub(Output::class)));
     }
 
     #[DataProvider('failures')]
     public function testFailuresStopPollingAndRestoreControl(Throwable $failure): void
     {
         $consumer = $this->createMock(MessageConsumer::class);
-        $consumer->expects($this->once())->method('receive')->willThrowException($failure);
+        $consumer->expects(self::once())->method('receive')->willThrowException($failure);
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start');
+        $control->expects(self::once())->method('start');
         $control->method('stopRequested')->willReturn(false);
-        $control->expects($this->never())->method('wait');
-        $control->expects($this->once())->method('finish');
+        $control->expects(self::never())->method('wait');
+        $control->expects(self::once())->method('finish');
         try {
-            $this->command($consumer, $control)->handle(new Input('messaging:consume'), $this->createStub(Output::class));
+            $this->command($consumer, $control)->handle(new Input('messaging:consume'), self::createStub(Output::class));
             self::fail('Expected processing failure.');
         } catch (Throwable $exception) {
             self::assertSame($failure, $exception);
@@ -141,13 +143,13 @@ final class ConsumeCommandTest extends TestCase
     {
         $failure = new MessageReceiveException('Database unavailable.');
         $cleanup = new WorkerControlException('Signal cleanup failed.');
-        $consumer = $this->createStub(MessageConsumer::class);
+        $consumer = self::createStub(MessageConsumer::class);
         $consumer->method('receive')->willThrowException($failure);
-        $control = $this->createStub(WorkerControl::class);
+        $control = self::createStub(WorkerControl::class);
         $control->method('stopRequested')->willReturn(false);
         $control->method('finish')->willThrowException($cleanup);
         try {
-            $this->command($consumer, $control)->handle(new Input('messaging:consume'), $this->createStub(Output::class));
+            $this->command($consumer, $control)->handle(new Input('messaging:consume'), self::createStub(Output::class));
             self::fail('Expected combined failure.');
         } catch (WorkerRunException $exception) {
             self::assertSame($failure, $exception->getPrevious());
@@ -158,21 +160,21 @@ final class ConsumeCommandTest extends TestCase
     public function testStartupFailureDoesNotReceiveAMessage(): void
     {
         $consumer = $this->createMock(MessageConsumer::class);
-        $consumer->expects($this->never())->method('receive');
+        $consumer->expects(self::never())->method('receive');
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start')
+        $control->expects(self::once())->method('start')
             ->willThrowException(new WorkerControlException('PCNTL unavailable.'));
-        $control->expects($this->never())->method('finish');
+        $control->expects(self::never())->method('finish');
         $this->expectException(WorkerControlException::class);
 
-        $this->command($consumer, $control)->handle(new Input('messaging:consume'), $this->createStub(Output::class));
+        $this->command($consumer, $control)->handle(new Input('messaging:consume'), self::createStub(Output::class));
     }
 
     private function command(MessageConsumer $consumer, WorkerControl $control): ConsumeCommand
     {
         $processor = new MessageProcessor(
             $consumer,
-            $this->resolver($this->createStub(MessageSubscriber::class)),
+            $this->resolver(self::createStub(MessageSubscriber::class)),
             new FixedDelayRetryPolicy(60, 3),
             new FrozenClock(new DateTimeImmutable('2026-10-07T12:00:00Z')),
         );
@@ -182,7 +184,7 @@ final class ConsumeCommandTest extends TestCase
 
     private function resolver(MessageSubscriber $subscriber): SubscriberResolver
     {
-        $resolver = $this->createStub(SubscriberResolver::class);
+        $resolver = self::createStub(SubscriberResolver::class);
         $resolver->method('resolve')->willReturn($subscriber);
 
         return $resolver;

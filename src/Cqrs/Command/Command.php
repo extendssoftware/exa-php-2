@@ -7,6 +7,4 @@ namespace ExtendsSoftware\ExaPHP\Cqrs\Command;
 /**
  * Describes a requested action without a result value.
  */
-interface Command
-{
-}
+interface Command {}

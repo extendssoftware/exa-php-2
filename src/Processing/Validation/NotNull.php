@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
+use Override;
 
 /**
  * Rejects null while accepting every other value.

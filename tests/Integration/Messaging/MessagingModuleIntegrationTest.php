@@ -53,10 +53,10 @@ final class MessagingModuleIntegrationTest extends TestCase
         $message = new Message('message-1', 'article.v1', '{}', $time);
         $delivery = new ReceivedDelivery($message, 'indexer', 'receipt', 1);
         $consumer = $this->createMock(MessageConsumer::class);
-        $consumer->expects($this->once())->method('receive')->willReturn($delivery);
-        $consumer->expects($this->once())->method('acknowledge')->with($delivery);
+        $consumer->expects(self::once())->method('receive')->willReturn($delivery);
+        $consumer->expects(self::once())->method('acknowledge')->with($delivery);
         $subscriber = $this->createMock(MessageSubscriber::class);
-        $subscriber->expects($this->once())->method('handle')->with($message);
+        $subscriber->expects(self::once())->method('handle')->with($message);
         $created = 0;
         $definition = new Subscription('indexer', ['article.v1']);
         $configuration = $this->configuration([
@@ -83,7 +83,9 @@ final class MessagingModuleIntegrationTest extends TestCase
         self::assertSame(0, $created);
         self::assertSame(2, $services->get(WorkerSettings::class)->idleDelaySeconds);
         self::assertSame(0, $services->get(CommandDispatcher::class)->dispatch(
-            'messaging:consume', ['--once'], $this->createStub(Output::class),
+            'messaging:consume',
+            ['--once'],
+            self::createStub(Output::class),
         ));
         self::assertSame(1, $created);
     }

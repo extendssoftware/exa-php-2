@@ -32,7 +32,7 @@ final class InstanceServiceResolverTest extends TestCase
         $resolver = new InstanceServiceResolver();
 
         self::assertTrue($resolver->supports(new InstanceDefinition(new stdClass())));
-        self::assertFalse($resolver->supports($this->createStub(ServiceDefinition::class)));
+        self::assertFalse($resolver->supports(self::createStub(ServiceDefinition::class)));
     }
 
     public function testRejectsUnsupportedDefinitionsWithoutConsultingTheLocator(): void
@@ -43,6 +43,6 @@ final class InstanceServiceResolverTest extends TestCase
 
         $this->expectException(UnsupportedDefinitionException::class);
 
-        new InstanceServiceResolver()->resolve($this->createStub(ServiceDefinition::class), $locator);
+        new InstanceServiceResolver()->resolve(self::createStub(ServiceDefinition::class), $locator);
     }
 }

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a transaction could not be started.
  */
-final class TransactionStartException extends RuntimeException implements TransactionException
-{
-}
+final class TransactionStartException extends RuntimeException implements TransactionException {}

@@ -39,8 +39,7 @@ final readonly class RoutingRequestHandler implements RequestHandler
         private Router $router,
         private HandlerResolver $resolver,
         private ?MiddlewareResolver $middlewareResolver = null,
-    ) {
-    }
+    ) {}
 
     /**
      * {@inheritDoc}
@@ -63,7 +62,8 @@ final readonly class RoutingRequestHandler implements RequestHandler
             }
 
             return new MiddlewarePipeline(
-                new ResolvingRequestHandler($this->resolver, $match->route->handlerId), $middleware,
+                new ResolvingRequestHandler($this->resolver, $match->route->handlerId),
+                $middleware,
             )->handle($request->withAttribute($match));
         }
         $methods = $this->router->allowedMethods($request);
@@ -73,7 +73,7 @@ final readonly class RoutingRequestHandler implements RequestHandler
                 protocolVersion: $request->protocolVersion,
             );
         }
-        $allow = implode(', ', array_map(static fn (Method $method): string => $method->value, $methods));
+        $allow = implode(', ', array_map(static fn(Method $method): string => $method->value, $methods));
 
         return new ProblemDetailsResponseFactory()->create(
             new ProblemDetails(StatusCode::MethodNotAllowed, 'Method Not Allowed'),

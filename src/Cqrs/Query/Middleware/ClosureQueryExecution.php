@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware;
 
-use Override;
 use Closure;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
+use Override;
 
 /**
  * Adapts a pipeline closure to query execution.
@@ -21,9 +21,7 @@ final readonly class ClosureQueryExecution implements QueryExecution
      *
      * @param Closure(Query<mixed>, DispatchContext): mixed $execution The step to execute.
      */
-    public function __construct(private Closure $execution)
-    {
-    }
+    public function __construct(private Closure $execution) {}
 
     /**
      * {@inheritDoc}

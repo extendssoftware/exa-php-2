@@ -32,8 +32,7 @@ final readonly class MessageProcessor
         private SubscriberResolver $resolver,
         private RetryPolicy $retryPolicy,
         private Clock $clock,
-    ) {
-    }
+    ) {}
 
     /**
      * Receives one delivery, invokes its subscriber, and acknowledges, retries, or rejects it.

@@ -19,9 +19,7 @@ final readonly class SuccessfulProcessingResult implements ProcessingResult
      *
      * @param TValue $value The processed value, including null.
      */
-    public function __construct(private mixed $value)
-    {
-    }
+    public function __construct(private mixed $value) {}
 
     /**
      * {@inheritDoc}

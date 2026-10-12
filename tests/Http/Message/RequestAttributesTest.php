@@ -24,10 +24,10 @@ final class RequestAttributesTest extends TestCase
         $original = new RequestAttributes([$first]);
         $updated = $original->with($second);
         $removed = $updated->without(stdClass::class);
-        $this->assertSame($first, $original->get(stdClass::class));
-        $this->assertSame($second, $updated->get(stdClass::class));
-        $this->assertFalse($removed->has(stdClass::class));
-        $this->assertTrue($updated->has(stdClass::class));
+        self::assertSame($first, $original->get(stdClass::class));
+        self::assertSame($second, $updated->get(stdClass::class));
+        self::assertFalse($removed->has(stdClass::class));
+        self::assertTrue($updated->has(stdClass::class));
     }
 
     public function testAbsentAttributeThrows(): void
@@ -53,7 +53,7 @@ final class RequestAttributesTest extends TestCase
         $metadata = new stdClass();
         $original = new Request(Method::Get, new Uri('/'));
         $request = $original->withAttribute($metadata);
-        $this->assertFalse($original->attributes->has(stdClass::class));
+        self::assertFalse($original->attributes->has(stdClass::class));
         $copies = [
             $request->withMethod(Method::Post),
             $request->withUri(new Uri('/another')),
@@ -62,9 +62,9 @@ final class RequestAttributesTest extends TestCase
             $request->withProtocolVersion(ProtocolVersion::Http2),
         ];
         foreach ($copies as $copy) {
-            $this->assertSame($metadata, $copy->attributes->get(stdClass::class));
-            $this->assertSame($request->attributes, $copy->attributes);
+            self::assertSame($metadata, $copy->attributes->get(stdClass::class));
+            self::assertSame($request->attributes, $copy->attributes);
         }
-        $this->assertFalse($request->withAttributes(new RequestAttributes())->attributes->has(stdClass::class));
+        self::assertFalse($request->withAttributes(new RequestAttributes())->attributes->has(stdClass::class));
     }
 }

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
+use Override;
 
 use function array_values;
 use function in_array;

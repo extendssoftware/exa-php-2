@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware;
 
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
 use Throwable;
 
 /**

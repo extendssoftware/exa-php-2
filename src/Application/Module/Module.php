@@ -7,6 +7,4 @@ namespace ExtendsSoftware\ExaPHP\Application\Module;
 /**
  * Identifies an application module.
  */
-interface Module
-{
-}
+interface Module {}

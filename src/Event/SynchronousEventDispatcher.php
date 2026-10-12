@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Event;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Event\Exception\DuplicateEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Exception\InvalidEventRegistrationException;
 use ExtendsSoftware\ExaPHP\Event\Listener\EventListener;
+use Override;
 use ReflectionClass;
 use Throwable;
 

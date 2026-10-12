@@ -7,6 +7,4 @@ namespace ExtendsSoftware\ExaPHP\Event;
 /**
  * Describes something that has happened.
  */
-interface Event
-{
-}
+interface Event {}

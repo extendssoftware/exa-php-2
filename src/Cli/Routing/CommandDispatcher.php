@@ -25,8 +25,7 @@ final readonly class CommandDispatcher
         private CommandRegistry $registry,
         private InputParser $parser,
         private HandlerResolver $resolver,
-    ) {
-    }
+    ) {}
 
     /**
      * Selects a command, parses tokens, resolves its handler, and returns the handler's exit code.

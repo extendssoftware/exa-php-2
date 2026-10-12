@@ -11,9 +11,9 @@ use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
 use ExtendsSoftware\ExaPHP\Logging\Exception\LogTimestampException;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
-use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
 use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
+use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 use stdClass;
@@ -24,7 +24,7 @@ final class WriterLoggerTest extends TestCase
     {
         $context = ['object' => new stdClass()];
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->once())->method('write')->with($this->callback(
+        $writer->expects(self::once())->method('write')->with(self::callback(
             static fn(LogRecord $record): bool => $record->level === LogLevel::Info
                 && $record->message === 'Published'
                 && $record->context === $context
@@ -38,7 +38,7 @@ final class WriterLoggerTest extends TestCase
     {
         $time = new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00');
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->once())->method('write')->with($this->callback(
+        $writer->expects(self::once())->method('write')->with(self::callback(
             static fn(LogRecord $record): bool => $record->timestamp === $time,
         ));
 
@@ -50,10 +50,10 @@ final class WriterLoggerTest extends TestCase
         $first = new DateTimeImmutable('2026-10-06T12:00:00Z');
         $second = $first->modify('+1 second');
         $clock = $this->createMock(Clock::class);
-        $clock->expects($this->exactly(2))->method('now')->willReturn($first, $second);
+        $clock->expects(self::exactly(2))->method('now')->willReturn($first, $second);
         $records = [];
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->exactly(2))->method('write')->willReturnCallback(
+        $writer->expects(self::exactly(2))->method('write')->willReturnCallback(
             static function (LogRecord $record) use (&$records): void {
                 $records[] = $record->timestamp;
             },
@@ -68,12 +68,11 @@ final class WriterLoggerTest extends TestCase
 
     public function testTranslatesClockFailuresWithoutWritingARecord(): void
     {
-        $failure = new class ('Clock unavailable') extends RuntimeException implements ClockException {
-        };
-        $clock = $this->createStub(Clock::class);
+        $failure = new class ('Clock unavailable') extends RuntimeException implements ClockException {};
+        $clock = self::createStub(Clock::class);
         $clock->method('now')->willThrowException($failure);
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->never())->method('write');
+        $writer->expects(self::never())->method('write');
 
         try {
             new WriterLogger($writer, $clock)->log(LogLevel::Error, 'Message');
@@ -86,7 +85,7 @@ final class WriterLoggerTest extends TestCase
     public function testPropagatesWriterFailureUnchanged(): void
     {
         $failure = new LogStreamWriteException('Failed');
-        $writer = $this->createStub(LogWriter::class);
+        $writer = self::createStub(LogWriter::class);
         $writer->method('write')->willThrowException($failure);
         $this->expectExceptionObject($failure);
 

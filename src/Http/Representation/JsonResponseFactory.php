@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Representation;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
-use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
 use JsonException;
+use Override;
 
 use function json_encode;
 

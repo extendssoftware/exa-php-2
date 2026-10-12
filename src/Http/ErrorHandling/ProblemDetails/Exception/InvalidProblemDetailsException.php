@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid problem detail extension data.
  */
-final class InvalidProblemDetailsException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidProblemDetailsException extends InvalidArgumentException implements HttpException {}

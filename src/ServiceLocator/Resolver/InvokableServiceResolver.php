@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator\Resolver;
 
-use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InvokableDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceResolutionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\UnsupportedDefinitionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
+use Override;
 use Throwable;
 
 use function sprintf;

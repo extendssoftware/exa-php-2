@@ -20,9 +20,9 @@ use PHPUnit\Framework\TestCase;
 use Throwable;
 use TypeError;
 
-use function json_decode;
 use function implode;
 use function iterator_to_array;
+use function json_decode;
 
 final class RequestBodyExceptionResponseFactoryTest extends TestCase
 {
@@ -30,17 +30,17 @@ final class RequestBodyExceptionResponseFactoryTest extends TestCase
     public function testMapsKnownFailuresWithoutExposingDetails(Throwable $failure, StatusCode $status): void
     {
         $fallback = $this->createMock(ExceptionResponseFactory::class);
-        $fallback->expects($this->never())->method('create');
+        $fallback->expects(self::never())->method('create');
         $request = new Request(Method::Post, new Uri('/'), protocolVersion: ProtocolVersion::Http2);
         $response = new RequestBodyExceptionResponseFactory($fallback)->create($failure, $request);
-        $this->assertSame($status, $response->statusCode);
-        $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
-        $this->assertSame(['application/problem+json'], $response->headers->get('Content-Type'));
+        self::assertSame($status, $response->statusCode);
+        self::assertSame(ProtocolVersion::Http2, $response->protocolVersion);
+        self::assertSame(['application/problem+json'], $response->headers->get('Content-Type'));
         $data = json_decode(implode('', iterator_to_array($response->body->chunks())), true);
-        $this->assertSame('about:blank', $data['type']);
-        $this->assertSame($status->value, $data['status']);
-        $this->assertSame(['no-store'], $response->headers->get('Cache-Control'));
-        $this->assertStringNotContainsString('secret', implode('', iterator_to_array($response->body->chunks())));
+        self::assertSame('about:blank', $data['type']);
+        self::assertSame($status->value, $data['status']);
+        self::assertSame(['no-store'], $response->headers->get('Cache-Control'));
+        self::assertStringNotContainsString('secret', implode('', iterator_to_array($response->body->chunks())));
     }
 
     /** @return iterable<array{Throwable, StatusCode}> */
@@ -57,7 +57,7 @@ final class RequestBodyExceptionResponseFactoryTest extends TestCase
         $request = new Request(Method::Post, new Uri('/'));
         $response = new Response();
         $fallback = $this->createMock(ExceptionResponseFactory::class);
-        $fallback->expects($this->once())->method('create')->with($failure, $request)->willReturn($response);
-        $this->assertSame($response, new RequestBodyExceptionResponseFactory($fallback)->create($failure, $request));
+        $fallback->expects(self::once())->method('create')->with($failure, $request)->willReturn($response);
+        self::assertSame($response, new RequestBodyExceptionResponseFactory($fallback)->create($failure, $request));
     }
 }

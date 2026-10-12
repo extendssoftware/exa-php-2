@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid decoder registrations or decoding limits.
  */
-final class InvalidRequestBodyDecoderException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRequestBodyDecoderException extends InvalidArgumentException implements HttpException {}

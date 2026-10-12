@@ -22,8 +22,8 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
     public function testConstructionDoesNotResolveMappedServices(): void
     {
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->never())->method('get');
-        $services->expects($this->never())->method('has');
+        $services->expects(self::never())->method('get');
+        $services->expects(self::never())->method('has');
 
         new ServiceLocatorSubscriberResolver($services, ['notifications' => 'email-handler', 'unused' => 'missing']);
     }
@@ -31,9 +31,9 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
     public function testResolvesOnlyTheMappedServiceWithoutInvokingIt(): void
     {
         $subscriber = $this->createMock(MessageSubscriber::class);
-        $subscriber->expects($this->never())->method('handle');
+        $subscriber->expects(self::never())->method('handle');
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->once())->method('get')->with('email-handler')->willReturn($subscriber);
+        $services->expects(self::once())->method('get')->with('email-handler')->willReturn($subscriber);
         $resolver = new ServiceLocatorSubscriberResolver($services, [
             'notifications' => 'email-handler', 'unused' => 'missing',
         ]);
@@ -43,9 +43,9 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
 
     public function testAllowsNumericIdentifiersAndMultipleSubscribersSharingAService(): void
     {
-        $subscriber = $this->createStub(MessageSubscriber::class);
+        $subscriber = self::createStub(MessageSubscriber::class);
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->exactly(2))->method('get')->with('handler')->willReturn($subscriber);
+        $services->expects(self::exactly(2))->method('get')->with('handler')->willReturn($subscriber);
         $resolver = new ServiceLocatorSubscriberResolver($services, ['0' => 'handler', 'other' => 'handler']);
 
         self::assertSame($subscriber, $resolver->resolve('0'));
@@ -56,7 +56,7 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
     public function testUnmappedIdentifiersNeverFallBackToServiceLookup(string $id): void
     {
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->never())->method('get');
+        $services->expects(self::never())->method('get');
         $resolver = new ServiceLocatorSubscriberResolver($services, ['notifications' => 'handler']);
 
         $this->expectException(SubscriberResolutionException::class);
@@ -76,7 +76,7 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
 
     public function testEmptyMappingRejectsResolution(): void
     {
-        $resolver = new ServiceLocatorSubscriberResolver($this->createStub(ServiceLocator::class), []);
+        $resolver = new ServiceLocatorSubscriberResolver(self::createStub(ServiceLocator::class), []);
         $this->expectException(SubscriberResolutionException::class);
 
         $resolver->resolve('notifications');
@@ -87,7 +87,7 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
     public function testRejectsInvalidMappingsWithoutResolvingServices(array $mapping): void
     {
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->never())->method('get');
+        $services->expects(self::never())->method('get');
         try {
             new ServiceLocatorSubscriberResolver($services, $mapping);
             self::fail('Expected invalid mapping.');
@@ -108,7 +108,7 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
 
     public function testRejectsServiceThatIsNotASubscriber(): void
     {
-        $services = $this->createStub(ServiceLocator::class);
+        $services = self::createStub(ServiceLocator::class);
         $services->method('get')->willReturn(new stdClass());
         $resolver = new ServiceLocatorSubscriberResolver($services, ['notifications' => 'handler']);
         $this->expectException(SubscriberResolutionException::class);
@@ -122,7 +122,7 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
     public function testTranslatesLookupFailuresWithContextAndPreservesTheCause(): void
     {
         $failure = new ServiceNotFoundException('Unknown service.');
-        $services = $this->createStub(ServiceLocator::class);
+        $services = self::createStub(ServiceLocator::class);
         $services->method('get')->willThrowException($failure);
         $resolver = new ServiceLocatorSubscriberResolver($services, ['notifications' => 'handler']);
         try {
@@ -139,7 +139,7 @@ final class ServiceLocatorSubscriberResolverTest extends TestCase
     public function testUnexpectedEngineErrorsPropagateUnchanged(): void
     {
         $failure = new TypeError('Invalid service factory.');
-        $services = $this->createStub(ServiceLocator::class);
+        $services = self::createStub(ServiceLocator::class);
         $services->method('get')->willThrowException($failure);
         $resolver = new ServiceLocatorSubscriberResolver($services, ['notifications' => 'handler']);
         try {

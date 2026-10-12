@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Http\Message\Body;
 
 use Override;
+
 use function strlen;
 
 /**
@@ -17,9 +18,7 @@ final readonly class StringBody implements Body
      *
      * @param string $content The content, empty by default.
      */
-    public function __construct(private string $content = '')
-    {
-    }
+    public function __construct(private string $content = '') {}
 
     /**
      * Returns the complete stored byte string.

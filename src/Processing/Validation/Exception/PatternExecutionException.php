@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that regular expression execution could not complete.
  */
-final class PatternExecutionException extends RuntimeException implements ProcessingException
-{
-}
+final class PatternExecutionException extends RuntimeException implements ProcessingException {}

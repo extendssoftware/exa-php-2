@@ -31,8 +31,7 @@ final readonly class WorkCommand implements CommandHandler
         private OutboxProcessor $processor,
         private WorkerSettings $settings,
         private WorkerControl $control,
-    ) {
-    }
+    ) {}
 
     /**
      * {@inheritDoc}

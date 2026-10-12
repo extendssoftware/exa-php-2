@@ -27,9 +27,9 @@ final class DefaultExceptionPresenterTest extends TestCase
     public function testPresentsUsageFailures(string $type): void
     {
         $output = $this->createMock(Output::class);
-        $output->expects($this->never())->method('write');
-        $output->expects($this->once())->method('writeError')->with("Error: Invalid input.\n");
-        $this->assertSame(2, new DefaultExceptionPresenter()->present(new $type('Invalid input.'), $output));
+        $output->expects(self::never())->method('write');
+        $output->expects(self::once())->method('writeError')->with("Error: Invalid input.\n");
+        self::assertSame(2, new DefaultExceptionPresenter()->present(new $type('Invalid input.'), $output));
     }
 
     /** @return iterable<array{class-string<Throwable>}> */
@@ -48,29 +48,29 @@ final class DefaultExceptionPresenterTest extends TestCase
     public function testDoesNotExposeUnexpectedFailureDetails(): void
     {
         $output = $this->createMock(Output::class);
-        $output->expects($this->never())->method('write');
-        $output->expects($this->once())->method('writeError')->with("Error: Command execution failed.\n");
+        $output->expects(self::never())->method('write');
+        $output->expects(self::once())->method('writeError')->with("Error: Command execution failed.\n");
         $failure = new TypeError('secret', 99, new RuntimeException('previous secret'));
-        $this->assertSame(1, new DefaultExceptionPresenter()->present($failure, $output));
+        self::assertSame(1, new DefaultExceptionPresenter()->present($failure, $output));
     }
 
     public function testKeepsUsagePresentationOnOneLine(): void
     {
         $output = $this->createMock(Output::class);
-        $output->expects($this->once())->method('writeError')->with("Error: bad  option [31m\n");
+        $output->expects(self::once())->method('writeError')->with("Error: bad  option [31m\n");
         new DefaultExceptionPresenter()->present(new UnknownOptionException("bad\r\noption\e[31m"), $output);
     }
 
     public function testPropagatesOutputFailureUnchanged(): void
     {
         $failure = new RuntimeException('stderr failed');
-        $output = $this->createStub(Output::class);
+        $output = self::createStub(Output::class);
         $output->method('writeError')->willThrowException($failure);
         try {
             new DefaultExceptionPresenter()->present(new TypeError('execution'), $output);
-            $this->fail('Expected output failure.');
+            self::fail('Expected output failure.');
         } catch (RuntimeException $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 }

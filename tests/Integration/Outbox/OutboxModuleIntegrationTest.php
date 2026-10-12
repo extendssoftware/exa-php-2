@@ -45,7 +45,7 @@ final class OutboxModuleIntegrationTest extends TestCase
     public function testDispatchesOnceWithConfiguredLeaseAndApplicationAdapters(): void
     {
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->with(new DateInterval('PT45S'))->willReturn(null);
+        $store->expects(self::once())->method('claim')->with(new DateInterval('PT45S'))->willReturn(null);
         $defaults = require new OutboxModule()->configDirectory() . '/services.php';
         $cli = require new CliModule()->configDirectory() . '/services.php';
         $configuration = new ConfigurationMerger()->merge(['cli' => $cli, 'outbox' => $defaults], [
@@ -53,7 +53,7 @@ final class OutboxModuleIntegrationTest extends TestCase
                 'outbox' => ['worker' => ['lease_seconds' => 45, 'idle_delay_seconds' => 2]],
                 'services' => [
                     OutboxStore::class => new InstanceDefinition($store),
-                    MessageDelivery::class => new InstanceDefinition($this->createStub(MessageDelivery::class)),
+                    MessageDelivery::class => new InstanceDefinition(self::createStub(MessageDelivery::class)),
                     RetryPolicy::class => new InstanceDefinition(new FixedDelayRetryPolicy(60, 3)),
                     Clock::class => new InstanceDefinition(new FrozenClock(new DateTimeImmutable('2026-10-07'))),
                 ],
@@ -61,7 +61,9 @@ final class OutboxModuleIntegrationTest extends TestCase
         ]);
         $services = new ServiceLocatorFactory()->create($configuration);
         self::assertSame(0, $services->get(CommandDispatcher::class)->dispatch(
-            'outbox:work', ['--once'], $this->createStub(Output::class),
+            'outbox:work',
+            ['--once'],
+            self::createStub(Output::class),
         ));
     }
 

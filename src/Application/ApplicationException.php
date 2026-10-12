@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies application failures.
  */
-interface ApplicationException extends Throwable
-{
-}
+interface ApplicationException extends Throwable {}

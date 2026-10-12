@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\ErrorHandling;
 
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\Exception\InvalidExceptionProblemDetailsMapperException;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
-
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\Exception\InvalidExceptionProblemDetailsMapperException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use Override;
-use Throwable;
 use SensitiveParameter;
+use Throwable;
 
 use function array_is_list;
 

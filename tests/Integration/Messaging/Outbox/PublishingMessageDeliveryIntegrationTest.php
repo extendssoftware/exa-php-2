@@ -27,22 +27,25 @@ final class PublishingMessageDeliveryIntegrationTest extends TestCase
         $message = new OutboxMessage('message-1', 'example.v1', '{}', $now);
         $claim = new ClaimedMessage($message, 1, 'token', $now->add(new DateInterval('PT30S')));
         $publisher = $this->createMock(MessagePublisher::class);
-        $publish = $publisher->expects($this->once())->method('publish');
+        $publish = $publisher->expects(self::once())->method('publish');
         if (!$accepted) {
             $publish->willThrowException(new MessagePublishException('Acceptance could not be confirmed.'));
         }
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($claim);
-        $store->expects($this->never())->method('fail');
+        $store->expects(self::once())->method('claim')->willReturn($claim);
+        $store->expects(self::never())->method('fail');
         if ($accepted) {
-            $store->expects($this->once())->method('complete')->with($claim);
-            $store->expects($this->never())->method('retry');
+            $store->expects(self::once())->method('complete')->with($claim);
+            $store->expects(self::never())->method('retry');
         } else {
-            $store->expects($this->never())->method('complete');
-            $store->expects($this->once())->method('retry')->with($claim, $now->add(new DateInterval('PT60S')));
+            $store->expects(self::never())->method('complete');
+            $store->expects(self::once())->method('retry')->with($claim, $now->add(new DateInterval('PT60S')));
         }
         $processor = new OutboxProcessor(
-            $store, new PublishingMessageDelivery($publisher), new FixedDelayRetryPolicy(60, 3), new FrozenClock($now),
+            $store,
+            new PublishingMessageDelivery($publisher),
+            new FixedDelayRetryPolicy(60, 3),
+            new FrozenClock($now),
         );
 
         self::assertTrue($processor->process(new DateInterval('PT30S')));

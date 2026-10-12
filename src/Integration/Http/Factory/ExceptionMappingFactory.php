@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\DefaultExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\MappingExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\RequestBodyExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;

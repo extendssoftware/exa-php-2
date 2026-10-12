@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies logging failures.
  */
-interface LoggingException extends Throwable
-{
-}
+interface LoggingException extends Throwable {}

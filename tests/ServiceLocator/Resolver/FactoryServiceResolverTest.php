@@ -23,7 +23,7 @@ final class FactoryServiceResolverTest extends TestCase
 {
     public function testPassesTheLocatorToTheFactoryAndDoesNotCacheResults(): void
     {
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $definition = new FactoryDefinition(static function (ServiceLocator $supplied) use ($locator): object {
             self::assertSame($locator, $supplied);
 
@@ -37,21 +37,21 @@ final class FactoryServiceResolverTest extends TestCase
     public function testReturnsTheExactFactoryResult(): void
     {
         $service = new stdClass();
-        $definition = new FactoryDefinition(static fn (): object => $service);
+        $definition = new FactoryDefinition(static fn(): object => $service);
 
         self::assertSame(
             $service,
-            new FactoryServiceResolver()->resolve($definition, $this->createStub(ServiceLocator::class)),
+            new FactoryServiceResolver()->resolve($definition, self::createStub(ServiceLocator::class)),
         );
     }
 
     public function testPropagatesComponentFailuresUnchanged(): void
     {
         $failure = new ServiceNotFoundException('Missing dependency.');
-        $definition = new FactoryDefinition(static fn (): object => throw $failure);
+        $definition = new FactoryDefinition(static fn(): object => throw $failure);
 
         try {
-            new FactoryServiceResolver()->resolve($definition, $this->createStub(ServiceLocator::class));
+            new FactoryServiceResolver()->resolve($definition, self::createStub(ServiceLocator::class));
             self::fail('Expected the component failure.');
         } catch (ServiceNotFoundException $exception) {
             self::assertSame($failure, $exception);
@@ -61,10 +61,10 @@ final class FactoryServiceResolverTest extends TestCase
     #[DataProvider('factoryFailures')]
     public function testWrapsOtherFactoryFailuresWithTheirOriginalCause(Throwable $failure): void
     {
-        $definition = new FactoryDefinition(static fn (): object => throw $failure);
+        $definition = new FactoryDefinition(static fn(): object => throw $failure);
 
         try {
-            new FactoryServiceResolver()->resolve($definition, $this->createStub(ServiceLocator::class));
+            new FactoryServiceResolver()->resolve($definition, self::createStub(ServiceLocator::class));
             self::fail('Expected a service resolution failure.');
         } catch (ServiceResolutionException $exception) {
             self::assertSame('Service factory failed.', $exception->getMessage());
@@ -81,10 +81,10 @@ final class FactoryServiceResolverTest extends TestCase
     #[DataProvider('nonObjectResults')]
     public function testRejectsNonObjectFactoryResults(mixed $result): void
     {
-        $definition = new FactoryDefinition(static fn (): mixed => $result);
+        $definition = new FactoryDefinition(static fn(): mixed => $result);
 
         try {
-            new FactoryServiceResolver()->resolve($definition, $this->createStub(ServiceLocator::class));
+            new FactoryServiceResolver()->resolve($definition, self::createStub(ServiceLocator::class));
             self::fail('Expected a service resolution failure.');
         } catch (ServiceResolutionException $exception) {
             self::assertInstanceOf(TypeError::class, $exception->getPrevious());
@@ -105,8 +105,8 @@ final class FactoryServiceResolverTest extends TestCase
     {
         $resolver = new FactoryServiceResolver();
 
-        self::assertTrue($resolver->supports(new FactoryDefinition(static fn (): object => new stdClass())));
-        self::assertFalse($resolver->supports($this->createStub(ServiceDefinition::class)));
+        self::assertTrue($resolver->supports(new FactoryDefinition(static fn(): object => new stdClass())));
+        self::assertFalse($resolver->supports(self::createStub(ServiceDefinition::class)));
     }
 
     public function testRejectsUnsupportedDefinitionsWithoutConsultingTheLocator(): void
@@ -117,6 +117,6 @@ final class FactoryServiceResolverTest extends TestCase
 
         $this->expectException(UnsupportedDefinitionException::class);
 
-        new FactoryServiceResolver()->resolve($this->createStub(ServiceDefinition::class), $locator);
+        new FactoryServiceResolver()->resolve(self::createStub(ServiceDefinition::class), $locator);
     }
 }

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a log record cannot be represented in the requested format.
  */
-final class LogFormattingException extends RuntimeException implements LoggingException
-{
-}
+final class LogFormattingException extends RuntimeException implements LoggingException {}

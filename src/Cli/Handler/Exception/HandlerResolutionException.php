@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a CLI handler identifier could not be resolved.
  */
-final class HandlerResolutionException extends RuntimeException implements CliException
-{
-}
+final class HandlerResolutionException extends RuntimeException implements CliException {}

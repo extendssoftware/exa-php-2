@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates a URI unsuitable for an HTTP request.
  */
-final class InvalidRequestException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRequestException extends InvalidArgumentException implements HttpException {}

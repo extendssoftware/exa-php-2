@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\ContentTypeRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;

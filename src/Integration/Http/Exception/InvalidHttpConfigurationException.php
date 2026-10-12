@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates malformed HTTP integration configuration or incompatible services.
  */
-final class InvalidHttpConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidHttpConfigurationException extends InvalidArgumentException implements IntegrationException {}

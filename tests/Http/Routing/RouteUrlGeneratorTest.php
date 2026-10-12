@@ -26,18 +26,18 @@ final class RouteUrlGeneratorTest extends TestCase
         $uri = new RouteUrlGenerator($routes)->generate('article', ['tag' => 'é /?#%', 'id' => 0], [
             'search' => 'a b&c', 'page' => 2, 'enabled' => false, 'extra' => null,
         ]);
-        $this->assertSame('/a%20b/0/%C3%A9%20%2F%3F%23%25/?search=a%20b%26c&page=2&enabled=0', $uri->toString());
-        $this->assertNull($uri->scheme());
-        $this->assertNull($uri->host());
+        self::assertSame('/a%20b/0/%C3%A9%20%2F%3F%23%25/?search=a%20b%26c&page=2&enabled=0', $uri->toString());
+        self::assertNull($uri->scheme());
+        self::assertNull($uri->host());
         $match = new SimpleRouter($routes)->match(new Request(Method::Get, $uri));
-        $this->assertSame($route, $match->route);
-        $this->assertSame(['id' => '0', 'tag' => '%C3%A9%20%2F%3F%23%25'], $match->parameters);
+        self::assertSame($route, $match->route);
+        self::assertSame(['id' => '0', 'tag' => '%C3%A9%20%2F%3F%23%25'], $match->parameters);
     }
 
     public function testOmitsEmptyQueryAndSupportsLiteralRoutes(): void
     {
         $generator = new RouteUrlGenerator(new RouteCollection([new Route('home', Method::Get, '/', 'handler')]));
-        $this->assertSame('/', $generator->generate('home', query: ['optional' => null])->toString());
+        self::assertSame('/', $generator->generate('home', query: ['optional' => null])->toString());
     }
 
     public function testRejectsUnknownNames(): void

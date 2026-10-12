@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Integration\Cqrs\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\SynchronousQueryBus;
 use ExtendsSoftware\ExaPHP\Cqrs\CqrsException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\SynchronousQueryBus;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Exception\InvalidCqrsConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;

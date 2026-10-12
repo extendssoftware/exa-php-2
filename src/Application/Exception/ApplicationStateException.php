@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates that an application operation is not valid in its current bootstrap state.
  */
-final class ApplicationStateException extends LogicException implements ApplicationException
-{
-}
+final class ApplicationStateException extends LogicException implements ApplicationException {}

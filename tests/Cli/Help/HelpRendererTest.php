@@ -20,14 +20,14 @@ final class HelpRendererTest extends TestCase
             new CommandDefinition('zebra', 'missing', 'First command'),
             new CommandDefinition('article:create', 'missing'),
         ], 'bin/console.php');
-        $this->assertStringContainsString("Commands:\n  zebra  First command\n  article:create\n", $text);
-        $this->assertStringContainsString('Usage: php bin/console.php <command> [arguments] [options]', $text);
-        $this->assertStringEndsWith("\n", $text);
+        self::assertStringContainsString("Commands:\n  zebra  First command\n  article:create\n", $text);
+        self::assertStringContainsString('Usage: php bin/console.php <command> [arguments] [options]', $text);
+        self::assertStringEndsWith("\n", $text);
     }
 
     public function testExplainsEmptyRegistry(): void
     {
-        $this->assertStringContainsString('No commands registered.', new HelpRenderer()->commandList([], 'console.php'));
+        self::assertStringContainsString('No commands registered.', new HelpRenderer()->commandList([], 'console.php'));
     }
 
     public function testRendersArgumentModesOptionAliasesAndValueRequirements(): void
@@ -41,21 +41,21 @@ final class HelpRendererTest extends TestCase
             new OptionDefinition('verbose'),
         ]);
         $text = new HelpRenderer()->commandHelp($definition, 'console.php');
-        $this->assertStringContainsString('Usage: php console.php greet <name> [suffix] [options]', $text);
-        $this->assertStringContainsString("\nSay hello\n", $text);
-        $this->assertStringContainsString('name (required)  Recipient', $text);
-        $this->assertStringContainsString('suffix (optional)', $text);
-        $this->assertStringContainsString('-q, --quiet  Suppress output', $text);
-        $this->assertStringContainsString('-f, --format <value>  Output format', $text);
-        $this->assertStringContainsString("  --verbose\n", $text);
-        $this->assertStringEndsWith("\n", $text);
+        self::assertStringContainsString('Usage: php console.php greet <name> [suffix] [options]', $text);
+        self::assertStringContainsString("\nSay hello\n", $text);
+        self::assertStringContainsString('name (required)  Recipient', $text);
+        self::assertStringContainsString('suffix (optional)', $text);
+        self::assertStringContainsString('-q, --quiet  Suppress output', $text);
+        self::assertStringContainsString('-f, --format <value>  Output format', $text);
+        self::assertStringContainsString("  --verbose\n", $text);
+        self::assertStringEndsWith("\n", $text);
     }
 
     public function testOmitsEmptyArgumentAndOptionSections(): void
     {
         $text = new HelpRenderer()->commandHelp(new CommandDefinition('greet', 'missing'), 'console.php');
-        $this->assertStringNotContainsString('Arguments:', $text);
-        $this->assertStringNotContainsString('Options:', $text);
-        $this->assertStringNotContainsString('[options]', $text);
+        self::assertStringNotContainsString('Arguments:', $text);
+        self::assertStringNotContainsString('Options:', $text);
+        self::assertStringNotContainsString('[options]', $text);
     }
 }

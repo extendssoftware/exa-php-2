@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Integration\Http;
 
 use ExtendsSoftware\ExaPHP\Application\Application;
-use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\ConfigurationLoadException;
+use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleShutdownException;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\HttpRunException;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
@@ -37,26 +37,26 @@ final class HttpRunnerIntegrationTest extends TestCase
         $directory = sys_get_temp_dir() . '/exa-runner-' . bin2hex(random_bytes(8));
         mkdir($directory);
         $config = <<<'PHP'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
-use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
-use ExtendsSoftware\ExaPHP\Tests\Integration\Http\Fixture\RunnerServices;
+            use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
+            use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
+            use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+            use ExtendsSoftware\ExaPHP\Tests\Integration\Http\Fixture\RunnerServices;
 
-PHP;
+            PHP;
         $config .= '$probe = new RunnerServices(' . var_export($stage, true) . ');' . "\n";
         $config .= <<<'PHP'
-$services = [
-    RunnerServices::class => new InstanceDefinition($probe),
-    ServerRequestFactory::class => new InstanceDefinition($probe),
-    RequestHandler::class => new InstanceDefinition($probe),
-    ResponseEmitter::class => new InstanceDefinition($probe),
-];
-PHP;
+            $services = [
+                RunnerServices::class => new InstanceDefinition($probe),
+                ServerRequestFactory::class => new InstanceDefinition($probe),
+                RequestHandler::class => new InstanceDefinition($probe),
+                ResponseEmitter::class => new InstanceDefinition($probe),
+            ];
+            PHP;
         if ($cleanupFails) {
             $config .= "\n\$services['cleanup'] = new InstanceDefinition(new RunnerServices('shutdown'));";
         }
@@ -72,22 +72,22 @@ PHP;
                 $caught = $exception;
             }
             $probe = $application->config()->get('services')[RunnerServices::class]->instance;
-            $this->assertSame($expected, $probe->calls);
+            self::assertSame($expected, $probe->calls);
             if ($stage !== '' && $cleanupFails) {
-                $this->assertInstanceOf(HttpRunException::class, $caught);
-                $this->assertInstanceOf(TypeError::class, $caught->getPrevious());
-                $this->assertSame($stage, $caught->getPrevious()->getMessage());
-                $this->assertInstanceOf(ModuleShutdownException::class, $caught->shutdownFailure);
+                self::assertInstanceOf(HttpRunException::class, $caught);
+                self::assertInstanceOf(TypeError::class, $caught->getPrevious());
+                self::assertSame($stage, $caught->getPrevious()->getMessage());
+                self::assertInstanceOf(ModuleShutdownException::class, $caught->shutdownFailure);
             } elseif ($cleanupFails) {
-                $this->assertInstanceOf(ModuleShutdownException::class, $caught);
+                self::assertInstanceOf(ModuleShutdownException::class, $caught);
             } elseif ($stage !== '') {
-                $this->assertInstanceOf(TypeError::class, $caught);
-                $this->assertSame($stage, $caught->getMessage());
+                self::assertInstanceOf(TypeError::class, $caught);
+                self::assertSame($stage, $caught->getMessage());
             } else {
-                $this->assertNull($caught);
+                self::assertNull($caught);
             }
             $application->shutdown();
-            $this->assertSame($expected, $probe->calls);
+            self::assertSame($expected, $probe->calls);
             $this->expectException(ApplicationStateException::class);
             $application->bootstrap();
         } finally {
@@ -119,29 +119,29 @@ PHP;
         $directory = sys_get_temp_dir() . '/exa-runner-' . bin2hex(random_bytes(8));
         mkdir($directory);
         file_put_contents($directory . '/runner.global.php', <<<'PHP'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
-use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
-use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+            use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
+            use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
+            use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 
-$invalid = new InstanceDefinition(new stdClass());
-return ['services' => [
-    ServerRequestFactory::class => $invalid,
-    RequestHandler::class => $invalid,
-    ResponseEmitter::class => $invalid,
-]];
-PHP);
+            $invalid = new InstanceDefinition(new stdClass());
+            return ['services' => [
+                ServerRequestFactory::class => $invalid,
+                RequestHandler::class => $invalid,
+                ResponseEmitter::class => $invalid,
+            ]];
+            PHP);
         try {
             $application = new Application($directory);
             try {
                 new HttpRunner()->run($application);
-                $this->fail('Expected invalid HTTP service failure.');
+                self::fail('Expected invalid HTTP service failure.');
             } catch (InvalidHttpConfigurationException $exception) {
-                $this->assertStringContainsString('registered contracts', $exception->getMessage());
+                self::assertStringContainsString('registered contracts', $exception->getMessage());
             }
             $this->expectException(ApplicationStateException::class);
             $application->bootstrap();

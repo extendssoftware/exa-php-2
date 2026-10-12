@@ -14,17 +14,17 @@ final class ViolationTest extends TestCase
     public function testPreservesMetadata(): void
     {
         $violation = new Violation('too_short', 'Too short', ['articles', 0, 'title'], ['minimum' => 3]);
-        $this->assertSame('too_short', $violation->code());
-        $this->assertSame('Too short', $violation->message());
-        $this->assertSame(['articles', 0, 'title'], $violation->path());
-        $this->assertSame(['minimum' => 3], $violation->parameters());
+        self::assertSame('too_short', $violation->code());
+        self::assertSame('Too short', $violation->message());
+        self::assertSame(['articles', 0, 'title'], $violation->path());
+        self::assertSame(['minimum' => 3], $violation->parameters());
     }
 
     public function testDefaultsToRootWithoutParameters(): void
     {
         $violation = new Violation('invalid', 'Invalid');
-        $this->assertSame([], $violation->path());
-        $this->assertSame([], $violation->parameters());
+        self::assertSame([], $violation->path());
+        self::assertSame([], $violation->parameters());
     }
 
     /**

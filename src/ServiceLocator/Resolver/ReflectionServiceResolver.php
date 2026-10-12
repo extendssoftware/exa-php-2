@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator\Resolver;
 
-use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ReflectionDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceResolutionException;
@@ -12,6 +11,7 @@ use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\UnresolvableParameterExcepti
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\UnsupportedDefinitionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
+use Override;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;

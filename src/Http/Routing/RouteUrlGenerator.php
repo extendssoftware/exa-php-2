@@ -33,9 +33,7 @@ final readonly class RouteUrlGenerator implements UrlGenerator
      *
      * @param RouteCollection $routes The shared definitions.
      */
-    public function __construct(private RouteCollection $routes)
-    {
-    }
+    public function __construct(private RouteCollection $routes) {}
 
     /**
      * {@inheritDoc}

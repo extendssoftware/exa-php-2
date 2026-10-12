@@ -35,11 +35,11 @@ final class StreamOutputIntegrationTest extends TestCase
             $output->writeError('error');
             rewind($stdout);
             rewind($stderr);
-            $this->assertSame("prefix:one\0two\n", stream_get_contents($stdout));
-            $this->assertSame('error', stream_get_contents($stderr));
+            self::assertSame("prefix:one\0two\n", stream_get_contents($stdout));
+            self::assertSame('error', stream_get_contents($stderr));
             unset($output);
-            $this->assertTrue(is_resource($stdout));
-            $this->assertTrue(is_resource($stderr));
+            self::assertTrue(is_resource($stdout));
+            self::assertTrue(is_resource($stderr));
         } finally {
             fclose($stdout);
             fclose($stderr);
@@ -54,13 +54,13 @@ final class StreamOutputIntegrationTest extends TestCase
             $output = new StreamOutput($stream, $stream);
             $output->write('abcdef');
             $wrapper = stream_get_meta_data($stream)['wrapper_data'];
-            $this->assertSame('abcdef', $wrapper->bytes);
+            self::assertSame('abcdef', $wrapper->bytes);
             try {
                 $output->writeError('ab!stop');
-                $this->fail('Expected zero-progress failure.');
+                self::fail('Expected zero-progress failure.');
             } catch (OutputWriteException $exception) {
-                $this->assertStringContainsString('stderr', $exception->getMessage());
-                $this->assertSame('abcdefab', $wrapper->bytes);
+                self::assertStringContainsString('stderr', $exception->getMessage());
+                self::assertSame('abcdefab', $wrapper->bytes);
             }
         } finally {
             fclose($stream);

@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates malformed CLI integration configuration or incompatible services.
  */
-final class InvalidCliConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidCliConfigurationException extends InvalidArgumentException implements IntegrationException {}

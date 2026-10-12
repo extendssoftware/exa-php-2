@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid shape field definitions.
  */
-final class InvalidShapeException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class InvalidShapeException extends InvalidArgumentException implements ProcessingException {}

@@ -23,7 +23,7 @@ final readonly class Violation
      *
      * @param non-empty-string $code The machine-readable failure code.
      * @param string $message The diagnostic message.
-     * @param list<string|int> $path Property names or collection keys; an empty list identifies the root.
+     * @param list<int|string> $path Property names or collection keys; an empty list identifies the root.
      * @param array<string, mixed> $parameters Named parameters describing the failure.
      *
      * @throws InvalidViolationException When the code, path, or parameter keys are invalid.
@@ -55,11 +55,11 @@ final readonly class Violation
     /**
      * Returns a new violation with a field or collection key prepended to its path.
      *
-     * @param string|int $segment The parent field name or collection key.
+     * @param int|string $segment The parent field name or collection key.
      *
      * @return self The prefixed violation with the same code, message, and parameters.
      */
-    public function withPrefix(string|int $segment): self
+    public function withPrefix(int|string $segment): self
     {
         return new self($this->code, $this->message, [$segment, ...$this->path], $this->parameters);
     }
@@ -67,7 +67,7 @@ final readonly class Violation
     /**
      * Returns the location of the invalid value relative to the input root.
      *
-     * @return list<string|int> Property names or collection keys; an empty list identifies the root.
+     * @return list<int|string> Property names or collection keys; an empty list identifies the root.
      */
     public function path(): array
     {

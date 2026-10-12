@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies failures belonging to the Authentication component.
  */
-interface AuthenticationException extends Throwable
-{
-}
+interface AuthenticationException extends Throwable {}

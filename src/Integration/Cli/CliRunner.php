@@ -18,8 +18,8 @@ use Throwable;
 use function array_is_list;
 use function array_slice;
 use function count;
-use function is_string;
 use function in_array;
+use function is_string;
 
 /**
  * Runs one CLI command through an explicitly configured application and shuts it down.

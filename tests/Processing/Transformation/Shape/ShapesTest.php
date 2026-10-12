@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing\Transformation\Shape;
 
-use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
-use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\Exception\ProcessingValueUnavailableException;
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Collection\EachItem;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\InvalidShapeException;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\ArrayShape;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\Field;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Shape\FieldPresence;
@@ -37,13 +37,13 @@ final class ShapesTest extends TestCase
         ]);
         $input = (object) ['title' => ' Title ', 'entries' => ['key' => ['count' => ' 42 ']]];
         $result = $shape->transform($input);
-        $this->assertTrue($result->isValid());
-        $this->assertInstanceOf(stdClass::class, $result->value());
-        $this->assertNotSame($input, $result->value());
-        $this->assertSame('Title', $result->value()->title);
-        $this->assertSame(['key' => ['count' => 42]], $result->value()->entries);
-        $this->assertSame(' Title ', $input->title);
-        $this->assertSame(' 42 ', $input->entries['key']['count']);
+        self::assertTrue($result->isValid());
+        self::assertInstanceOf(stdClass::class, $result->value());
+        self::assertNotSame($input, $result->value());
+        self::assertSame('Title', $result->value()->title);
+        self::assertSame(['key' => ['count' => 42]], $result->value()->entries);
+        self::assertSame(' Title ', $input->title);
+        self::assertSame(' 42 ', $input->entries['key']['count']);
     }
 
     public function testAggregatesNestedViolationsAndUnknownFieldsInOrder(): void
@@ -55,11 +55,11 @@ final class ShapesTest extends TestCase
         $input = (object) ['entries' => [(object) ['title' => ''], (object) []], 'extra' => 1];
         $result = $shape->transform($input);
         $violations = $result->violations();
-        $this->assertCount(4, $violations);
-        $this->assertSame(['entries', 0, 'title'], $violations[0]->path());
-        $this->assertSame(['entries', 1, 'title'], $violations[1]->path());
-        $this->assertSame(['required'], $violations[2]->path());
-        $this->assertSame(['extra'], $violations[3]->path());
+        self::assertCount(4, $violations);
+        self::assertSame(['entries', 0, 'title'], $violations[0]->path());
+        self::assertSame(['entries', 1, 'title'], $violations[1]->path());
+        self::assertSame(['required'], $violations[2]->path());
+        self::assertSame(['extra'], $violations[3]->path());
         $this->expectException(ProcessingValueUnavailableException::class);
         $result->value();
     }
@@ -67,10 +67,10 @@ final class ShapesTest extends TestCase
     public function testMissingOptionalDiffersFromExplicitNull(): void
     {
         $shape = new ArrayShape(['name' => new Field(new NotNull(), FieldPresence::Optional)]);
-        $this->assertSame([], $shape->transform([])->value());
+        self::assertSame([], $shape->transform([])->value());
         $result = $shape->transform(['name' => null]);
-        $this->assertSame(NotNull::CODE_NULL_VALUE, $result->violations()[0]->code());
-        $this->assertSame(['name'], $result->violations()[0]->path());
+        self::assertSame(NotNull::CODE_NULL_VALUE, $result->violations()[0]->code());
+        self::assertSame(['name'], $result->violations()[0]->path());
     }
 
     public function testNullCanBeSuccessfulAndUnknownPoliciesAreExplicit(): void
@@ -78,12 +78,12 @@ final class ShapesTest extends TestCase
         $fields = ['name' => new Field(new SequentialPipeline())];
         $object = new stdClass();
         $input = ['extra' => $object, 'name' => null];
-        $this->assertSame(['name' => null], new ArrayShape($fields, UnknownFields::Discard)->transform($input)->value());
-        $this->assertSame(
+        self::assertSame(['name' => null], new ArrayShape($fields, UnknownFields::Discard)->transform($input)->value());
+        self::assertSame(
             ['name' => null, 'extra' => $object],
             new ArrayShape($fields, UnknownFields::Preserve)->transform($input)->value(),
         );
-        $this->assertSame(
+        self::assertSame(
             ArrayShape::CODE_UNKNOWN_FIELD,
             new ArrayShape($fields)->transform($input)->violations()[0]->code(),
         );
@@ -106,38 +106,38 @@ final class ShapesTest extends TestCase
             }
         };
         $shape = new ObjectShape(['name' => new Field(new TrimString())]);
-        $this->assertSame(['name' => 'raw'], (array) $shape->transform($input)->value());
+        self::assertSame(['name' => 'raw'], (array) $shape->transform($input)->value());
         $missing = new ObjectShape(['computed' => new Field(new NotNull())], UnknownFields::Discard);
-        $this->assertSame(ObjectShape::CODE_MISSING_FIELD, $missing->transform($input)->violations()[0]->code());
+        self::assertSame(ObjectShape::CODE_MISSING_FIELD, $missing->transform($input)->violations()[0]->code());
     }
 
     public function testNumericObjectPropertyPathsAreStringsWhileArrayKeysRemainIntegers(): void
     {
         $fields = [0 => new Field(new NotNull())];
-        $this->assertSame(['0'], new ObjectShape($fields)->transform((object) [null])->violations()[0]->path());
-        $this->assertSame([0], new ArrayShape($fields)->transform([null])->violations()[0]->path());
+        self::assertSame(['0'], new ObjectShape($fields)->transform((object) [null])->violations()[0]->path());
+        self::assertSame([0], new ArrayShape($fields)->transform([null])->violations()[0]->path());
     }
 
     public function testWrongContainerTypesProduceRootViolations(): void
     {
-        $this->assertSame(ObjectShape::CODE_NOT_OBJECT, new ObjectShape([])->transform([])->violations()[0]->code());
-        $this->assertSame(ArrayShape::CODE_NOT_ARRAY, new ArrayShape([])->transform(new stdClass())->violations()[0]->code());
-        $this->assertSame([], new ArrayShape([])->transform(null)->violations()[0]->path());
+        self::assertSame(ObjectShape::CODE_NOT_OBJECT, new ObjectShape([])->transform([])->violations()[0]->code());
+        self::assertSame(ArrayShape::CODE_NOT_ARRAY, new ArrayShape([])->transform(new stdClass())->violations()[0]->code());
+        self::assertSame([], new ArrayShape([])->transform(null)->violations()[0]->path());
     }
 
     public function testPrefixesWithoutChangingOriginalViolation(): void
     {
         $violation = new Violation('invalid', 'Message', ['leaf'], ['limit' => 2]);
-        $step = $this->createStub(Transformer::class);
+        $step = self::createStub(Transformer::class);
         $step->method('transform')->willReturn(new FailedProcessingResult($violation));
         $result = new ArrayShape(['parent' => new Field($step)])->transform(['parent' => 1]);
         $prefixed = $result->violations()[0];
-        $this->assertNotSame($violation, $prefixed);
-        $this->assertSame(['leaf'], $violation->path());
-        $this->assertSame(['parent', 'leaf'], $prefixed->path());
-        $this->assertSame($violation->code(), $prefixed->code());
-        $this->assertSame($violation->message(), $prefixed->message());
-        $this->assertSame($violation->parameters(), $prefixed->parameters());
+        self::assertNotSame($violation, $prefixed);
+        self::assertSame(['leaf'], $violation->path());
+        self::assertSame(['parent', 'leaf'], $prefixed->path());
+        self::assertSame($violation->code(), $prefixed->code());
+        self::assertSame($violation->message(), $prefixed->message());
+        self::assertSame($violation->parameters(), $prefixed->parameters());
     }
 
     public function testRejectsInvalidFieldDefinitions(): void

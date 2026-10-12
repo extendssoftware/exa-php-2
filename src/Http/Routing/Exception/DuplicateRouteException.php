@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates duplicate route names or equivalent patterns registered for the same method.
  */
-final class DuplicateRouteException extends LogicException implements HttpException
-{
-}
+final class DuplicateRouteException extends LogicException implements HttpException {}

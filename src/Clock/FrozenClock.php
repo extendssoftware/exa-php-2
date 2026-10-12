@@ -17,9 +17,7 @@ final readonly class FrozenClock implements Clock
      *
      * @param DateTimeImmutable $time The fixed time, preserving its timezone and precision.
      */
-    public function __construct(private DateTimeImmutable $time)
-    {
-    }
+    public function __construct(private DateTimeImmutable $time) {}
 
     /**
      * {@inheritDoc}

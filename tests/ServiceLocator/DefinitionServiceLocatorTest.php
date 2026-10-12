@@ -52,7 +52,7 @@ final class DefinitionServiceLocatorTest extends TestCase
 
     public function testUsesTheFirstSupportingResolverAndCachesItsResult(): void
     {
-        $definition = $this->createStub(ServiceDefinition::class);
+        $definition = self::createStub(ServiceDefinition::class);
         $service = new stdClass();
         $unsupported = $this->createMock(ServiceResolver::class);
         $unsupported->expects(self::once())->method('supports')->with($definition)->willReturn(false);
@@ -90,7 +90,7 @@ final class DefinitionServiceLocatorTest extends TestCase
         $locator = new DefinitionServiceLocator([
             'service' => new InvokableDefinition(stdClass::class),
             'alias' => new AliasDefinition('service'),
-            'dependent' => new FactoryDefinition(static fn (ServiceLocator $locator): object => (object) [
+            'dependent' => new FactoryDefinition(static fn(ServiceLocator $locator): object => (object) [
                 'dependency' => $locator->get('alias'),
             ]),
         ], [new AliasServiceResolver(), new FactoryServiceResolver(), new InvokableServiceResolver()]);
@@ -136,7 +136,7 @@ final class DefinitionServiceLocatorTest extends TestCase
     #[DataProvider('resolverFailures')]
     public function testRetriesResolutionFailuresWithoutWrappingOrFallingBack(Throwable $failure): void
     {
-        $definition = $this->createStub(ServiceDefinition::class);
+        $definition = self::createStub(ServiceDefinition::class);
         $service = new stdClass();
         $attempts = 0;
         $resolver = $this->createMock(ServiceResolver::class);
@@ -169,7 +169,7 @@ final class DefinitionServiceLocatorTest extends TestCase
     #[DataProvider('resolverFailures')]
     public function testSupportFailuresPropagateUnchangedAndClearTheResolutionPath(Throwable $failure): void
     {
-        $definition = $this->createStub(ServiceDefinition::class);
+        $definition = self::createStub(ServiceDefinition::class);
         $resolver = $this->createMock(ServiceResolver::class);
         $resolver->expects(self::exactly(2))->method('supports')->with($definition)->willThrowException($failure);
         $resolver->expects(self::never())->method('resolve');
@@ -220,7 +220,7 @@ final class DefinitionServiceLocatorTest extends TestCase
             'b' => new AliasDefinition('a'),
         ], 'a -> b -> a'];
         yield 'factory dependency' => [[
-            'a' => new FactoryDefinition(static fn (ServiceLocator $locator): object => $locator->get('b')),
+            'a' => new FactoryDefinition(static fn(ServiceLocator $locator): object => $locator->get('b')),
             'b' => new AliasDefinition('a'),
         ], 'a -> b -> a'];
     }

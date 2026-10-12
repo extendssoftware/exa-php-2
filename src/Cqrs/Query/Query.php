@@ -9,6 +9,4 @@ namespace ExtendsSoftware\ExaPHP\Cqrs\Query;
  *
  * @template TResult
  */
-interface Query
-{
-}
+interface Query {}

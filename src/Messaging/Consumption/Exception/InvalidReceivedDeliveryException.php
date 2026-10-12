@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid subscriber identity, receipt, or attempt number for a received delivery.
  */
-final class InvalidReceivedDeliveryException extends InvalidArgumentException implements MessagingException
-{
-}
+final class InvalidReceivedDeliveryException extends InvalidArgumentException implements MessagingException {}

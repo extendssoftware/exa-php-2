@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a resolver does not support the supplied service definition.
  */
-final class UnsupportedDefinitionException extends InvalidArgumentException implements ServiceLocatorException
-{
-}
+final class UnsupportedDefinitionException extends InvalidArgumentException implements ServiceLocatorException {}

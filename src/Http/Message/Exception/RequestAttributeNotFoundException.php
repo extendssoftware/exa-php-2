@@ -10,6 +10,4 @@ use OutOfBoundsException;
 /**
  * Indicates absent typed request metadata.
  */
-final class RequestAttributeNotFoundException extends OutOfBoundsException implements HttpException
-{
-}
+final class RequestAttributeNotFoundException extends OutOfBoundsException implements HttpException {}

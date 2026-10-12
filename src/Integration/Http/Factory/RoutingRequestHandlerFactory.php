@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
 use ExtendsSoftware\ExaPHP\Http\Handler\HandlerResolver;
-use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
+use ExtendsSoftware\ExaPHP\Http\Routing\Router;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;

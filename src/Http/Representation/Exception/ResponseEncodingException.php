@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that response data could not be encoded.
  */
-final class ResponseEncodingException extends RuntimeException implements HttpException
-{
-}
+final class ResponseEncodingException extends RuntimeException implements HttpException {}

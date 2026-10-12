@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates a stream write, flush, lock, or cleanup failure.
  */
-final class LogStreamWriteException extends RuntimeException implements LoggingException
-{
-}
+final class LogStreamWriteException extends RuntimeException implements LoggingException {}

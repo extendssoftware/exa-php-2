@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid response factory registrations or an unavailable default media type.
  */
-final class InvalidResponseFactoryException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidResponseFactoryException extends InvalidArgumentException implements HttpException {}

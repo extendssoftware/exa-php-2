@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Logging\Writer;
 
 use DateTimeImmutable;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
 use ExtendsSoftware\ExaPHP\Logging\Writer\CompositeLogWriter;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\CompositeLogWriteException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Writer\FilteringLogWriter;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
 use PHPUnit\Framework\TestCase;
@@ -22,19 +22,19 @@ final class CompositeLogWriterTest extends TestCase
         $record = $this->record();
         $calls = [];
         $first = $this->createMock(LogWriter::class);
-        $first->expects($this->exactly(2))->method('write')->with($this->identicalTo($record))
+        $first->expects(self::exactly(2))->method('write')->with(self::identicalTo($record))
             ->willReturnCallback(static function () use (&$calls): void {
                 $calls[] = 'first';
             });
         $second = $this->createMock(LogWriter::class);
-        $second->expects($this->once())->method('write')->with($this->identicalTo($record))
+        $second->expects(self::once())->method('write')->with(self::identicalTo($record))
             ->willReturnCallback(static function () use (&$calls): void {
                 $calls[] = 'second';
             });
 
         new CompositeLogWriter($first, $second, $first)->write($record);
 
-        $this->assertSame(['first', 'second', 'first'], $calls);
+        self::assertSame(['first', 'second', 'first'], $calls);
     }
 
     public function testEmptyCompositeDiscardsRecord(): void
@@ -48,19 +48,19 @@ final class CompositeLogWriterTest extends TestCase
         $firstFailure = new LogStreamWriteException('First failed');
         $lastFailure = new LogStreamWriteException('Last failed');
         $first = $this->createMock(LogWriter::class);
-        $first->expects($this->once())->method('write')->willThrowException($firstFailure);
+        $first->expects(self::once())->method('write')->willThrowException($firstFailure);
         $middle = $this->createMock(LogWriter::class);
-        $middle->expects($this->once())->method('write');
+        $middle->expects(self::once())->method('write');
         $last = $this->createMock(LogWriter::class);
-        $last->expects($this->once())->method('write')->willThrowException($lastFailure);
+        $last->expects(self::once())->method('write')->willThrowException($lastFailure);
 
         try {
             new CompositeLogWriter($first, $middle, $last)->write($this->record());
-            $this->fail('Expected aggregate failure.');
+            self::fail('Expected aggregate failure.');
         } catch (CompositeLogWriteException $exception) {
-            $this->assertSame([0 => $firstFailure, 2 => $lastFailure], $exception->failures);
-            $this->assertSame($firstFailure, $exception->getPrevious());
-            $this->assertSame('Log delivery failed for 2 writer(s).', $exception->getMessage());
+            self::assertSame([0 => $firstFailure, 2 => $lastFailure], $exception->failures);
+            self::assertSame($firstFailure, $exception->getPrevious());
+            self::assertSame('Log delivery failed for 2 writer(s).', $exception->getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ final class CompositeLogWriterTest extends TestCase
         $failure = new LogStreamWriteException('Failed once');
         $calls = 0;
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->exactly(2))->method('write')->willReturnCallback(
+        $writer->expects(self::exactly(2))->method('write')->willReturnCallback(
             static function () use (&$calls, $failure): void {
                 if (++$calls === 1) {
                     throw $failure;
@@ -79,9 +79,9 @@ final class CompositeLogWriterTest extends TestCase
         $composite = new CompositeLogWriter($writer);
         try {
             $composite->write($this->record());
-            $this->fail('Expected aggregate failure.');
+            self::fail('Expected aggregate failure.');
         } catch (CompositeLogWriteException $exception) {
-            $this->assertSame([$failure], $exception->failures);
+            self::assertSame([$failure], $exception->failures);
         }
         $composite->write($this->record());
     }
@@ -90,15 +90,15 @@ final class CompositeLogWriterTest extends TestCase
     {
         $failure = new TypeError('Programming error');
         $first = $this->createMock(LogWriter::class);
-        $first->expects($this->once())->method('write')->willThrowException($failure);
+        $first->expects(self::once())->method('write')->willThrowException($failure);
         $second = $this->createMock(LogWriter::class);
-        $second->expects($this->never())->method('write');
+        $second->expects(self::never())->method('write');
 
         try {
             new CompositeLogWriter($first, $second)->write($this->record());
-            $this->fail('Expected original error.');
+            self::fail('Expected original error.');
         } catch (TypeError $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 
@@ -106,9 +106,9 @@ final class CompositeLogWriterTest extends TestCase
     {
         $record = $this->record();
         $accepted = $this->createMock(LogWriter::class);
-        $accepted->expects($this->once())->method('write')->with($this->identicalTo($record));
+        $accepted->expects(self::once())->method('write')->with(self::identicalTo($record));
         $rejected = $this->createMock(LogWriter::class);
-        $rejected->expects($this->never())->method('write');
+        $rejected->expects(self::never())->method('write');
 
         new CompositeLogWriter(
             new FilteringLogWriter($accepted, static fn(LogRecord $record): bool => $record->level === LogLevel::Info),

@@ -44,20 +44,20 @@ final class ClockModuleIntegrationTest extends TestCase
         $directory = sys_get_temp_dir() . '/exa-clock-' . bin2hex(random_bytes(8));
         mkdir($directory);
         file_put_contents($directory . '/clock.global.php', <<<'CONFIG'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Clock\Clock;
-use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
+            use ExtendsSoftware\ExaPHP\Clock\Clock;
+            use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 
-return ['services' => [
-    Clock::class => new FactoryDefinition(
-        static fn(): Clock => new FrozenClock(new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00')),
-    ),
-]];
-CONFIG);
+            return ['services' => [
+                Clock::class => new FactoryDefinition(
+                    static fn(): Clock => new FrozenClock(new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00')),
+                ),
+            ]];
+            CONFIG);
         try {
             $application = new Application($directory);
             $application->registerModule(ClockModule::class);

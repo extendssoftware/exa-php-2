@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates that multiple handlers are registered for the same query class.
  */
-final class DuplicateQueryHandlerException extends LogicException implements CqrsException
-{
-}
+final class DuplicateQueryHandlerException extends LogicException implements CqrsException {}

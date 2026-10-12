@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
+use Override;
 
 use function is_string;
 use function trim;

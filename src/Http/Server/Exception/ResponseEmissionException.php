@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a response cannot be emitted successfully.
  */
-final class ResponseEmissionException extends RuntimeException implements HttpException
-{
-}
+final class ResponseEmissionException extends RuntimeException implements HttpException {}

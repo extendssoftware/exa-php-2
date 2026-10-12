@@ -18,8 +18,10 @@ final class ProblemDetailsTest extends TestCase
 {
     public function testGenericProblemOmitsOptionalMembers(): void
     {
-        $this->assertSame(['type' => 'about:blank', 'title' => 'Not Found', 'status' => 404],
-            new ProblemDetails(StatusCode::NotFound, 'Not Found')->toArray());
+        self::assertSame(
+            ['type' => 'about:blank', 'title' => 'Not Found', 'status' => 404],
+            new ProblemDetails(StatusCode::NotFound, 'Not Found')->toArray()
+        );
     }
 
     public function testCustomProblemRetainsTypeOccurrenceAndExtensions(): void
@@ -32,7 +34,7 @@ final class ProblemDetailsTest extends TestCase
             new Uri('/articles/123'),
             ['errors' => [['field' => 'title', 'code' => 'required']], 'retry' => false],
         );
-        $this->assertSame([
+        self::assertSame([
             'type' => 'https://example.com/problems/invalid-article',
             'title' => 'Invalid article',
             'status' => 422,
@@ -50,7 +52,7 @@ final class ProblemDetailsTest extends TestCase
         $problem = new ProblemDetails(StatusCode::BadRequest, 'Bad Request', extensions: ['entries' => &$entries]);
         $value = 'changed';
         $entries['another'] = 'added';
-        $this->assertSame(['entries' => ['value' => 'original']], $problem->extensions);
+        self::assertSame(['entries' => ['value' => 'original']], $problem->extensions);
     }
 
     /** @param array<array-key, mixed> $extensions */

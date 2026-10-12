@@ -27,9 +27,7 @@ final class RunnerHandler implements CommandHandler
      * @param bool $fail Whether command execution fails.
      * @param bool $shutdownFails Whether shutdown fails.
      */
-    public function __construct(private readonly bool $fail, private readonly bool $shutdownFails)
-    {
-    }
+    public function __construct(private readonly bool $fail, private readonly bool $shutdownFails) {}
 
     /**
      * Writes parsed input and returns an application-specific exit code.

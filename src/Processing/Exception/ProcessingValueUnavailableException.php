@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates an attempt to read a value from unsuccessful processing.
  */
-final class ProcessingValueUnavailableException extends LogicException implements ProcessingException
-{
-}
+final class ProcessingValueUnavailableException extends LogicException implements ProcessingException {}

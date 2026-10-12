@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Cqrs\Query;
 
+use ExtendsSoftware\ExaPHP\Cqrs\CqrsException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\QueryHandler;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\SynchronousQueryBus;
-use ExtendsSoftware\ExaPHP\Cqrs\CqrsException;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\QueryHandlerNotFoundException;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\DuplicateQueryHandlerException;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Query\Fixture\ChildQuery;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Query\Fixture\ParentQuery;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -106,7 +106,7 @@ final class SynchronousQueryBusTest extends TestCase
     public function testRejectsInvalidQueryClasses(int|string $class): void
     {
         $this->expectException(InvalidQueryRegistrationException::class);
-        new SynchronousQueryBus([$class => $this->createStub(QueryHandler::class)]);
+        new SynchronousQueryBus([$class => self::createStub(QueryHandler::class)]);
     }
 
     /**
@@ -125,7 +125,7 @@ final class SynchronousQueryBusTest extends TestCase
     public function testPreservesTheCauseOfClassInspectionFailures(): void
     {
         try {
-            new SynchronousQueryBus(['ExaPHP\\MissingQuery' => $this->createStub(QueryHandler::class)]);
+            new SynchronousQueryBus(['ExaPHP\\MissingQuery' => self::createStub(QueryHandler::class)]);
             self::fail('Expected an invalid registration failure.');
         } catch (InvalidQueryRegistrationException $exception) {
             self::assertInstanceOf(CqrsException::class, $exception);
@@ -153,8 +153,7 @@ final class SynchronousQueryBusTest extends TestCase
         yield 'boolean' => [false];
         yield 'object' => [new stdClass()];
         yield 'class name' => [QueryHandler::class];
-        yield 'callable' => [static function (): void {
-        }];
+        yield 'callable' => [static function (): void {}];
     }
 
     public function testNormalizesClassNameCasing(): void
@@ -175,7 +174,7 @@ final class SynchronousQueryBusTest extends TestCase
 
     public function testRejectsDuplicateCanonicalRegistrations(): void
     {
-        $handler = $this->createStub(QueryHandler::class);
+        $handler = self::createStub(QueryHandler::class);
         $this->expectException(DuplicateQueryHandlerException::class);
         new SynchronousQueryBus([
             ParentQuery::class => $handler,
@@ -225,7 +224,7 @@ final class SynchronousQueryBusTest extends TestCase
         $handler->expects(self::once())->method('handle');
         $registrations = [ParentQuery::class => &$handler];
         $bus = new SynchronousQueryBus($registrations);
-        $handler = $this->createStub(QueryHandler::class);
+        $handler = self::createStub(QueryHandler::class);
         $registrations = [];
 
         $bus->ask(new ParentQuery());

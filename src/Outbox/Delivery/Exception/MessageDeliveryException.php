@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that outgoing message delivery could not be acknowledged.
  */
-final class MessageDeliveryException extends RuntimeException implements OutboxException
-{
-}
+final class MessageDeliveryException extends RuntimeException implements OutboxException {}

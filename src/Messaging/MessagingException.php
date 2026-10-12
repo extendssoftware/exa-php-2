@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies message validation, publishing, subscription, resolution, and consumption failures.
  */
-interface MessagingException extends Throwable
-{
-}
+interface MessagingException extends Throwable {}

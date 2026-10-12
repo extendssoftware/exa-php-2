@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid or non-writable logging destination.
  */
-final class InvalidLogStreamException extends InvalidArgumentException implements LoggingException
-{
-}
+final class InvalidLogStreamException extends InvalidArgumentException implements LoggingException {}

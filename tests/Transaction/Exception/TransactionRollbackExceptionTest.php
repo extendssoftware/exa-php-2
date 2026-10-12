@@ -17,9 +17,9 @@ final class TransactionRollbackExceptionTest extends TestCase
         $operation = new TypeError('operation failed');
         $rollback = new RuntimeException('connection lost');
         $failure = new TransactionRollbackException($operation, $rollback);
-        $this->assertInstanceOf(TransactionException::class, $failure);
-        $this->assertSame($operation, $failure->getPrevious());
-        $this->assertSame($rollback, $failure->rollbackFailure);
-        $this->assertSame('Transaction operation failed and rollback also failed.', $failure->getMessage());
+        self::assertInstanceOf(TransactionException::class, $failure);
+        self::assertSame($operation, $failure->getPrevious());
+        self::assertSame($rollback, $failure->rollbackFailure);
+        self::assertSame('Transaction operation failed and rollback also failed.', $failure->getMessage());
     }
 }

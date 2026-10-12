@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid HTTP middleware registration list.
  */
-final class InvalidMiddlewareException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidMiddlewareException extends InvalidArgumentException implements HttpException {}

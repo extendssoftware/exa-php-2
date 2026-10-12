@@ -46,7 +46,7 @@ final class AuthorizationModuleIntegrationTest extends TestCase
     {
         $request = new AuthorizationRequest(new Actor('42', 'user'), 'article.publish');
         $authorizer = $this->createMock(Authorizer::class);
-        $authorizer->expects($this->once())->method('isGranted')->with($this->identicalTo($request))->willReturn(false);
+        $authorizer->expects(self::once())->method('isGranted')->with(self::identicalTo($request))->willReturn(false);
         $defaults = require new AuthorizationModule()->configDirectory() . '/services.php';
         $configuration = new ConfigurationMerger()->merge(['authorization' => $defaults], ['application' => [
             'services' => [Authorizer::class => new InstanceDefinition($authorizer)],
@@ -68,7 +68,7 @@ final class AuthorizationModuleIntegrationTest extends TestCase
             'private-action',
             (object) ['secret' => 'private-resource'],
         );
-        $handler = $this->createStub(RequestHandler::class);
+        $handler = self::createStub(RequestHandler::class);
         $handler->method('handle')->willThrowException(new AccessDeniedException($denied));
         $request = new Request(Method::Get, new Uri('/private-path'), protocolVersion: ProtocolVersion::Http2);
         $response = $services->get(ExceptionHandlingMiddleware::class)->process($request, $handler);
@@ -112,7 +112,7 @@ final class AuthorizationModuleIntegrationTest extends TestCase
 
     public function testApplicationCanOverrideTheNamedDenialMapper(): void
     {
-        $mapper = $this->createStub(ExceptionProblemDetailsMapper::class);
+        $mapper = self::createStub(ExceptionProblemDetailsMapper::class);
         $mapper->method('map')->willReturn(new ProblemDetails(StatusCode::NotFound, 'Not Found'));
         $services = $this->services([
             'http' => ['exceptionMappers' => ['authorization.accessDenied' => 'custom-denial']],
@@ -120,7 +120,8 @@ final class AuthorizationModuleIntegrationTest extends TestCase
         ]);
         $denial = new AccessDeniedException(new AuthorizationRequest(new Actor('42', 'user'), 'article.view'));
         $response = $services->get(ExceptionResponseFactory::class)->create(
-            $denial, new Request(Method::Get, new Uri('/')),
+            $denial,
+            new Request(Method::Get, new Uri('/')),
         );
 
         self::assertSame(StatusCode::NotFound, $response->statusCode);
@@ -132,7 +133,8 @@ final class AuthorizationModuleIntegrationTest extends TestCase
         $http = require new HttpModule()->configDirectory() . '/services.php';
         $authorization = require new AuthorizationModule()->configDirectory() . '/services.php';
         $configuration = new ConfigurationMerger()->merge(
-            ['http' => $http, 'authorization' => $authorization], ['application' => $overrides],
+            ['http' => $http, 'authorization' => $authorization],
+            ['application' => $overrides],
         );
 
         return new ServiceLocatorFactory()->create($configuration);

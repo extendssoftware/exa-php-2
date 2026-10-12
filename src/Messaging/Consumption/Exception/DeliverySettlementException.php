@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates failure to acknowledge, retry, or reject a subscriber delivery.
  */
-final class DeliverySettlementException extends RuntimeException implements MessagingException
-{
-}
+final class DeliverySettlementException extends RuntimeException implements MessagingException {}

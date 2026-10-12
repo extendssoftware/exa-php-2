@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates malformed parsed CLI input.
  */
-final class InvalidInputException extends InvalidArgumentException implements CliException
-{
-}
+final class InvalidInputException extends InvalidArgumentException implements CliException {}

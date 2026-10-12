@@ -26,18 +26,18 @@ final class ArgvInputParserTest extends TestCase
     /**
      * @param list<string> $tokens
      * @param array<string, string> $arguments
-     * @param array<string, string|bool> $options
+     * @param array<string, bool|string> $options
      */
     #[DataProvider('validInput')]
     public function testParsesNamedInput(array $tokens, array $arguments, array $options): void
     {
         $input = new ArgvInputParser()->parse($this->definition(), $tokens);
-        $this->assertSame('articles:create', $input->command);
-        $this->assertSame($arguments, $input->arguments);
-        $this->assertSame($options, $input->options);
+        self::assertSame('articles:create', $input->command);
+        self::assertSame($arguments, $input->arguments);
+        self::assertSame($options, $input->options);
     }
 
-    /** @return iterable<array{list<string>, array<string, string>, array<string, string|bool>}> */
+    /** @return iterable<array{list<string>, array<string, string>, array<string, bool|string>}> */
     public static function validInput(): iterable
     {
         yield [['Title'], ['title' => 'Title'], []];
@@ -102,8 +102,8 @@ final class ArgvInputParserTest extends TestCase
         $definition = $this->definition();
         $first = $parser->parse($definition, ['--', '--publish']);
         $second = $parser->parse($definition, ['Title', '--publish']);
-        $this->assertSame([], $first->options);
-        $this->assertSame(['publish' => true], $second->options);
+        self::assertSame([], $first->options);
+        self::assertSame(['publish' => true], $second->options);
     }
 
     private function definition(): CommandDefinition

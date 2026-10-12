@@ -11,8 +11,8 @@ final class ExitCodeTest extends TestCase
 {
     public function testConventionalExitCodesHaveStableIntegerValues(): void
     {
-        $this->assertSame(0, ExitCode::Success->value);
-        $this->assertSame(1, ExitCode::Failure->value);
-        $this->assertSame(2, ExitCode::InvalidUsage->value);
+        self::assertSame(0, ExitCode::Success->value);
+        self::assertSame(1, ExitCode::Failure->value);
+        self::assertSame(2, ExitCode::InvalidUsage->value);
     }
 }

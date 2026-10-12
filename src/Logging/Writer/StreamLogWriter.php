@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
-use Override;
 use Closure;
 use ErrorException;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\InvalidLogStreamException;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamOpenException;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\JsonLogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\Formatter\LogFormatter;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\InvalidLogStreamException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamOpenException;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
+use Override;
 use Throwable;
 use ValueError;
 
@@ -28,8 +28,8 @@ use function is_resource;
 use function is_string;
 use function restore_error_handler;
 use function set_error_handler;
-use function stream_get_meta_data;
 use function str_contains;
+use function stream_get_meta_data;
 use function strlen;
 use function strpbrk;
 use function substr;
@@ -51,7 +51,7 @@ final readonly class StreamLogWriter implements LogWriter
     /**
      * Creates a stream writer without opening path destinations.
      *
-     * @param string|resource $destination A non-empty path or stream URI, or an open writable stream.
+     * @param resource|string $destination A non-empty path or stream URI, or an open writable stream.
      * @param LogFormatter $formatter The record formatter, including any required delimiter.
      *
      * @throws InvalidLogStreamException When the destination is invalid, closed, or not writable.
@@ -92,10 +92,10 @@ final readonly class StreamLogWriter implements LogWriter
         try {
             $this->assertWritable($stream);
             $metadata = stream_get_meta_data($stream);
-            $this->io(function () use ($stream, $metadata, $data, &$locked): void {
+            $this->io(static function () use ($stream, $metadata, $data, &$locked): void {
                 $stat = $metadata['stream_type'] === 'STDIO' ? fstat($stream) : false;
                 if ($metadata['stream_type'] === 'STDIO' && $stat !== false
-                    && ($stat['mode'] & 0170000) === 0100000) {
+                    && ($stat['mode'] & 0o170000) === 0o100000) {
                     if (!flock($stream, LOCK_EX)) {
                         throw new LogStreamWriteException('Could not lock log stream.');
                     }
@@ -153,7 +153,7 @@ final readonly class StreamLogWriter implements LogWriter
     private function openStream(string $destination): mixed
     {
         try {
-            $stream = $this->io(fn() => fopen($destination, 'ab'));
+            $stream = $this->io(static fn() => fopen($destination, 'ab'));
         } catch (LogStreamWriteException $exception) {
             throw new LogStreamOpenException(
                 'Could not open log destination.',
@@ -203,7 +203,7 @@ final readonly class StreamLogWriter implements LogWriter
         }, E_WARNING | E_NOTICE);
         try {
             return $operation();
-        } catch (ErrorException | ValueError $exception) {
+        } catch (ErrorException|ValueError $exception) {
             throw new LogStreamWriteException('Log stream operation failed.', 0, $exception);
         } finally {
             restore_error_handler();

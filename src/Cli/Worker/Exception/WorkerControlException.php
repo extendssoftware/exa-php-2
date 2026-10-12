@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates failure to manage the CLI worker lifecycle.
  */
-final class WorkerControlException extends RuntimeException implements CliException
-{
-}
+final class WorkerControlException extends RuntimeException implements CliException {}

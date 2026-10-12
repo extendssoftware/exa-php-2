@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid CLI option definition.
  */
-final class InvalidOptionDefinitionException extends InvalidArgumentException implements CliException
-{
-}
+final class InvalidOptionDefinitionException extends InvalidArgumentException implements CliException {}

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Routing;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use Override;
 use SensitiveParameter;
 
 use function array_map;

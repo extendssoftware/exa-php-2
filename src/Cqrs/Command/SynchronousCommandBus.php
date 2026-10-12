@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Command;
 
-use Override;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\CommandHandlerNotFoundException;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\DuplicateCommandHandlerException;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandRegistrationException;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\ClosureCommandExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandExecution;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware\CommandMiddleware;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
-use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandMiddlewareException;
-use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\CommandHandlerNotFoundException;
-use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\DuplicateCommandHandlerException;
-use ExtendsSoftware\ExaPHP\Cqrs\Command\Exception\InvalidCommandRegistrationException;
+use Override;
 use ReflectionClass;
 use Throwable;
 

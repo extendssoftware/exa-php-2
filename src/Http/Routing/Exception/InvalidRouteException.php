@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid route pattern or route registration list.
  */
-final class InvalidRouteException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRouteException extends InvalidArgumentException implements HttpException {}

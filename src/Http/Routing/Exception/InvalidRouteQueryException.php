@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates unsupported URL query data.
  */
-final class InvalidRouteQueryException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRouteQueryException extends InvalidArgumentException implements HttpException {}

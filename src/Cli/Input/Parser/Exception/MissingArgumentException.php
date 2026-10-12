@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a required positional argument was omitted.
  */
-final class MissingArgumentException extends InvalidArgumentException implements UsageException
-{
-}
+final class MissingArgumentException extends InvalidArgumentException implements UsageException {}

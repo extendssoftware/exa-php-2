@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid outbox claim data or an invalid lease duration.
  */
-final class InvalidClaimException extends InvalidArgumentException implements OutboxException
-{
-}
+final class InvalidClaimException extends InvalidArgumentException implements OutboxException {}

@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid CQRS integration configuration.
  */
-final class InvalidCqrsConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidCqrsConfigurationException extends InvalidArgumentException implements IntegrationException {}

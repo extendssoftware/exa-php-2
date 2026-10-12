@@ -19,18 +19,18 @@ final class MatchesPatternTest extends TestCase
 {
     public function testViolationCodesRemainStable(): void
     {
-        $this->assertSame('not_string', MatchesPattern::CODE_NOT_STRING);
-        $this->assertSame('pattern_mismatch', MatchesPattern::CODE_PATTERN_MISMATCH);
-        $this->assertSame('invalid_utf8', MatchesPattern::CODE_INVALID_UTF8);
+        self::assertSame('not_string', MatchesPattern::CODE_NOT_STRING);
+        self::assertSame('pattern_mismatch', MatchesPattern::CODE_PATTERN_MISMATCH);
+        self::assertSame('invalid_utf8', MatchesPattern::CODE_INVALID_UTF8);
     }
 
     #[DataProvider('inputs')]
     public function testMatchesSuppliedPattern(string $pattern, mixed $value, ?string $code): void
     {
         $result = new MatchesPattern($pattern)->validate($value);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code !== null) {
-            $this->assertSame($code, $result->violations()[0]->code());
+            self::assertSame($code, $result->violations()[0]->code());
         }
     }
 
@@ -55,13 +55,13 @@ final class MatchesPatternTest extends TestCase
         try {
             try {
                 new MatchesPattern('/[/');
-                $this->fail('Expected invalid pattern.');
+                self::fail('Expected invalid pattern.');
             } catch (InvalidPatternException $exception) {
-                $this->assertInstanceOf(ErrorException::class, $exception->getPrevious());
+                self::assertInstanceOf(ErrorException::class, $exception->getPrevious());
             }
             $previous = set_error_handler($handler);
             restore_error_handler();
-            $this->assertSame($handler, $previous);
+            self::assertSame($handler, $previous);
         } finally {
             restore_error_handler();
         }

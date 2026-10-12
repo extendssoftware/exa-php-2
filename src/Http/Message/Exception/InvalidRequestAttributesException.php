@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid or duplicate request metadata.
  */
-final class InvalidRequestAttributesException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRequestAttributesException extends InvalidArgumentException implements HttpException {}

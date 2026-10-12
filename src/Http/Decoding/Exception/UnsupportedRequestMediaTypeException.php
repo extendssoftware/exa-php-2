@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates a missing, malformed, or unsupported request content type or encoding.
  */
-final class UnsupportedRequestMediaTypeException extends RuntimeException implements HttpException
-{
-}
+final class UnsupportedRequestMediaTypeException extends RuntimeException implements HttpException {}

@@ -20,21 +20,21 @@ final class ResponseTest extends TestCase
         $headers = new Headers(['Content-Type' => 'text/plain']);
         $updated = $original->withStatusCode(StatusCode::Created)->withHeaders($headers)->withBody($body)
             ->withProtocolVersion(ProtocolVersion::Http2);
-        $this->assertSame(StatusCode::Ok, $original->statusCode);
-        $this->assertSame([], $original->headers->all());
-        $this->assertSame(0, $original->body->size());
-        $this->assertSame(StatusCode::Created, $updated->statusCode);
-        $this->assertSame(201, $updated->statusCode->value);
-        $this->assertSame($headers, $updated->headers);
-        $this->assertSame($body, $updated->body);
-        $this->assertSame(ProtocolVersion::Http2, $updated->protocolVersion);
-        $this->assertSame($body, $updated->withStatusCode(StatusCode::Accepted)->body);
+        self::assertSame(StatusCode::Ok, $original->statusCode);
+        self::assertSame([], $original->headers->all());
+        self::assertSame(0, $original->body->size());
+        self::assertSame(StatusCode::Created, $updated->statusCode);
+        self::assertSame(201, $updated->statusCode->value);
+        self::assertSame($headers, $updated->headers);
+        self::assertSame($body, $updated->body);
+        self::assertSame(ProtocolVersion::Http2, $updated->protocolVersion);
+        self::assertSame($body, $updated->withStatusCode(StatusCode::Accepted)->body);
     }
 
     public function testEverySupportedStatusCanBeUsedInAResponse(): void
     {
         foreach (StatusCode::cases() as $status) {
-            $this->assertSame($status, new Response($status)->statusCode);
+            self::assertSame($status, new Response($status)->statusCode);
         }
     }
 }

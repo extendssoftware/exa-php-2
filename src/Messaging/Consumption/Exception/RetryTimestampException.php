@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that the current time could not be obtained to schedule a retry.
  */
-final class RetryTimestampException extends RuntimeException implements MessagingException
-{
-}
+final class RetryTimestampException extends RuntimeException implements MessagingException {}

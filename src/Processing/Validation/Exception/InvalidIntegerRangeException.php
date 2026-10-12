@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates reversed integer range bounds.
  */
-final class InvalidIntegerRangeException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class InvalidIntegerRangeException extends InvalidArgumentException implements ProcessingException {}

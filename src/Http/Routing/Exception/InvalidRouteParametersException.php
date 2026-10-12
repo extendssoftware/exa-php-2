@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid parameters for route URL generation.
  */
-final class InvalidRouteParametersException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRouteParametersException extends InvalidArgumentException implements HttpException {}

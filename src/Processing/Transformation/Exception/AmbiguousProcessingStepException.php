@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates a nested processing step implementing more than one processing role.
  */
-final class AmbiguousProcessingStepException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class AmbiguousProcessingStepException extends InvalidArgumentException implements ProcessingException {}

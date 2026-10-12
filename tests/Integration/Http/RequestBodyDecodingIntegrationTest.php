@@ -6,16 +6,16 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Http;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationMerger;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
-use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
+use ExtendsSoftware\ExaPHP\Http\Decoding\RequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
-use ExtendsSoftware\ExaPHP\Http\Decoding\RequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
+use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Integration\Http\HttpModule;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 use PHPUnit\Framework\TestCase;
@@ -25,7 +25,7 @@ final class RequestBodyDecodingIntegrationTest extends TestCase
     public function testConfiguredLimitAndDecoderFailuresFlowThroughDefaultExceptionMiddleware(): void
     {
         $decoder = null;
-        $handler = $this->createStub(RequestHandler::class);
+        $handler = self::createStub(RequestHandler::class);
         $handler->method('handle')->willReturnCallback(static function (Request $request) use (&$decoder): Response {
             $decoder->decode($request);
 
@@ -49,9 +49,12 @@ final class RequestBodyDecodingIntegrationTest extends TestCase
             ['application/xml', '<a/>', StatusCode::UnsupportedMediaType],
         ] as [$type, $body, $status]) {
             $request = new Request(
-                Method::Post, new Uri('/'), new Headers(['Content-Type' => $type]), new StringBody($body),
+                Method::Post,
+                new Uri('/'),
+                new Headers(['Content-Type' => $type]),
+                new StringBody($body),
             );
-            $this->assertSame($status, $pipeline->handle($request)->statusCode);
+            self::assertSame($status, $pipeline->handle($request)->statusCode);
         }
     }
 }

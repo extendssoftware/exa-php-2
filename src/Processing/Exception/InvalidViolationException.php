@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid violation metadata.
  */
-final class InvalidViolationException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class InvalidViolationException extends InvalidArgumentException implements ProcessingException {}

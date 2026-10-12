@@ -10,8 +10,8 @@ use ExtendsSoftware\ExaPHP\Http\Routing\Exception\InvalidRouteException;
 use ExtendsSoftware\ExaPHP\Http\Routing\Exception\RouteNotFoundException;
 use ExtendsSoftware\ExaPHP\Http\Routing\Route;
 use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 use stdClass;
 
 final class RouteCollectionTest extends TestCase
@@ -30,8 +30,8 @@ final class RouteCollectionTest extends TestCase
         $first = new Route('first', Method::Post, '/articles', 'create');
         $second = new Route('second', Method::Get, '/articles', 'list');
         $collection = new RouteCollection([$first, $second]);
-        $this->assertSame([$first, $second], $collection->all());
-        $this->assertSame($first, $collection->get('first'));
+        self::assertSame([$first, $second], $collection->all());
+        self::assertSame($first, $collection->get('first'));
         $this->expectException(RouteNotFoundException::class);
         $collection->get('First');
     }

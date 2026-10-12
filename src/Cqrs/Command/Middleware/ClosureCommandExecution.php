@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Cqrs\Command\Middleware;
 
-use Override;
 use Closure;
 use ExtendsSoftware\ExaPHP\Cqrs\Command\Command;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
+use Override;
 
 /**
  * Adapts a pipeline closure to command execution.
@@ -21,9 +21,7 @@ final readonly class ClosureCommandExecution implements CommandExecution
      *
      * @param Closure(Command, DispatchContext): void $execution The step to execute.
      */
-    public function __construct(private Closure $execution)
-    {
-    }
+    public function __construct(private Closure $execution) {}
 
     /**
      * {@inheritDoc}

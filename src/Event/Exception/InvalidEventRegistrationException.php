@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid event class or listener list.
  */
-final class InvalidEventRegistrationException extends InvalidArgumentException implements EventException
-{
-}
+final class InvalidEventRegistrationException extends InvalidArgumentException implements EventException {}

@@ -17,7 +17,7 @@ final class ResponseNegotiationFactoryTest extends TestCase
     public function testRejectsInvalidConfigurationBeforeResolvingFactories(mixed $response): void
     {
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->once())->method('get')->with(Configuration::class)
+        $services->expects(self::once())->method('get')->with(Configuration::class)
             ->willReturn(new Configuration(['http' => ['response' => $response]]));
         $this->expectException(InvalidHttpConfigurationException::class);
         new ResponseNegotiationFactory()->create($services);

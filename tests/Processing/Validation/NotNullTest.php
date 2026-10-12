@@ -12,20 +12,20 @@ final class NotNullTest extends TestCase
 {
     public function testViolationCodesRemainStable(): void
     {
-        $this->assertSame('null_value', NotNull::CODE_NULL_VALUE);
+        self::assertSame('null_value', NotNull::CODE_NULL_VALUE);
     }
 
     #[DataProvider('inputs')]
     public function testInput(mixed $input, ?string $code): void
     {
         $result = new NotNull()->validate($input);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code !== null) {
-            $this->assertCount(1, $result->violations());
-            $this->assertSame($code, $result->violations()[0]->code());
-            $this->assertSame([], $result->violations()[0]->path());
+            self::assertCount(1, $result->violations());
+            self::assertSame($code, $result->violations()[0]->code());
+            self::assertSame([], $result->violations()[0]->path());
         } else {
-            $this->assertSame([], $result->violations());
+            self::assertSame([], $result->violations());
 
         }
     }

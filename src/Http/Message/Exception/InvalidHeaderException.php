@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid header name or field value.
  */
-final class InvalidHeaderException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidHeaderException extends InvalidArgumentException implements HttpException {}

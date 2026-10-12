@@ -32,31 +32,31 @@ final class CliHelpIntegrationTest extends TestCase
         $directory = sys_get_temp_dir() . '/exa-help-' . bin2hex(random_bytes(8));
         mkdir($directory);
         file_put_contents($directory . '/help.global.php', <<<'PHP'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Cli\Definition\ArgumentDefinition;
-use ExtendsSoftware\ExaPHP\Cli\Definition\CommandDefinition;
-use ExtendsSoftware\ExaPHP\Cli\Output\Output;
-use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
-use ExtendsSoftware\ExaPHP\Cli\Routing\CommandDispatcher;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+            use ExtendsSoftware\ExaPHP\Cli\Definition\ArgumentDefinition;
+            use ExtendsSoftware\ExaPHP\Cli\Definition\CommandDefinition;
+            use ExtendsSoftware\ExaPHP\Cli\Output\Output;
+            use ExtendsSoftware\ExaPHP\Cli\Output\StreamOutput;
+            use ExtendsSoftware\ExaPHP\Cli\Routing\CommandDispatcher;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 
-$streams = new stdClass();
-$streams->stdout = fopen('php://memory', 'w+');
-$streams->stderr = fopen('php://memory', 'w+');
-return [
-    'cli' => ['commands' => [
-        'greet' => new CommandDefinition('greet', 'missing-handler', 'Say hello', [new ArgumentDefinition('name')]),
-    ]],
-    'services' => [
-        'streams' => new InstanceDefinition($streams),
-        Output::class => new InstanceDefinition(new StreamOutput($streams->stdout, $streams->stderr)),
-        CommandDispatcher::class => new InstanceDefinition(new stdClass()),
-    ],
-];
-PHP);
+            $streams = new stdClass();
+            $streams->stdout = fopen('php://memory', 'w+');
+            $streams->stderr = fopen('php://memory', 'w+');
+            return [
+                'cli' => ['commands' => [
+                    'greet' => new CommandDefinition('greet', 'missing-handler', 'Say hello', [new ArgumentDefinition('name')]),
+                ]],
+                'services' => [
+                    'streams' => new InstanceDefinition($streams),
+                    Output::class => new InstanceDefinition(new StreamOutput($streams->stdout, $streams->stderr)),
+                    CommandDispatcher::class => new InstanceDefinition(new stdClass()),
+                ],
+            ];
+            PHP);
         $application = new Application($directory);
         $application->registerModule(CliModule::class);
         $services = $application->bootstrap();
@@ -65,17 +65,17 @@ PHP);
             if ($expected === 'unknown') {
                 try {
                     new CliRunner()->run($application, ['console.php', ...$tokens]);
-                    $this->fail('Expected command lookup failure.');
+                    self::fail('Expected command lookup failure.');
                 } catch (CommandNotFoundException $exception) {
-                    $this->assertStringContainsString('missing', $exception->getMessage());
+                    self::assertStringContainsString('missing', $exception->getMessage());
                 }
             } else {
-                $this->assertSame(0, new CliRunner()->run($application, ['console.php', ...$tokens]));
+                self::assertSame(0, new CliRunner()->run($application, ['console.php', ...$tokens]));
                 rewind($streams->stdout);
-                $this->assertStringContainsString($expected, stream_get_contents($streams->stdout));
+                self::assertStringContainsString($expected, stream_get_contents($streams->stdout));
             }
             rewind($streams->stderr);
-            $this->assertSame('', stream_get_contents($streams->stderr));
+            self::assertSame('', stream_get_contents($streams->stderr));
             $this->expectException(ApplicationStateException::class);
             $application->bootstrap();
         } finally {

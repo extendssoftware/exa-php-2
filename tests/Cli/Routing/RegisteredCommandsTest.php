@@ -19,9 +19,9 @@ final class RegisteredCommandsTest extends TestCase
         $first = new CommandDefinition('z', 'unregistered');
         $second = new CommandDefinition('a', 'unregistered');
         $registry = new RegisteredCommands([$first, $second]);
-        $this->assertSame($first, $registry->get('z'));
-        $this->assertSame([$first, $second], $registry->all());
-        $this->assertSame([], new RegisteredCommands()->all());
+        self::assertSame($first, $registry->get('z'));
+        self::assertSame([$first, $second], $registry->all());
+        self::assertSame([], new RegisteredCommands()->all());
     }
 
     public function testNamesAreCaseSensitive(): void

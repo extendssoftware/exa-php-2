@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Decoding;
 
-use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
-use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
-use ExtendsSoftware\ExaPHP\Http\Message\Exception\BodyReadException;
+use ExtendsSoftware\ExaPHP\Http\Decoding\ContentTypeRequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
+use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
+use ExtendsSoftware\ExaPHP\Http\Message\Exception\BodyReadException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
-use ExtendsSoftware\ExaPHP\Http\Decoding\ContentTypeRequestBodyDecoder;
-use ExtendsSoftware\ExaPHP\Http\Decoding\JsonRequestBodyDecoder;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use JsonException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -30,13 +30,13 @@ final class RequestBodyDecoderTest extends TestCase
             '{"object":{},"array":[],"null":null,"bool":true,"integer":123456789012345678901234567890}',
         ));
         $data = new JsonRequestBodyDecoder()->decode($request);
-        $this->assertInstanceOf(stdClass::class, $data);
-        $this->assertInstanceOf(stdClass::class, $data->object);
-        $this->assertSame([], $data->array);
-        $this->assertNull($data->null);
-        $this->assertTrue($data->bool);
-        $this->assertSame('123456789012345678901234567890', $data->integer);
-        $this->assertNull(new JsonRequestBodyDecoder()->decode($request->withBody(new StringBody('null'))));
+        self::assertInstanceOf(stdClass::class, $data);
+        self::assertInstanceOf(stdClass::class, $data->object);
+        self::assertSame([], $data->array);
+        self::assertNull($data->null);
+        self::assertTrue($data->bool);
+        self::assertSame('123456789012345678901234567890', $data->integer);
+        self::assertNull(new JsonRequestBodyDecoder()->decode($request->withBody(new StringBody('null'))));
     }
 
     #[DataProvider('malformedBodies')]
@@ -44,9 +44,9 @@ final class RequestBodyDecoderTest extends TestCase
     {
         try {
             new JsonRequestBodyDecoder()->decode(new Request(Method::Post, new Uri('/'), body: new StringBody($bytes)));
-            $this->fail('Expected malformed body.');
+            self::fail('Expected malformed body.');
         } catch (MalformedRequestBodyException $exception) {
-            $this->assertInstanceOf(JsonException::class, $exception->getPrevious());
+            self::assertInstanceOf(JsonException::class, $exception->getPrevious());
         }
     }
 
@@ -62,7 +62,7 @@ final class RequestBodyDecoderTest extends TestCase
 
     public function testEnforcesActualByteLimitAcrossChunksAndStopsReading(): void
     {
-        $body = $this->createStub(Body::class);
+        $body = self::createStub(Body::class);
         $body->method('chunks')->willReturnCallback(function (): iterable {
             yield 'nu';
             yield 'll';
@@ -76,16 +76,16 @@ final class RequestBodyDecoderTest extends TestCase
     public function testBodyReadFailuresPropagateUnchanged(): void
     {
         $failure = new BodyReadException('Read failed');
-        $body = $this->createStub(Body::class);
+        $body = self::createStub(Body::class);
         $body->method('chunks')->willReturnCallback(static function () use ($failure): iterable {
             yield '{';
             throw $failure;
         });
         try {
             new JsonRequestBodyDecoder()->decode(new Request(Method::Post, new Uri('/'), body: $body));
-            $this->fail('Expected read failure.');
+            self::fail('Expected read failure.');
         } catch (BodyReadException $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 
@@ -118,7 +118,7 @@ final class RequestBodyDecoderTest extends TestCase
     public function testAllowsBodyExactlyAtByteLimit(): void
     {
         $request = new Request(Method::Post, new Uri('/'), body: new StringBody('null'));
-        $this->assertNull(new JsonRequestBodyDecoder(4)->decode($request));
+        self::assertNull(new JsonRequestBodyDecoder(4)->decode($request));
     }
 
     #[DataProvider('contentTypes')]
@@ -128,7 +128,7 @@ final class RequestBodyDecoderTest extends TestCase
         $request = new Request(Method::Post, new Uri('/'), new Headers([
             'Content-Type' => $type, 'Accept' => 'application/xml',
         ]), new StringBody('[1,2]'));
-        $this->assertSame([1, 2], $decoder->decode($request));
+        self::assertSame([1, 2], $decoder->decode($request));
     }
 
     /** @return iterable<array{string}> */
@@ -140,18 +140,18 @@ final class RequestBodyDecoderTest extends TestCase
         yield ['application/json; profile="a;b,c"'];
     }
 
-    /** @param array<string, string|list<string>> $headers */
+    /** @param array<string, list<string>|string> $headers */
     #[DataProvider('unsupportedTypes')]
     public function testRejectsUnsupportedMetadataBeforeReading(array $headers): void
     {
         $body = $this->createMock(Body::class);
-        $body->expects($this->never())->method('chunks');
+        $body->expects(self::never())->method('chunks');
         $decoder = new ContentTypeRequestBodyDecoder(['application/json' => new JsonRequestBodyDecoder()]);
         $this->expectException(UnsupportedRequestMediaTypeException::class);
         $decoder->decode(new Request(Method::Post, new Uri('/'), new Headers($headers), $body));
     }
 
-    /** @return iterable<array{array<string, string|list<string>>}> */
+    /** @return iterable<array{array<string, list<string>|string>}> */
     public static function unsupportedTypes(): iterable
     {
         yield [[]];

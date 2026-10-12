@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Representation;
 
-use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
-use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
+use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 use JsonException;
 use PHPUnit\Framework\TestCase;
 
@@ -24,21 +24,21 @@ final class JsonResponseFactoryTest extends TestCase
             'Transfer-Encoding' => 'chunked',
             'X-Test' => 'yes',
         ]));
-        $this->assertSame(StatusCode::Created, $response->statusCode);
-        $this->assertSame(['application/json'], $response->headers->get('Content-Type'));
-        $this->assertSame([], $response->headers->get('Content-Length'));
-        $this->assertSame([], $response->headers->get('Transfer-Encoding'));
-        $this->assertSame(['yes'], $response->headers->get('X-Test'));
-        $this->assertSame('{"id":1}', implode('', iterator_to_array($response->body->chunks())));
+        self::assertSame(StatusCode::Created, $response->statusCode);
+        self::assertSame(['application/json'], $response->headers->get('Content-Type'));
+        self::assertSame([], $response->headers->get('Content-Length'));
+        self::assertSame([], $response->headers->get('Transfer-Encoding'));
+        self::assertSame(['yes'], $response->headers->get('X-Test'));
+        self::assertSame('{"id":1}', implode('', iterator_to_array($response->body->chunks())));
     }
 
     public function testEncodingFailurePreservesCause(): void
     {
         try {
             new JsonResponseFactory()->create("\xFF");
-            $this->fail('Expected encoding failure.');
+            self::fail('Expected encoding failure.');
         } catch (ResponseEncodingException $exception) {
-            $this->assertInstanceOf(JsonException::class, $exception->getPrevious());
+            self::assertInstanceOf(JsonException::class, $exception->getPrevious());
         }
     }
 }

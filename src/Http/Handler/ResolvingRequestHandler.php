@@ -20,9 +20,7 @@ final readonly class ResolvingRequestHandler implements RequestHandler
      * @param HandlerResolver $resolver The handler resolver.
      * @param non-empty-string $handlerId The handler identifier to resolve on execution.
      */
-    public function __construct(private HandlerResolver $resolver, private string $handlerId)
-    {
-    }
+    public function __construct(private HandlerResolver $resolver, private string $handlerId) {}
 
     /**
      * {@inheritDoc}

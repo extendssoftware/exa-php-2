@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that service inspection, construction, or delegation failed.
  */
-final class ServiceResolutionException extends RuntimeException implements ServiceLocatorException
-{
-}
+final class ServiceResolutionException extends RuntimeException implements ServiceLocatorException {}

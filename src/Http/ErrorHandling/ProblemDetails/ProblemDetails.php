@@ -10,8 +10,8 @@ use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 
 use function in_array;
 use function is_array;
-use function is_float;
 use function is_finite;
+use function is_float;
 use function is_scalar;
 use function is_string;
 

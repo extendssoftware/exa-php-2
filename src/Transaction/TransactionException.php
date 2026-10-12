@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies transaction lifecycle failures.
  */
-interface TransactionException extends Throwable
-{
-}
+interface TransactionException extends Throwable {}

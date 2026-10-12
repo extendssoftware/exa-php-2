@@ -17,9 +17,7 @@ final readonly class AuthorizationGuard
      *
      * @param Authorizer $authorizer The evaluator deciding whether access is granted.
      */
-    public function __construct(private Authorizer $authorizer)
-    {
-    }
+    public function __construct(private Authorizer $authorizer) {}
 
     /**
      * Returns normally only when the authorizer grants access.

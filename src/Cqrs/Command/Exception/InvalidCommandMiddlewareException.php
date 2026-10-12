@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid command middleware list or entry.
  */
-final class InvalidCommandMiddlewareException extends InvalidArgumentException implements CqrsException
-{
-}
+final class InvalidCommandMiddlewareException extends InvalidArgumentException implements CqrsException {}

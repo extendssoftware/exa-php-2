@@ -10,16 +10,16 @@ use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
-use ExtendsSoftware\ExaPHP\Http\Middleware\Middleware;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use ExtendsSoftware\ExaPHP\Http\Routing\Route;
-use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
-use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
-use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
-use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
+use ExtendsSoftware\ExaPHP\Http\Middleware\Middleware;
+use ExtendsSoftware\ExaPHP\Http\Routing\Route;
+use ExtendsSoftware\ExaPHP\Http\Routing\RouteCollection;
+use ExtendsSoftware\ExaPHP\Http\Routing\UrlGenerator;
+use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
+use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\HttpModule;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
@@ -43,11 +43,11 @@ final class HttpModuleIntegrationTest extends TestCase
             $application->registerModule(HttpModule::class);
             $services = $application->bootstrap();
             $handler = $services->get(RequestHandler::class);
-            $this->assertSame($handler, $services->get(RequestHandler::class));
+            self::assertSame($handler, $services->get(RequestHandler::class));
             $response = $handler->handle(new Request(Method::Get, new Uri('/')));
-            $this->assertSame(StatusCode::NotFound, $response->statusCode);
-            $this->assertInstanceOf(ServerRequestFactory::class, $services->get(ServerRequestFactory::class));
-            $this->assertInstanceOf(ResponseEmitter::class, $services->get(ResponseEmitter::class));
+            self::assertSame(StatusCode::NotFound, $response->statusCode);
+            self::assertInstanceOf(ServerRequestFactory::class, $services->get(ServerRequestFactory::class));
+            self::assertInstanceOf(ResponseEmitter::class, $services->get(ResponseEmitter::class));
             $application->shutdown();
         } finally {
             rmdir($directory);
@@ -57,7 +57,7 @@ final class HttpModuleIntegrationTest extends TestCase
     public function testMergesRoutesAndResolvesOnlySelectedHandlerAfterApplicationOverride(): void
     {
         $created = 0;
-        $handler = $this->createStub(RequestHandler::class);
+        $handler = self::createStub(RequestHandler::class);
         $response = new Response(StatusCode::Accepted);
         $handler->method('handle')->willReturn($response);
         $defaults = require new HttpModule()->configDirectory() . '/services.php';
@@ -81,22 +81,22 @@ final class HttpModuleIntegrationTest extends TestCase
         ]]);
         $services = new ServiceLocatorFactory()->create($configuration);
         $generator = $services->get(UrlGenerator::class);
-        $this->assertSame('/articles', $generator->generate('articles.show')->toString());
-        $this->assertSame('/other', $generator->generate('other.show')->toString());
-        $this->assertSame('/articles', $services->get(RouteCollection::class)->get('articles.show')->path);
-        $this->assertSame(0, $created);
+        self::assertSame('/articles', $generator->generate('articles.show')->toString());
+        self::assertSame('/other', $generator->generate('other.show')->toString());
+        self::assertSame('/articles', $services->get(RouteCollection::class)->get('articles.show')->path);
+        self::assertSame(0, $created);
         $pipeline = $services->get(RequestHandler::class);
-        $this->assertSame(0, $created);
+        self::assertSame(0, $created);
         $missing = $pipeline->handle(new Request(Method::Get, new Uri('/old')));
-        $this->assertSame(StatusCode::NotFound, $missing->statusCode);
-        $this->assertSame(
+        self::assertSame(StatusCode::NotFound, $missing->statusCode);
+        self::assertSame(
             StatusCode::MethodNotAllowed,
             $pipeline->handle(new Request(Method::Post, new Uri('/articles')))->statusCode,
         );
-        $this->assertSame(0, $created);
-        $this->assertSame($response, $pipeline->handle(new Request(Method::Get, new Uri('/articles'))));
-        $this->assertSame(1, $created);
-        $this->assertSame(
+        self::assertSame(0, $created);
+        self::assertSame($response, $pipeline->handle(new Request(Method::Get, new Uri('/articles'))));
+        self::assertSame(1, $created);
+        self::assertSame(
             StatusCode::InternalServerError,
             $pipeline->handle(new Request(Method::Get, new Uri('/other')))->statusCode,
         );
@@ -106,7 +106,7 @@ final class HttpModuleIntegrationTest extends TestCase
     {
         $calls = [];
         $first = $this->createMock(Middleware::class);
-        $first->expects($this->once())->method('process')->willReturnCallback(
+        $first->expects(self::once())->method('process')->willReturnCallback(
             static function (Request $request, RequestHandler $next) use (&$calls): Response {
                 $calls[] = 'first';
 
@@ -114,13 +114,13 @@ final class HttpModuleIntegrationTest extends TestCase
             },
         );
         $second = $this->createMock(Middleware::class);
-        $second->expects($this->once())->method('process')->willReturnCallback(
+        $second->expects(self::once())->method('process')->willReturnCallback(
             static function () use (&$calls): never {
                 $calls[] = 'second';
                 throw new RuntimeException('Failure');
             },
         );
-        $factory = $this->createStub(ExceptionResponseFactory::class);
+        $factory = self::createStub(ExceptionResponseFactory::class);
         $response = new Response(StatusCode::ServiceUnavailable);
         $factory->method('create')->willReturn($response);
         $defaults = require new HttpModule()->configDirectory() . '/services.php';
@@ -136,7 +136,7 @@ final class HttpModuleIntegrationTest extends TestCase
             ],
         ]]);
         $pipeline = new ServiceLocatorFactory()->create($configuration)->get(RequestHandler::class);
-        $this->assertSame($response, $pipeline->handle(new Request(Method::Get, new Uri('/'))));
-        $this->assertSame(['first', 'second'], $calls);
+        self::assertSame($response, $pipeline->handle(new Request(Method::Get, new Uri('/'))));
+        self::assertSame(['first', 'second'], $calls);
     }
 }

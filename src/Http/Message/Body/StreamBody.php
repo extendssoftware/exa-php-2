@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Message\Body;
 
-use Override;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Http\Message\Exception\BodyReadException;
 use ExtendsSoftware\ExaPHP\Http\Message\Exception\InvalidBodyStreamException;
+use Override;
 
 use function feof;
 use function fread;

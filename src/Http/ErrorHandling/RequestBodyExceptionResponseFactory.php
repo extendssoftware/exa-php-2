@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\ErrorHandling;
 
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
-
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetailsResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
-use Throwable;
+use Override;
 use SensitiveParameter;
+use Throwable;
 
 /**
  * Maps request decoding failures to safe 400, 413, or 415 responses and delegates other failures.
@@ -27,9 +26,7 @@ final readonly class RequestBodyExceptionResponseFactory implements ExceptionRes
      *
      * @param ExceptionResponseFactory $fallback The policy for unrelated failures.
      */
-    public function __construct(private ExceptionResponseFactory $fallback)
-    {
-    }
+    public function __construct(private ExceptionResponseFactory $fallback) {}
 
     /**
      * {@inheritDoc}

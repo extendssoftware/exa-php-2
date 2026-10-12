@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a command handler registration has an invalid command class or handler.
  */
-final class InvalidCommandRegistrationException extends InvalidArgumentException implements CqrsException
-{
-}
+final class InvalidCommandRegistrationException extends InvalidArgumentException implements CqrsException {}

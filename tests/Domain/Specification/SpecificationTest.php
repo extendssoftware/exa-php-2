@@ -22,9 +22,9 @@ final class SpecificationTest extends TestCase
     public function testBooleanComposition(bool $leftValue, bool $rightValue): void
     {
         $candidate = new stdClass();
-        $left = $this->createStub(Specification::class);
+        $left = self::createStub(Specification::class);
         $left->method('isSatisfiedBy')->willReturn($leftValue);
-        $right = $this->createStub(Specification::class);
+        $right = self::createStub(Specification::class);
         $right->method('isSatisfiedBy')->willReturn($rightValue);
 
         self::assertSame($leftValue && $rightValue, new AndSpecification($left, $right)->isSatisfiedBy($candidate));

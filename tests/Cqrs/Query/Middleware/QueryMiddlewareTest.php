@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Cqrs\Query\Middleware;
 
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\QueryHandler;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\SynchronousQueryBus;
 use ExtendsSoftware\ExaPHP\Cqrs\DispatchContext;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryExecution;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\QueryHandler;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\SynchronousQueryBus;
 use ExtendsSoftware\ExaPHP\Tests\Cqrs\Query\Fixture\ParentQuery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
@@ -70,23 +70,19 @@ final class QueryMiddlewareTest extends TestCase
         $context = new DispatchContext();
         $replacementContext = $context->with(new stdClass());
         $first = $this->createMock(QueryMiddleware::class);
-        $first->expects(self::once())->method('process')->willReturnCallback(static function (
+        $first->expects(self::once())->method('process')->willReturnCallback(static fn(
             Query $incoming,
             DispatchContext $context,
             QueryExecution $next,
-        ) use ($query, $replacementContext): mixed {
-            return $next->execute($query, $replacementContext);
-        });
+        ): mixed => $next->execute($query, $replacementContext));
         $second = $this->createMock(QueryMiddleware::class);
         $second->expects(self::once())->method('process')
             ->with(self::identicalTo($query), self::identicalTo($replacementContext), self::anything())
-            ->willReturnCallback(static function (
+            ->willReturnCallback(static fn(
                 Query $query,
                 DispatchContext $context,
                 QueryExecution $next,
-            ): mixed {
-                return $next->execute($query, $context);
-            });
+            ): mixed => $next->execute($query, $context));
         $handler = $this->createMock(QueryHandler::class);
         $handler->expects(self::once())->method('handle')->with(self::identicalTo($query));
         new SynchronousQueryBus([ParentQuery::class => $handler], [$first, $second])
@@ -144,16 +140,14 @@ final class QueryMiddlewareTest extends TestCase
 
     public function testCanTransformTheDownstreamResult(): void
     {
-        $handler = $this->createStub(QueryHandler::class);
+        $handler = self::createStub(QueryHandler::class);
         $handler->method('handle')->willReturn(10);
         $middleware = $this->createMock(QueryMiddleware::class);
-        $middleware->expects(self::once())->method('process')->willReturnCallback(static function (
+        $middleware->expects(self::once())->method('process')->willReturnCallback(static fn(
             Query $query,
             DispatchContext $context,
             QueryExecution $next,
-        ): mixed {
-            return $next->execute($query, $context) + 5;
-        });
+        ): mixed => $next->execute($query, $context) + 5);
         $bus = new SynchronousQueryBus([ParentQuery::class => $handler], [$middleware]);
         self::assertSame(15, $bus->ask(new ParentQuery()));
     }
@@ -161,16 +155,14 @@ final class QueryMiddlewareTest extends TestCase
     #[DataProvider('results')]
     public function testPreservesResultValuesThroughMiddleware(mixed $result): void
     {
-        $handler = $this->createStub(QueryHandler::class);
+        $handler = self::createStub(QueryHandler::class);
         $handler->method('handle')->willReturn($result);
         $middleware = $this->createMock(QueryMiddleware::class);
-        $middleware->expects(self::once())->method('process')->willReturnCallback(static function (
+        $middleware->expects(self::once())->method('process')->willReturnCallback(static fn(
             Query $query,
             DispatchContext $context,
             QueryExecution $next,
-        ): mixed {
-            return $next->execute($query, $context);
-        });
+        ): mixed => $next->execute($query, $context));
         $bus = new SynchronousQueryBus([ParentQuery::class => $handler], [$middleware]);
         self::assertSame($result, $bus->ask(new ParentQuery()));
     }

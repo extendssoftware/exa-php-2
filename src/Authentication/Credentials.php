@@ -9,6 +9,4 @@ namespace ExtendsSoftware\ExaPHP\Authentication;
  *
  * Credential data must not be included in exception messages or retained as exception properties.
  */
-interface Credentials
-{
-}
+interface Credentials {}

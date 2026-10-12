@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates an unknown route name.
  */
-final class RouteNotFoundException extends RuntimeException implements HttpException
-{
-}
+final class RouteNotFoundException extends RuntimeException implements HttpException {}

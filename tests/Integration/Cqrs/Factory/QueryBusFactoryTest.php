@@ -6,10 +6,10 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Cqrs\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\QueryHandler;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
-use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryMiddlewareException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Exception\InvalidQueryRegistrationException;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\Middleware\QueryMiddleware;
+use ExtendsSoftware\ExaPHP\Cqrs\Query\QueryHandler;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Exception\InvalidCqrsConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Cqrs\Factory\QueryBusFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
@@ -113,7 +113,7 @@ final class QueryBusFactoryTest extends TestCase
 
     public function testRejectsAnIncorrectConfigurationService(): void
     {
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $locator->method('get')->willReturn(new stdClass());
         $this->expectException(InvalidCqrsConfigurationException::class);
         new QueryBusFactory()->create($locator);

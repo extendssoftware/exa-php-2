@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates a persistence or time-source failure while claiming a message or recording its processing outcome.
  */
-final class OutboxStoreException extends RuntimeException implements OutboxException
-{
-}
+final class OutboxStoreException extends RuntimeException implements OutboxException {}

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a middleware identifier could not be resolved to middleware.
  */
-final class MiddlewareResolutionException extends RuntimeException implements HttpException
-{
-}
+final class MiddlewareResolutionException extends RuntimeException implements HttpException {}

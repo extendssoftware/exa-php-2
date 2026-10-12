@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates that service resolution depends on an identifier already being resolved.
  */
-final class CircularDependencyException extends LogicException implements ServiceLocatorException
-{
-}
+final class CircularDependencyException extends LogicException implements ServiceLocatorException {}

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a message could not be appended to the transactional outbox.
  */
-final class OutboxWriteException extends RuntimeException implements OutboxException
-{
-}
+final class OutboxWriteException extends RuntimeException implements OutboxException {}

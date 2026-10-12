@@ -16,7 +16,7 @@ interface ServiceLocator
      *
      * @template T of object
      *
-     * @param string|class-string<T> $id The service identifier.
+     * @param class-string<T>|string $id The service identifier.
      *
      * @return ($id is class-string<T> ? T : object) The resolved service.
      *

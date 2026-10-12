@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Collection;
 
 use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
-use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
-use Override;
-use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\StepTransformer;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
+use Override;
 use Throwable;
 
 use function array_is_list;
@@ -46,13 +46,13 @@ final readonly class EachItem implements Transformer
     /**
      * Creates a collection processor without executing its step.
      *
-     * @param Transformer<mixed, mixed>|Validator<mixed>|Pipeline $step The behavior for each value.
+     * @param Pipeline|Transformer<mixed, mixed>|Validator<mixed> $step The behavior for each value.
      * @param CollectionKeys $keys The input key constraint.
      *
      * @throws AmbiguousProcessingStepException When the step implements multiple roles.
      */
     public function __construct(
-        Transformer|Validator|Pipeline $step,
+        Pipeline|Transformer|Validator $step,
         private CollectionKeys $keys = CollectionKeys::Preserve,
     ) {
         $this->processor = new StepTransformer($step);

@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid event integration configuration.
  */
-final class InvalidEventConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidEventConfigurationException extends InvalidArgumentException implements IntegrationException {}

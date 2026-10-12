@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies failures in service lookup and resolution.
  */
-interface ServiceLocatorException extends Throwable
-{
-}
+interface ServiceLocatorException extends Throwable {}

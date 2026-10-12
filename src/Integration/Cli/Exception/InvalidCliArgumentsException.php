@@ -11,6 +11,4 @@ use InvalidArgumentException;
 /**
  * Indicates missing command selection or malformed process arguments.
  */
-final class InvalidCliArgumentsException extends InvalidArgumentException implements IntegrationException, UsageException
-{
-}
+final class InvalidCliArgumentsException extends InvalidArgumentException implements IntegrationException, UsageException {}

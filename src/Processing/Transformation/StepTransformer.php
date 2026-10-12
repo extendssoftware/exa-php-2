@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation;
 
 use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
-use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
-use Override;
-use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
+use Override;
 use Throwable;
 
 /**
@@ -23,11 +23,11 @@ final readonly class StepTransformer implements Transformer
     /**
      * Creates an adapter without executing the step.
      *
-     * @param Transformer<mixed, mixed>|Validator<mixed>|Pipeline $step The step with exactly one processing role.
+     * @param Pipeline|Transformer<mixed, mixed>|Validator<mixed> $step The step with exactly one processing role.
      *
      * @throws AmbiguousProcessingStepException When the step implements multiple roles.
      */
-    public function __construct(private Transformer|Validator|Pipeline $step)
+    public function __construct(private Pipeline|Transformer|Validator $step)
     {
         $roles = (int) ($step instanceof Transformer)
             + (int) ($step instanceof Validator)

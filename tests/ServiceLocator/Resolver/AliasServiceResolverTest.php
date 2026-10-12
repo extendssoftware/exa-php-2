@@ -46,7 +46,7 @@ final class AliasServiceResolverTest extends TestCase
         $resolver = new AliasServiceResolver();
 
         self::assertTrue($resolver->supports(new AliasDefinition('target')));
-        self::assertFalse($resolver->supports($this->createStub(ServiceDefinition::class)));
+        self::assertFalse($resolver->supports(self::createStub(ServiceDefinition::class)));
     }
 
     public function testRejectsUnsupportedDefinitionsWithoutConsultingTheLocator(): void
@@ -57,6 +57,6 @@ final class AliasServiceResolverTest extends TestCase
 
         $this->expectException(UnsupportedDefinitionException::class);
 
-        new AliasServiceResolver()->resolve($this->createStub(ServiceDefinition::class), $locator);
+        new AliasServiceResolver()->resolve(self::createStub(ServiceDefinition::class), $locator);
     }
 }

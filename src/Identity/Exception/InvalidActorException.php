@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that an actor contains an empty identifier or kind.
  */
-final class InvalidActorException extends InvalidArgumentException implements IdentityException
-{
-}
+final class InvalidActorException extends InvalidArgumentException implements IdentityException {}

@@ -30,8 +30,7 @@ final readonly class AuthenticationMiddleware implements Middleware
         private RequestCredentialsExtractor $extractor,
         private Authenticator $authenticator,
         private AuthenticationResponseFactory $responses,
-    ) {
-    }
+    ) {}
 
     /**
      * {@inheritDoc}

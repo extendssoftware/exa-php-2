@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 
-use Override;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidStringLengthException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\PatternExecutionException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
 use ExtendsSoftware\ExaPHP\Processing\Violation;
-use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidStringLengthException;
-use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\PatternExecutionException;
+use Override;
 
 use function is_string;
-use function preg_match_all;
 use function preg_last_error;
 use function preg_last_error_msg;
+use function preg_match_all;
 
 use const PREG_BAD_UTF8_ERROR;
 

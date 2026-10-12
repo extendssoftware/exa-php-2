@@ -12,14 +12,14 @@ final class AbstractAggregateRootTest extends TestCase
 {
     public function testStartsEmptyWithAnIndependentSubclassConstructor(): void
     {
-        $aggregate = new RecordingAggregate($this->createStub(DomainEvent::class));
+        $aggregate = new RecordingAggregate(self::createStub(DomainEvent::class));
 
         self::assertSame([], $aggregate->releaseEvents());
     }
 
     public function testReleasesRecordedOccurrencesAndCanRecordAgain(): void
     {
-        $event = $this->createStub(DomainEvent::class);
+        $event = self::createStub(DomainEvent::class);
         $aggregate = new RecordingAggregate($event);
         $aggregate->act();
         $aggregate->act();
@@ -35,7 +35,7 @@ final class AbstractAggregateRootTest extends TestCase
 
     public function testAggregatesHaveIndependentPendingEvents(): void
     {
-        $event = $this->createStub(DomainEvent::class);
+        $event = self::createStub(DomainEvent::class);
         $first = new RecordingAggregate($event);
         $second = new RecordingAggregate($event);
         $first->act();
@@ -46,7 +46,7 @@ final class AbstractAggregateRootTest extends TestCase
 
     public function testCloningBeforeRecordingKeepsCollectionsIndependent(): void
     {
-        $event = $this->createStub(DomainEvent::class);
+        $event = self::createStub(DomainEvent::class);
         $original = new RecordingAggregate($event);
         $copy = clone $original;
         $copy->act();
@@ -57,7 +57,7 @@ final class AbstractAggregateRootTest extends TestCase
 
     public function testCloningCopiesPendingEventsWithoutSharingTheCollection(): void
     {
-        $event = $this->createStub(DomainEvent::class);
+        $event = self::createStub(DomainEvent::class);
         $original = new RecordingAggregate($event);
         $original->act();
         $copy = clone $original;

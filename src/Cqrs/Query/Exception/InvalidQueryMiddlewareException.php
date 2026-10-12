@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid query middleware list or entry.
  */
-final class InvalidQueryMiddlewareException extends InvalidArgumentException implements CqrsException
-{
-}
+final class InvalidQueryMiddlewareException extends InvalidArgumentException implements CqrsException {}

@@ -15,23 +15,23 @@ final class StringToIntegerTest extends TestCase
 {
     public function testViolationCodesRemainStable(): void
     {
-        $this->assertSame('not_string', StringToInteger::CODE_NOT_STRING);
-        $this->assertSame('invalid_integer_format', StringToInteger::CODE_INVALID_INTEGER_FORMAT);
-        $this->assertSame('integer_overflow', StringToInteger::CODE_INTEGER_OVERFLOW);
+        self::assertSame('not_string', StringToInteger::CODE_NOT_STRING);
+        self::assertSame('invalid_integer_format', StringToInteger::CODE_INVALID_INTEGER_FORMAT);
+        self::assertSame('integer_overflow', StringToInteger::CODE_INTEGER_OVERFLOW);
     }
 
     #[DataProvider('inputs')]
     public function testInput(mixed $input, ?string $code, mixed $expected): void
     {
         $result = new StringToInteger()->transform($input);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code !== null) {
-            $this->assertCount(1, $result->violations());
-            $this->assertSame($code, $result->violations()[0]->code());
-            $this->assertSame([], $result->violations()[0]->path());
+            self::assertCount(1, $result->violations());
+            self::assertSame($code, $result->violations()[0]->code());
+            self::assertSame([], $result->violations()[0]->path());
         } else {
-            $this->assertSame([], $result->violations());
-            $this->assertSame($expected, $result->value());
+            self::assertSame([], $result->violations());
+            self::assertSame($expected, $result->value());
         }
     }
 

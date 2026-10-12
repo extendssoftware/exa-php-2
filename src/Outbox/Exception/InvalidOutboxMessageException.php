@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that an outbox message contains invalid envelope data.
  */
-final class InvalidOutboxMessageException extends InvalidArgumentException implements OutboxException
-{
-}
+final class InvalidOutboxMessageException extends InvalidArgumentException implements OutboxException {}

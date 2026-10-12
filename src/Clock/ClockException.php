@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies Clock component failures.
  */
-interface ClockException extends Throwable
-{
-}
+interface ClockException extends Throwable {}

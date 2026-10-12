@@ -7,8 +7,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Http;
 use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationMerger;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
@@ -24,13 +24,13 @@ final class ExceptionProblemDetailsMappingIntegrationTest extends TestCase
     public function testApplicationOverrideRetainsModuleOrderAndDefaultFallback(): void
     {
         $calls = [];
-        $article = $this->createStub(ExceptionProblemDetailsMapper::class);
+        $article = self::createStub(ExceptionProblemDetailsMapper::class);
         $article->method('map')->willReturnCallback(static function () use (&$calls): ?ProblemDetails {
             $calls[] = 'article';
 
             return null;
         });
-        $account = $this->createStub(ExceptionProblemDetailsMapper::class);
+        $account = self::createStub(ExceptionProblemDetailsMapper::class);
         $account->method('map')->willReturnCallback(static function () use (&$calls): ?ProblemDetails {
             $calls[] = 'account';
 
@@ -51,9 +51,9 @@ final class ExceptionProblemDetailsMappingIntegrationTest extends TestCase
         $services = new ServiceLocatorFactory()->create($configuration);
         $factory = $services->get(ExceptionResponseFactory::class);
         $request = new Request(Method::Get, new Uri('/'));
-        $this->assertSame(StatusCode::BadRequest, $factory->create(new MalformedRequestBodyException(), $request)->statusCode);
-        $this->assertSame(['article', 'account'], $calls);
-        $this->assertSame(StatusCode::InternalServerError, $factory->create(new TypeError(), $request)->statusCode);
-        $this->assertSame($factory, $services->get(ExceptionResponseFactory::class));
+        self::assertSame(StatusCode::BadRequest, $factory->create(new MalformedRequestBodyException(), $request)->statusCode);
+        self::assertSame(['article', 'account'], $calls);
+        self::assertSame(StatusCode::InternalServerError, $factory->create(new TypeError(), $request)->statusCode);
+        self::assertSame($factory, $services->get(ExceptionResponseFactory::class));
     }
 }

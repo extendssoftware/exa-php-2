@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Transformation\Shape;
 
-use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Pipeline;
+use ExtendsSoftware\ExaPHP\Processing\Transformation\Exception\AmbiguousProcessingStepException;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\StepTransformer;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
@@ -25,13 +25,13 @@ final readonly class Field
     /**
      * Creates a field that is required unless explicitly marked optional.
      *
-     * @param Transformer<mixed, mixed>|Validator<mixed>|Pipeline $step The processing behavior for present values.
+     * @param Pipeline|Transformer<mixed, mixed>|Validator<mixed> $step The processing behavior for present values.
      * @param FieldPresence $presence The missing-field policy.
      *
      * @throws AmbiguousProcessingStepException When the step implements multiple roles.
      */
     public function __construct(
-        Transformer|Validator|Pipeline $step,
+        Pipeline|Transformer|Validator $step,
         public FieldPresence $presence = FieldPresence::Required,
     ) {
         $this->processor = new StepTransformer($step);

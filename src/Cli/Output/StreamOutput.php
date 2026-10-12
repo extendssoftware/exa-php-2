@@ -100,7 +100,7 @@ final readonly class StreamOutput implements Output
                 }
                 $offset += $written;
             }
-        } catch (ErrorException | ValueError $exception) {
+        } catch (ErrorException|ValueError $exception) {
             throw new OutputWriteException('CLI output write failed for ' . $channel . '.', 0, $exception);
         } finally {
             restore_error_handler();

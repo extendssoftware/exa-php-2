@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Messaging\Consumption;
 
 use DateTimeImmutable;
-use ExtendsSoftware\ExaPHP\Messaging\Consumption\ReceivedDelivery;
 use ExtendsSoftware\ExaPHP\Messaging\Consumption\Exception\InvalidReceivedDeliveryException;
+use ExtendsSoftware\ExaPHP\Messaging\Consumption\ReceivedDelivery;
 use ExtendsSoftware\ExaPHP\Messaging\Message;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;

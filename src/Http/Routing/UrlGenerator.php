@@ -19,8 +19,8 @@ interface UrlGenerator
      * Query keys are nonempty strings; null values are omitted and booleans become 1 or 0.
      *
      * @param string $routeName The exact route name.
-     * @param array<string, string|int> $parameters The raw path parameter values.
-     * @param array<string, string|int|bool|null> $query The query values.
+     * @param array<string, int|string> $parameters The raw path parameter values.
+     * @param array<string, bool|int|string|null> $query The query values.
      *
      * @return Uri The generated URI reference without scheme or authority.
      *

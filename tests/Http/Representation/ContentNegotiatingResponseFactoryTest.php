@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Representation;
 
-use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
-use ExtendsSoftware\ExaPHP\Http\Representation\ResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Message\Uri;
+use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
+use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\ResponseFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -28,7 +28,7 @@ final class ContentNegotiatingResponseFactoryTest extends TestCase
         $factories = [];
         foreach (['application/xml', 'application/json'] as $type) {
             $factory = $this->createMock(ResponseFactory::class);
-            $factory->expects($expected === $type ? $this->once() : $this->never())->method('create')
+            $factory->expects($expected === $type ? self::once() : self::never())->method('create')
                 ->with(['id' => 1], StatusCode::Created)->willReturn(
                     new Response(StatusCode::Created, new Headers(['Content-Type' => $type])),
                 );
@@ -42,10 +42,10 @@ final class ContentNegotiatingResponseFactoryTest extends TestCase
         );
         $negotiator = new ContentNegotiatingResponseFactory($factories);
         $response = $negotiator->create($request, ['id' => 1], StatusCode::Created);
-        $this->assertSame($expected === null ? StatusCode::NotAcceptable : StatusCode::Created, $response->statusCode);
-        $this->assertSame($expected === null ? ['application/problem+json'] : [$expected], $response->headers->get('Content-Type'));
-        $this->assertSame(['Accept'], $response->headers->get('Vary'));
-        $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
+        self::assertSame($expected === null ? StatusCode::NotAcceptable : StatusCode::Created, $response->statusCode);
+        self::assertSame($expected === null ? ['application/problem+json'] : [$expected], $response->headers->get('Content-Type'));
+        self::assertSame(['Accept'], $response->headers->get('Vary'));
+        self::assertSame(ProtocolVersion::Http2, $response->protocolVersion);
     }
 
     /** @return iterable<array{?string, ?string}> */
@@ -79,7 +79,7 @@ final class ContentNegotiatingResponseFactoryTest extends TestCase
         $request = new Request(Method::Get, new Uri('/'), new Headers(['Accept' => ['text/html', 'application/json']]));
         foreach (['Origin', 'Origin, aCcEpT', '*'] as $vary) {
             $response = $factory->create($request, null, headers: new Headers(['Vary' => $vary]));
-            $this->assertSame($vary === 'Origin' ? ['Origin', 'Accept'] : [$vary], $response->headers->get('Vary'));
+            self::assertSame($vary === 'Origin' ? ['Origin', 'Accept'] : [$vary], $response->headers->get('Vary'));
         }
     }
 
@@ -87,15 +87,15 @@ final class ContentNegotiatingResponseFactoryTest extends TestCase
     {
         $failure = new RuntimeException('Failed encoder');
         $json = $this->createMock(ResponseFactory::class);
-        $json->expects($this->once())->method('create')->willThrowException($failure);
+        $json->expects(self::once())->method('create')->willThrowException($failure);
         $other = $this->createMock(ResponseFactory::class);
-        $other->expects($this->never())->method('create');
+        $other->expects(self::never())->method('create');
         $factory = new ContentNegotiatingResponseFactory(['application/json' => $json, 'text/plain' => $other]);
         try {
             $factory->create(new Request(Method::Get, new Uri('/')), []);
-            $this->fail('Expected encoder failure.');
+            self::fail('Expected encoder failure.');
         } catch (RuntimeException $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 

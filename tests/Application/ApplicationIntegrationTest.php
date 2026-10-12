@@ -6,8 +6,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Application;
 
 use ExtendsSoftware\ExaPHP\Application\Application;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Exception\InvalidServiceDefinitionException;
+use ExtendsSoftware\ExaPHP\Application\Exception\ApplicationStateException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleBootstrapException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleInstantiationException;
 use ExtendsSoftware\ExaPHP\Application\Module\Exception\ModuleShutdownException;
@@ -68,20 +68,20 @@ final class ApplicationIntegrationTest extends TestCase
         $this->write('Second/config/defaults.php', "return ['module' => 'second'];");
         $this->write('config/test.global.php', "return ['value' => 'global'];");
         $this->write('config/test.local.php', <<<'PHP'
-use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
-use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
+            use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 
-return [
-    'value' => 'local',
-    'services' => [
-        'result' => new FactoryDefinition(
-            static fn(ServiceLocator $services): object =>
-                (object) ['value' => $services->get(Configuration::class)->get('value')],
-        ),
-    ],
-];
-PHP);
+            return [
+                'value' => 'local',
+                'services' => [
+                    'result' => new FactoryDefinition(
+                        static fn(ServiceLocator $services): object =>
+                            (object) ['value' => $services->get(Configuration::class)->get('value')],
+                    ),
+                ],
+            ];
+            PHP);
         $application = new Application($this->directory . '/config');
         $application->registerModule($first);
         $application->registerModule($second);
@@ -190,10 +190,10 @@ PHP);
             'First',
             bootstrap: '$this->hookServices = $services; ' . $this->event('start-first'),
             shutdown: <<<'PHP'
-if ($this->hookServices !== $services) {
-    throw new RuntimeException('Module or locator changed.');
-}
-PHP . $this->event('stop-first'),
+                if ($this->hookServices !== $services) {
+                    throw new RuntimeException('Module or locator changed.');
+                }
+                PHP . $this->event('stop-first'),
         );
         $second = $this->module(
             'Second',
@@ -224,13 +224,13 @@ PHP . $this->event('stop-first'),
     public function testBootstrapHooksCanResolveConfiguredServices(): void
     {
         $this->write('config/services.global.php', <<<'PHP'
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 
-return ['services' => ['ready' => new InstanceDefinition((object) ['value' => 'available'])]];
-PHP);
+            return ['services' => ['ready' => new InstanceDefinition((object) ['value' => 'available'])]];
+            PHP);
         $module = $this->module('Reader', bootstrap: <<<'PHP'
-file_put_contents(__DIR__ . '/../events', $services->get('ready')->value);
-PHP);
+            file_put_contents(__DIR__ . '/../events', $services->get('ready')->value);
+            PHP);
         $application = new Application($this->directory . '/config');
         $application->registerModule($module);
         $application->bootstrap();
@@ -380,8 +380,7 @@ PHP);
         string $constructor = '',
         ?string $bootstrap = null,
         ?string $shutdown = null,
-    ): string
-    {
+    ): string {
         mkdir($this->directory . '/' . $name);
         mkdir($this->directory . '/' . $name . '/config');
         $class = 'ApplicationTestModule' . bin2hex(random_bytes(8));
@@ -399,51 +398,51 @@ PHP);
             $imports .= 'use ExtendsSoftware\\ExaPHP\\Application\\Module\\' . $capability . ";\n";
             $hooks .= <<<PHP
 
-    /**
-     * Executes the test lifecycle operation.
-     *
-     * @param ServiceLocator \$services The application services.
-     *
-     * @return void
-     */
-    public function $method(ServiceLocator \$services): void
-    {
-        $body
-    }
+                    /**
+                     * Executes the test lifecycle operation.
+                     *
+                     * @param ServiceLocator \$services The application services.
+                     *
+                     * @return void
+                     */
+                    public function $method(ServiceLocator \$services): void
+                    {
+                        $body
+                    }
 
-PHP;
+                PHP;
         }
         $this->write($name . '/Module.php', <<<PHP
-use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
-use ExtendsSoftware\ExaPHP\Application\Module\Module;
-$imports
-use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
+            use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
+            use ExtendsSoftware\ExaPHP\Application\Module\Module;
+            $imports
+            use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 
-/** Provides configuration for an application integration test. */
-final class $class implements Module, ConfigurableModule$capabilities
-{
-    /** The locator retained by a lifecycle hook for identity checks. */
-    private ?ServiceLocator \$hookServices = null;
+            /** Provides configuration for an application integration test. */
+            final class $class implements Module, ConfigurableModule$capabilities
+            {
+                /** The locator retained by a lifecycle hook for identity checks. */
+                private ?ServiceLocator \$hookServices = null;
 
-$hooks
-    /** Records module construction. */
-    public function __construct()
-    {
-        file_put_contents($log, $label, FILE_APPEND);
-        $constructor
-    }
+            $hooks
+                /** Records module construction. */
+                public function __construct()
+                {
+                    file_put_contents($log, $label, FILE_APPEND);
+                    $constructor
+                }
 
-    /**
-     * Returns the module configuration directory.
-     *
-     * @return string The configuration directory.
-     */
-    public function configDirectory(): string
-    {
-        return __DIR__ . '/config';
-    }
-}
-PHP);
+                /**
+                 * Returns the module configuration directory.
+                 *
+                 * @return string The configuration directory.
+                 */
+                public function configDirectory(): string
+                {
+                    return __DIR__ . '/config';
+                }
+            }
+            PHP);
         require $this->directory . '/' . $name . '/Module.php';
 
         return $class;

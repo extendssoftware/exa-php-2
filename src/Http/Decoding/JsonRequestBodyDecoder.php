@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Decoding;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\MalformedRequestBodyException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\RequestBodyTooLargeException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use JsonException;
+use Override;
 use SensitiveParameter;
 
 use function json_decode;

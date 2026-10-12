@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates that multiple handlers are registered for the same command class.
  */
-final class DuplicateCommandHandlerException extends LogicException implements CqrsException
-{
-}
+final class DuplicateCommandHandlerException extends LogicException implements CqrsException {}

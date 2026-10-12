@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies event dispatch failures.
  */
-interface EventException extends Throwable
-{
-}
+interface EventException extends Throwable {}

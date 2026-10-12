@@ -13,18 +13,18 @@ final class StringLengthTest extends TestCase
 {
     public function testViolationCodesRemainStable(): void
     {
-        $this->assertSame('not_string', StringLength::CODE_NOT_STRING);
-        $this->assertSame('invalid_utf8', StringLength::CODE_INVALID_UTF8);
-        $this->assertSame('string_length_out_of_range', StringLength::CODE_STRING_LENGTH_OUT_OF_RANGE);
+        self::assertSame('not_string', StringLength::CODE_NOT_STRING);
+        self::assertSame('invalid_utf8', StringLength::CODE_INVALID_UTF8);
+        self::assertSame('string_length_out_of_range', StringLength::CODE_STRING_LENGTH_OUT_OF_RANGE);
     }
 
     #[DataProvider('inputs')]
     public function testCountsCodePoints(mixed $input, ?string $code): void
     {
         $result = new StringLength(1, 2)->validate($input);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code !== null) {
-            $this->assertSame($code, $result->violations()[0]->code());
+            self::assertSame($code, $result->violations()[0]->code());
         }
     }
 
@@ -46,9 +46,9 @@ final class StringLengthTest extends TestCase
 
     public function testParametersAndZeroBounds(): void
     {
-        $this->assertTrue(new StringLength(0, 0)->validate('')->isValid());
+        self::assertTrue(new StringLength(0, 0)->validate('')->isValid());
         $violation = new StringLength(1, 1)->validate("e\u{0301}")->violations()[0];
-        $this->assertSame(['minimum' => 1, 'maximum' => 1, 'length' => 2], $violation->parameters());
+        self::assertSame(['minimum' => 1, 'maximum' => 1, 'length' => 2], $violation->parameters());
     }
 
     #[DataProvider('bounds')]

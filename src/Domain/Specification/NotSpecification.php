@@ -19,9 +19,7 @@ final class NotSpecification extends AbstractSpecification
      *
      * @param Specification<T> $specification The condition to negate.
      */
-    public function __construct(private readonly Specification $specification)
-    {
-    }
+    public function __construct(private readonly Specification $specification) {}
 
     /**
      * {@inheritDoc}

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Decoding;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\InvalidRequestBodyDecoderException;
 use ExtendsSoftware\ExaPHP\Http\Decoding\Exception\UnsupportedRequestMediaTypeException;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
+use Override;
 use SensitiveParameter;
 
 use function count;

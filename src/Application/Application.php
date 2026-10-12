@@ -78,8 +78,7 @@ final class Application
         private readonly string $configDirectory,
         private readonly ConfigurationLoader $configurationLoader = new ConfigurationLoader(new ConfigurationMerger()),
         private readonly ServiceLocatorFactory $serviceLocatorFactory = new ServiceLocatorFactory(),
-    ) {
-    }
+    ) {}
 
     /**
      * Registers a module class without instantiating it.

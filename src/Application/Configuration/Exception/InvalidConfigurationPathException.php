@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a configuration path contains an empty segment.
  */
-final class InvalidConfigurationPathException extends InvalidArgumentException implements ApplicationException
-{
-}
+final class InvalidConfigurationPathException extends InvalidArgumentException implements ApplicationException {}

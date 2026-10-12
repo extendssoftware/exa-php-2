@@ -10,8 +10,8 @@ use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use Override;
-use Throwable;
 use SensitiveParameter;
+use Throwable;
 
 /**
  * Maps access denials to generic forbidden problem details.

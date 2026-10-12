@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator\Resolver;
 
-use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\InstanceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\UnsupportedDefinitionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
+use Override;
 
 /**
  * Returns existing service instances without constructing or cloning them.

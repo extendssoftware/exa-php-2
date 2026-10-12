@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates an attempt to start a nested transaction on the same manager.
  */
-final class NestedTransactionException extends LogicException implements TransactionException
-{
-}
+final class NestedTransactionException extends LogicException implements TransactionException {}

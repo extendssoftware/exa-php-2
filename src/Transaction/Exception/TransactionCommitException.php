@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that transaction commit could not be confirmed.
  */
-final class TransactionCommitException extends RuntimeException implements TransactionException
-{
-}
+final class TransactionCommitException extends RuntimeException implements TransactionException {}

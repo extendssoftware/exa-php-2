@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates malformed HTTP authentication credentials without retaining credential data.
  */
-final class MalformedCredentialsException extends RuntimeException implements IntegrationException
-{
-}
+final class MalformedCredentialsException extends RuntimeException implements IntegrationException {}

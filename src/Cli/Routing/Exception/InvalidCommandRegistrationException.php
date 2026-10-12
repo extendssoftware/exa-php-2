@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates malformed command registry registrations.
  */
-final class InvalidCommandRegistrationException extends InvalidArgumentException implements CliException
-{
-}
+final class InvalidCommandRegistrationException extends InvalidArgumentException implements CliException {}

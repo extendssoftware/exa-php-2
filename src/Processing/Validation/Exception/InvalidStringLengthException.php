@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid string length bounds.
  */
-final class InvalidStringLengthException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class InvalidStringLengthException extends InvalidArgumentException implements ProcessingException {}

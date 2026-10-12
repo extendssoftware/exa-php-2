@@ -28,7 +28,7 @@ final class CliModuleIntegrationTest extends TestCase
     public function testMergesNamedCommandsAndResolvesOnlySelectedHandler(): void
     {
         $created = 0;
-        $handler = $this->createStub(CommandHandler::class);
+        $handler = self::createStub(CommandHandler::class);
         $handler->method('handle')->willReturn(23);
         $defaults = require new CliModule()->configDirectory() . '/services.php';
         $config = new ConfigurationMerger()->merge([
@@ -47,19 +47,19 @@ final class CliModuleIntegrationTest extends TestCase
         ]]);
         $services = new ServiceLocatorFactory()->create($config);
         $dispatcher = $services->get(CommandDispatcher::class);
-        $this->assertSame(0, $created);
-        $this->assertSame('greet', $services->get(CommandRegistry::class)->get('greet')->name);
-        $this->assertSame(23, $dispatcher->dispatch('greet', [], $this->createStub(Output::class)));
-        $this->assertSame(1, $created);
-        $this->assertSame($dispatcher, $services->get(CommandDispatcher::class));
+        self::assertSame(0, $created);
+        self::assertSame('greet', $services->get(CommandRegistry::class)->get('greet')->name);
+        self::assertSame(23, $dispatcher->dispatch('greet', [], self::createStub(Output::class)));
+        self::assertSame(1, $created);
+        self::assertSame($dispatcher, $services->get(CommandDispatcher::class));
     }
 
     public function testDefaultRegistryIsEmptyAndOutputUsesRuntimeStreams(): void
     {
         $defaults = require new CliModule()->configDirectory() . '/services.php';
         $services = new ServiceLocatorFactory()->create(new Configuration($defaults));
-        $this->assertSame([], $services->get(CommandRegistry::class)->all());
-        $this->assertInstanceOf(StreamOutput::class, $services->get(Output::class));
+        self::assertSame([], $services->get(CommandRegistry::class)->all());
+        self::assertInstanceOf(StreamOutput::class, $services->get(Output::class));
     }
 
     public function testProvidesSharedWorkerControlWithoutTheOutboxModule(): void
@@ -74,7 +74,7 @@ final class CliModuleIntegrationTest extends TestCase
 
     public function testApplicationCanOverrideWorkerControl(): void
     {
-        $control = $this->createStub(WorkerControl::class);
+        $control = self::createStub(WorkerControl::class);
         $defaults = require new CliModule()->configDirectory() . '/services.php';
         $configuration = new ConfigurationMerger()->merge(['cli' => $defaults], ['application' => [
             'services' => [WorkerControl::class => new InstanceDefinition($control)],
@@ -93,9 +93,9 @@ final class CliModuleIntegrationTest extends TestCase
         $services = new ServiceLocatorFactory()->create($config);
         try {
             $services->get($service);
-            $this->fail('Expected invalid CLI configuration.');
+            self::fail('Expected invalid CLI configuration.');
         } catch (ServiceResolutionException $exception) {
-            $this->assertInstanceOf(InvalidCliConfigurationException::class, $exception->getPrevious());
+            self::assertInstanceOf(InvalidCliConfigurationException::class, $exception->getPrevious());
         }
     }
 

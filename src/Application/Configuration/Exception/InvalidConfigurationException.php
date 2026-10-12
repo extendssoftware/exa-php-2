@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that configuration has an invalid structure.
  */
-final class InvalidConfigurationException extends InvalidArgumentException implements ApplicationException
-{
-}
+final class InvalidConfigurationException extends InvalidArgumentException implements ApplicationException {}

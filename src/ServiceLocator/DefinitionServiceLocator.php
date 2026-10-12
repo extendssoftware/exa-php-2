@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\ServiceLocator;
 
-use Override;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\ServiceDefinition;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\CircularDependencyException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\ServiceNotFoundException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Exception\UnsupportedDefinitionException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Resolver\ServiceResolver;
+use Override;
 use Throwable;
 
 use function array_key_exists;

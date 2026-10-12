@@ -9,18 +9,18 @@ use ExtendsSoftware\ExaPHP\Clock\Clock;
 use ExtendsSoftware\ExaPHP\Clock\SystemClock;
 use ExtendsSoftware\ExaPHP\Integration\Clock\ClockModule;
 use ExtendsSoftware\ExaPHP\Integration\Logging\LoggingModule;
-use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\Logger;
-use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
+use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
 use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
+use ExtendsSoftware\ExaPHP\Logging\WriterLogger;
 use PHPUnit\Framework\TestCase;
 
 use function bin2hex;
 use function file_get_contents;
 use function file_put_contents;
-use function json_decode;
 use function is_file;
+use function json_decode;
 use function mkdir;
 use function random_bytes;
 use function rmdir;
@@ -39,14 +39,14 @@ final class LoggingModuleIntegrationTest extends TestCase
             $application->registerModule(LoggingModule::class);
             $services = $application->bootstrap();
             $clock = $services->get(Clock::class);
-            $this->assertInstanceOf(SystemClock::class, $clock);
-            $this->assertSame($clock, $services->get(Clock::class));
+            self::assertInstanceOf(SystemClock::class, $clock);
+            self::assertSame($clock, $services->get(Clock::class));
             $logger = $services->get(Logger::class);
             $writer = $services->get(LogWriter::class);
-            $this->assertInstanceOf(WriterLogger::class, $logger);
-            $this->assertInstanceOf(StreamLogWriter::class, $writer);
-            $this->assertSame($logger, $services->get(Logger::class));
-            $this->assertSame($writer, $services->get(LogWriter::class));
+            self::assertInstanceOf(WriterLogger::class, $logger);
+            self::assertInstanceOf(StreamLogWriter::class, $writer);
+            self::assertSame($logger, $services->get(Logger::class));
+            self::assertSame($writer, $services->get(LogWriter::class));
             $application->shutdown();
         } finally {
             rmdir($directory);
@@ -58,32 +58,32 @@ final class LoggingModuleIntegrationTest extends TestCase
         $directory = sys_get_temp_dir() . '/exa-logging-' . bin2hex(random_bytes(8));
         mkdir($directory);
         file_put_contents($directory . '/logging.global.php', <<<'CONFIG'
-<?php
+            <?php
 
-declare(strict_types=1);
+            declare(strict_types=1);
 
-use ExtendsSoftware\ExaPHP\Clock\Clock;
-use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
-use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
-use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
-use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
+            use ExtendsSoftware\ExaPHP\Clock\Clock;
+            use ExtendsSoftware\ExaPHP\Clock\FrozenClock;
+            use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
+            use ExtendsSoftware\ExaPHP\Logging\Writer\StreamLogWriter;
+            use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
 
-return ['services' => [
-    Clock::class => new FactoryDefinition(
-        static fn(): Clock => new FrozenClock(new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00')),
-    ),
-    LogWriter::class => new FactoryDefinition(static fn(): LogWriter => new StreamLogWriter(__DIR__ . '/app.log')),
-]];
-CONFIG);
+            return ['services' => [
+                Clock::class => new FactoryDefinition(
+                    static fn(): Clock => new FrozenClock(new DateTimeImmutable('2026-10-06T12:34:56.123456+02:00')),
+                ),
+                LogWriter::class => new FactoryDefinition(static fn(): LogWriter => new StreamLogWriter(__DIR__ . '/app.log')),
+            ]];
+            CONFIG);
         try {
             $application = new Application($directory);
             $application->registerModule(LoggingModule::class);
             $services = $application->bootstrap();
             $services->get(Logger::class)->log(LogLevel::Info, 'Application message', ['id' => 1]);
             $record = json_decode(file_get_contents($directory . '/app.log'), true);
-            $this->assertSame('2026-10-06T10:34:56.123456Z', $record['timestamp']);
-            $this->assertSame('Application message', $record['message']);
-            $this->assertSame(['id' => 1], $record['context']);
+            self::assertSame('2026-10-06T10:34:56.123456Z', $record['timestamp']);
+            self::assertSame('Application message', $record['message']);
+            self::assertSame(['id' => 1], $record['context']);
             $application->shutdown();
         } finally {
             if (is_file($directory . '/app.log')) {

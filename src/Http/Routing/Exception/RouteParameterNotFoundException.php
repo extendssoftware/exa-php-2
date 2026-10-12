@@ -10,6 +10,4 @@ use OutOfBoundsException;
 /**
  * Indicates a parameter absent from a route match.
  */
-final class RouteParameterNotFoundException extends OutOfBoundsException implements HttpException
-{
-}
+final class RouteParameterNotFoundException extends OutOfBoundsException implements HttpException {}

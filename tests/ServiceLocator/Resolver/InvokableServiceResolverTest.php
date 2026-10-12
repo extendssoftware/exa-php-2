@@ -23,7 +23,7 @@ final class InvokableServiceResolverTest extends TestCase
         try {
             new InvokableServiceResolver()->resolve(
                 new InvokableDefinition(AliasDefinition::class),
-                $this->createStub(ServiceLocator::class),
+                self::createStub(ServiceLocator::class),
             );
             self::fail('Expected a construction failure.');
         } catch (ServiceResolutionException $exception) {
@@ -52,7 +52,7 @@ final class InvokableServiceResolverTest extends TestCase
         $definition = new InvokableDefinition('ExaPHP\\MissingService');
 
         try {
-            new InvokableServiceResolver()->resolve($definition, $this->createStub(ServiceLocator::class));
+            new InvokableServiceResolver()->resolve($definition, self::createStub(ServiceLocator::class));
             self::fail('Expected a service resolution failure.');
         } catch (ServiceResolutionException $exception) {
             self::assertStringContainsString($definition->className, $exception->getMessage());
@@ -67,7 +67,7 @@ final class InvokableServiceResolverTest extends TestCase
 
         new InvokableServiceResolver()->resolve(
             new InvokableDefinition(ServiceLocator::class),
-            $this->createStub(ServiceLocator::class),
+            self::createStub(ServiceLocator::class),
         );
     }
 
@@ -76,7 +76,7 @@ final class InvokableServiceResolverTest extends TestCase
         $resolver = new InvokableServiceResolver();
 
         self::assertTrue($resolver->supports(new InvokableDefinition(stdClass::class)));
-        self::assertFalse($resolver->supports($this->createStub(ServiceDefinition::class)));
+        self::assertFalse($resolver->supports(self::createStub(ServiceDefinition::class)));
     }
 
     public function testRejectsUnsupportedDefinitionsWithoutConsultingTheLocator(): void
@@ -87,6 +87,6 @@ final class InvokableServiceResolverTest extends TestCase
 
         $this->expectException(UnsupportedDefinitionException::class);
 
-        new InvokableServiceResolver()->resolve($this->createStub(ServiceDefinition::class), $locator);
+        new InvokableServiceResolver()->resolve(self::createStub(ServiceDefinition::class), $locator);
     }
 }

@@ -22,9 +22,7 @@ final readonly class WriterLogger implements Logger
      * @param LogWriter $writer The destination for records.
      * @param Clock $clock The timestamp source, defaulting to the system clock for standalone use.
      */
-    public function __construct(private LogWriter $writer, private Clock $clock = new SystemClock())
-    {
-    }
+    public function __construct(private LogWriter $writer, private Clock $clock = new SystemClock()) {}
 
     /**
      * {@inheritDoc}

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
+use ExtendsSoftware\ExaPHP\Http\HttpException;
 use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewarePipeline;
 use ExtendsSoftware\ExaPHP\Http\Routing\RoutingRequestHandler;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;

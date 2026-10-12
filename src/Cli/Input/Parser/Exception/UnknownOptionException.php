@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an option or short alias absent from the command definition.
  */
-final class UnknownOptionException extends InvalidArgumentException implements UsageException
-{
-}
+final class UnknownOptionException extends InvalidArgumentException implements UsageException {}

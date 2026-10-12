@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Logging\Writer;
 
 use DateTimeImmutable;
-use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\LogLevel;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
+use ExtendsSoftware\ExaPHP\Logging\Writer\Exception\LogStreamWriteException;
 use ExtendsSoftware\ExaPHP\Logging\Writer\FilteringLogWriter;
 use ExtendsSoftware\ExaPHP\Logging\Writer\LogWriter;
 use LogicException;
@@ -21,7 +21,7 @@ final class FilteringLogWriterTest extends TestCase
         $accepted = new LogRecord(LogLevel::Critical, 'Critical', new DateTimeImmutable('2026-10-02T12:00:01Z'));
         $evaluated = [];
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->once())->method('write')->with($this->identicalTo($accepted));
+        $writer->expects(self::once())->method('write')->with(self::identicalTo($accepted));
         $filter = new FilteringLogWriter($writer, static function (LogRecord $record) use (&$evaluated): bool {
             $evaluated[] = $record;
 
@@ -31,13 +31,13 @@ final class FilteringLogWriterTest extends TestCase
         $filter->write($rejected);
         $filter->write($accepted);
 
-        $this->assertSame([$rejected, $accepted], $evaluated);
+        self::assertSame([$rejected, $accepted], $evaluated);
     }
 
     public function testRejectedRecordDoesNotCallWriter(): void
     {
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->never())->method('write');
+        $writer->expects(self::never())->method('write');
 
         new FilteringLogWriter($writer, static fn(LogRecord $record): bool => false)->write(
             new LogRecord(LogLevel::Info, 'Ignored', new DateTimeImmutable('2026-10-02T12:00:00Z')),
@@ -48,14 +48,14 @@ final class FilteringLogWriterTest extends TestCase
     {
         $failure = new LogicException('Predicate failed');
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->never())->method('write');
+        $writer->expects(self::never())->method('write');
         $filter = new FilteringLogWriter($writer, static fn(LogRecord $record): bool => throw $failure);
 
         try {
             $filter->write(new LogRecord(LogLevel::Info, 'Message', new DateTimeImmutable('2026-10-02T12:00:00Z')));
-            $this->fail('Expected predicate failure.');
+            self::fail('Expected predicate failure.');
         } catch (LogicException $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 
@@ -63,14 +63,14 @@ final class FilteringLogWriterTest extends TestCase
     {
         $failure = new LogStreamWriteException('Writer failed');
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->once())->method('write')->willThrowException($failure);
+        $writer->expects(self::once())->method('write')->willThrowException($failure);
         $filter = new FilteringLogWriter($writer, static fn(LogRecord $record): bool => true);
 
         try {
             $filter->write(new LogRecord(LogLevel::Info, 'Message', new DateTimeImmutable('2026-10-02T12:00:00Z')));
-            $this->fail('Expected writer failure.');
+            self::fail('Expected writer failure.');
         } catch (LogStreamWriteException $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 }

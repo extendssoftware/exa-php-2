@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Messaging\Consumption\Retry;
 
 use DateTimeImmutable;
-use RuntimeException;
-use ExtendsSoftware\ExaPHP\Messaging\Message;
 use ExtendsSoftware\ExaPHP\Messaging\Consumption\ReceivedDelivery;
 use ExtendsSoftware\ExaPHP\Messaging\Consumption\Retry\Exception\InvalidRetryPolicyException;
 use ExtendsSoftware\ExaPHP\Messaging\Consumption\Retry\FixedDelayRetryPolicy;
+use ExtendsSoftware\ExaPHP\Messaging\Message;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 final class FixedDelayRetryPolicyTest extends TestCase
 {

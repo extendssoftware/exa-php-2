@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that the request body cannot be decoded in its declared format.
  */
-final class MalformedRequestBodyException extends RuntimeException implements HttpException
-{
-}
+final class MalformedRequestBodyException extends RuntimeException implements HttpException {}

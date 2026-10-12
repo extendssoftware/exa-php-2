@@ -9,6 +9,4 @@ use ExtendsSoftware\ExaPHP\Cli\CliException;
 /**
  * Identifies invalid command usage whose message is suitable for terminal presentation.
  */
-interface UsageException extends CliException
-{
-}
+interface UsageException extends CliException {}

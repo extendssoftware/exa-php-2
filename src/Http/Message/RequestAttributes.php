@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Message;
 
-use ExtendsSoftware\ExaPHP\Http\Message\Exception\RequestAttributeNotFoundException;
 use ExtendsSoftware\ExaPHP\Http\Message\Exception\InvalidRequestAttributesException;
+use ExtendsSoftware\ExaPHP\Http\Message\Exception\RequestAttributeNotFoundException;
 
 use function is_object;
 use function sprintf;

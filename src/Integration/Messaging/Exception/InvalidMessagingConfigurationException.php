@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid messaging worker configuration.
  */
-final class InvalidMessagingConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidMessagingConfigurationException extends InvalidArgumentException implements IntegrationException {}

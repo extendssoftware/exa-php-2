@@ -23,24 +23,24 @@ final class RequestTest extends TestCase
         $headers = new Headers(['X-Test' => 'value']);
         $updated = $request->withMethod(Method::Put)->withUri(new Uri('/updated'))->withHeaders($headers)
             ->withProtocolVersion(ProtocolVersion::Http2);
-        $this->assertSame(Method::Post, $request->method);
-        $this->assertSame('/original', $request->target());
-        $this->assertSame(Method::Put, $updated->method);
-        $this->assertSame('/updated', $updated->target());
-        $this->assertSame($headers, $updated->headers);
-        $this->assertSame($body, $updated->body);
-        $this->assertSame(ProtocolVersion::Http2, $updated->protocolVersion);
+        self::assertSame(Method::Post, $request->method);
+        self::assertSame('/original', $request->target());
+        self::assertSame(Method::Put, $updated->method);
+        self::assertSame('/updated', $updated->target());
+        self::assertSame($headers, $updated->headers);
+        self::assertSame($body, $updated->body);
+        self::assertSame(ProtocolVersion::Http2, $updated->protocolVersion);
         $replacement = new StringBody('new');
-        $this->assertSame($replacement, $updated->withBody($replacement)->body);
-        $this->assertSame($body, $updated->body);
+        self::assertSame($replacement, $updated->withBody($replacement)->body);
+        self::assertSame($body, $updated->body);
     }
 
     #[DataProvider('targets')]
     public function testRequestTargets(Method $method, string $uri, string $target): void
     {
         $request = new Request($method, new Uri($uri));
-        $this->assertSame($target, $request->target());
-        $this->assertSame([], $request->headers->all());
+        self::assertSame($target, $request->target());
+        self::assertSame([], $request->headers->all());
     }
 
     /**

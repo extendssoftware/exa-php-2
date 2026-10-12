@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies processing configuration and execution failures, excluding ordinary invalid input.
  */
-interface ProcessingException extends Throwable
-{
-}
+interface ProcessingException extends Throwable {}

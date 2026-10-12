@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that configuration discovery or file execution failed.
  */
-final class ConfigurationLoadException extends RuntimeException implements ApplicationException
-{
-}
+final class ConfigurationLoadException extends RuntimeException implements ApplicationException {}

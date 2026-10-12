@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies HTTP component failures.
  */
-interface HttpException extends Throwable
-{
-}
+interface HttpException extends Throwable {}

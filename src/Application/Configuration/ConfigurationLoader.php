@@ -42,9 +42,7 @@ final readonly class ConfigurationLoader
      *
      * @param ConfigurationMerger $merger The merger for module files and application overrides.
      */
-    public function __construct(private ConfigurationMerger $merger)
-    {
-    }
+    public function __construct(private ConfigurationMerger $merger) {}
 
     /**
      * Loads configuration for instantiated modules and an application configuration directory.
@@ -111,7 +109,7 @@ final readonly class ConfigurationLoader
                     $files[] = $file->getPathname();
                 }
             }
-        } catch (RuntimeException | ValueError $exception) {
+        } catch (RuntimeException|ValueError $exception) {
             throw new ConfigurationLoadException(
                 sprintf('Could not read configuration directory "%s".', $directory),
                 0,
@@ -170,9 +168,7 @@ final readonly class ConfigurationLoader
         );
 
         try {
-            $configuration = (static function (string $path): mixed {
-                return require $path;
-            })($file);
+            $configuration = (static fn(string $path): mixed => require $path)($file);
         } catch (Throwable $exception) {
             throw new ConfigurationLoadException(
                 sprintf('Could not load configuration file "%s".', $file),

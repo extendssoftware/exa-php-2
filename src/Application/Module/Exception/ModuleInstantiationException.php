@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that an application module could not be instantiated.
  */
-final class ModuleInstantiationException extends RuntimeException implements ApplicationException
-{
-}
+final class ModuleInstantiationException extends RuntimeException implements ApplicationException {}

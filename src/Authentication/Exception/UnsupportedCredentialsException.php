@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that an authenticator does not support the supplied credential type.
  */
-final class UnsupportedCredentialsException extends InvalidArgumentException implements AuthenticationException
-{
-}
+final class UnsupportedCredentialsException extends InvalidArgumentException implements AuthenticationException {}

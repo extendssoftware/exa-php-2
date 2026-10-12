@@ -91,7 +91,8 @@ final readonly class ContentNegotiatingResponseFactory
      * @throws Throwable When the selected factory fails, propagated unchanged.
      */
     public function create(
-        #[SensitiveParameter] Request $request,
+        #[SensitiveParameter]
+        Request $request,
         mixed $data,
         StatusCode $statusCode = StatusCode::Ok,
         Headers $headers = new Headers(),

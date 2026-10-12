@@ -18,7 +18,7 @@ final class RequestBodyDecoderFactoryTest extends TestCase
     public function testRejectsInvalidConfiguration(array $request, string $method): void
     {
         $services = $this->createMock(ServiceLocator::class);
-        $services->expects($this->once())->method('get')->with(Configuration::class)
+        $services->expects(self::once())->method('get')->with(Configuration::class)
             ->willReturn(new Configuration(['http' => ['request' => $request]]));
         $this->expectException(InvalidHttpConfigurationException::class);
         new RequestBodyDecoderFactory()->$method($services);

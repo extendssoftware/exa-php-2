@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a supplied option is missing its required value.
  */
-final class MissingOptionValueException extends InvalidArgumentException implements UsageException
-{
-}
+final class MissingOptionValueException extends InvalidArgumentException implements UsageException {}

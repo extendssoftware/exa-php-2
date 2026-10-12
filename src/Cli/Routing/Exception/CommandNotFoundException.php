@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a requested command name is not registered.
  */
-final class CommandNotFoundException extends RuntimeException implements UsageException
-{
-}
+final class CommandNotFoundException extends RuntimeException implements UsageException {}

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Resolver;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\MiddlewareResolutionException;
-use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
 use ExtendsSoftware\ExaPHP\Http\Middleware\Middleware;
+use ExtendsSoftware\ExaPHP\Http\Middleware\MiddlewareResolver;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocatorException;
+use Override;
 
 use function sprintf;
 
@@ -23,9 +23,7 @@ final readonly class ServiceLocatorMiddlewareResolver implements MiddlewareResol
      *
      * @param ServiceLocator $serviceLocator The locator supplying middleware services.
      */
-    public function __construct(private ServiceLocator $serviceLocator)
-    {
-    }
+    public function __construct(private ServiceLocator $serviceLocator) {}
 
     /**
      * {@inheritDoc}
@@ -37,7 +35,9 @@ final readonly class ServiceLocatorMiddlewareResolver implements MiddlewareResol
             $middleware = $this->serviceLocator->get($id);
         } catch (ServiceLocatorException $exception) {
             throw new MiddlewareResolutionException(
-                sprintf('Failed to resolve HTTP middleware "%s".', $id), 0, $exception,
+                sprintf('Failed to resolve HTTP middleware "%s".', $id),
+                0,
+                $exception,
             );
         }
         if (!$middleware instanceof Middleware) {

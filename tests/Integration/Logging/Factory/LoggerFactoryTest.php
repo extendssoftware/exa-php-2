@@ -24,25 +24,25 @@ final class LoggerFactoryTest extends TestCase
         $time = new DateTimeImmutable('2026-10-06T12:00:00Z');
         $clock = new FrozenClock($time);
         $writer = $this->createMock(LogWriter::class);
-        $writer->expects($this->once())->method('write')->with($this->callback(
+        $writer->expects(self::once())->method('write')->with(self::callback(
             static fn(LogRecord $record): bool => $record->message === 'Message'
                 && $record->level === LogLevel::Info && $record->context === ['id' => 1]
                 && $record->timestamp === $time,
         ));
         $locator = $this->createMock(ServiceLocator::class);
-        $locator->expects($this->exactly(4))->method('get')->willReturnMap([
+        $locator->expects(self::exactly(4))->method('get')->willReturnMap([
             [LogWriter::class, $writer],
             [Clock::class, $clock],
         ]);
         $factory = new LoggerFactory();
         $logger = $factory->create($locator);
-        $this->assertNotSame($logger, $factory->create($locator));
+        self::assertNotSame($logger, $factory->create($locator));
         $logger->log(LogLevel::Info, 'Message', ['id' => 1]);
     }
 
     public function testRejectsIncorrectWriterService(): void
     {
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $locator->method('get')->willReturn(new stdClass());
         $this->expectException(InvalidLoggingConfigurationException::class);
         new LoggerFactory()->create($locator);
@@ -50,9 +50,9 @@ final class LoggerFactoryTest extends TestCase
 
     public function testRejectsIncorrectClockService(): void
     {
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $locator->method('get')->willReturnMap([
-            [LogWriter::class, $this->createStub(LogWriter::class)],
+            [LogWriter::class, self::createStub(LogWriter::class)],
             [Clock::class, new stdClass()],
         ]);
         $this->expectException(InvalidLoggingConfigurationException::class);
@@ -62,13 +62,13 @@ final class LoggerFactoryTest extends TestCase
     public function testPreservesResolutionFailure(): void
     {
         $failure = new ServiceNotFoundException('Missing writer');
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $locator->method('get')->willThrowException($failure);
         try {
             new LoggerFactory()->create($locator);
-            $this->fail('Expected resolution failure.');
+            self::fail('Expected resolution failure.');
         } catch (ServiceNotFoundException $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 }

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a log record could not receive a timestamp.
  */
-final class LogTimestampException extends RuntimeException implements LoggingException
-{
-}
+final class LogTimestampException extends RuntimeException implements LoggingException {}

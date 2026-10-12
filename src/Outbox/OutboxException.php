@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies outbox message, delivery, retry, ownership, and persistence failures.
  */
-interface OutboxException extends Throwable
-{
-}
+interface OutboxException extends Throwable {}

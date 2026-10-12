@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates a failed or unsupported body stream read.
  */
-final class BodyReadException extends RuntimeException implements HttpException
-{
-}
+final class BodyReadException extends RuntimeException implements HttpException {}

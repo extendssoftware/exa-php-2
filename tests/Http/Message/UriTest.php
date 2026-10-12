@@ -16,36 +16,36 @@ final class UriTest extends TestCase
     {
         $text = 'HTTPS://user:p%40ss@Example.COM:443/a/../b%2f/?x=1&x=2+#part%20one';
         $uri = new Uri($text);
-        $this->assertSame($text, $uri->toString());
-        $this->assertSame('HTTPS', $uri->scheme());
-        $this->assertSame('user:p%40ss', $uri->userInfo());
-        $this->assertSame('Example.COM', $uri->host());
-        $this->assertSame(443, $uri->port());
-        $this->assertSame('/a/../b%2f/', $uri->path());
-        $this->assertSame('x=1&x=2+', $uri->query());
-        $this->assertSame('part%20one', $uri->fragment());
+        self::assertSame($text, $uri->toString());
+        self::assertSame('HTTPS', $uri->scheme());
+        self::assertSame('user:p%40ss', $uri->userInfo());
+        self::assertSame('Example.COM', $uri->host());
+        self::assertSame(443, $uri->port());
+        self::assertSame('/a/../b%2f/', $uri->path());
+        self::assertSame('x=1&x=2+', $uri->query());
+        self::assertSame('part%20one', $uri->fragment());
     }
 
     public function testRelativeReferencesAndAbsentVersusEmptyComponents(): void
     {
         $uri = new Uri('/articles?');
-        $this->assertNull($uri->scheme());
-        $this->assertNull($uri->host());
-        $this->assertNull($uri->port());
-        $this->assertSame('', $uri->query());
-        $this->assertNull($uri->fragment());
-        $this->assertSame('', new Uri('#')->fragment());
-        $this->assertNull(new Uri('')->query());
-        $this->assertSame('relative/path', new Uri('relative/path')->path());
+        self::assertNull($uri->scheme());
+        self::assertNull($uri->host());
+        self::assertNull($uri->port());
+        self::assertSame('', $uri->query());
+        self::assertNull($uri->fragment());
+        self::assertSame('', new Uri('#')->fragment());
+        self::assertNull(new Uri('')->query());
+        self::assertSame('relative/path', new Uri('relative/path')->path());
     }
 
     public function testIpv6DoesNotChangeOriginalRepresentation(): void
     {
         $text = 'http://[::1]:8080/path';
         $uri = new Uri($text);
-        $this->assertSame('[::1]', $uri->host());
-        $this->assertSame(8080, $uri->port());
-        $this->assertSame($text, $uri->toString());
+        self::assertSame('[::1]', $uri->host());
+        self::assertSame(8080, $uri->port());
+        self::assertSame($text, $uri->toString());
     }
 
     #[DataProvider('invalidUris')]
@@ -53,9 +53,9 @@ final class UriTest extends TestCase
     {
         try {
             new Uri($input);
-            $this->fail('Expected invalid URI.');
+            self::fail('Expected invalid URI.');
         } catch (InvalidUriException $exception) {
-            $this->assertInstanceOf(NativeInvalidUriException::class, $exception->getPrevious());
+            self::assertInstanceOf(NativeInvalidUriException::class, $exception->getPrevious());
         }
     }
 

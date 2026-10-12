@@ -16,17 +16,17 @@ final class InputTest extends TestCase
         $input = new Input('articles:create', ['title' => '', 'id' => '0042'], [
             'author' => '42', 'publish' => true, 'quiet' => false, 'label' => '',
         ]);
-        $this->assertSame('articles:create', $input->command);
-        $this->assertSame(['title' => '', 'id' => '0042'], $input->arguments);
-        $this->assertSame(['author' => '42', 'publish' => true, 'quiet' => false, 'label' => ''], $input->options);
-        $this->assertArrayNotHasKey('missing', $input->options);
+        self::assertSame('articles:create', $input->command);
+        self::assertSame(['title' => '', 'id' => '0042'], $input->arguments);
+        self::assertSame(['author' => '42', 'publish' => true, 'quiet' => false, 'label' => ''], $input->options);
+        self::assertArrayNotHasKey('missing', $input->options);
     }
 
     public function testArgumentsAndOptionsDefaultToEmptyMaps(): void
     {
         $input = new Input('help');
-        $this->assertSame([], $input->arguments);
-        $this->assertSame([], $input->options);
+        self::assertSame([], $input->arguments);
+        self::assertSame([], $input->options);
     }
 
     /**

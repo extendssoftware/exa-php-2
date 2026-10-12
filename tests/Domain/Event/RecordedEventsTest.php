@@ -17,10 +17,8 @@ final class RecordedEventsTest extends TestCase
 
     public function testPreservesEventIdentityOrderAndRepeatedOccurrences(): void
     {
-        $first = new class implements DomainEvent {
-        };
-        $second = new class implements DomainEvent {
-        };
+        $first = new class implements DomainEvent {};
+        $second = new class implements DomainEvent {};
         $events = new RecordedEvents();
         $events->record($first);
         $events->record($second);
@@ -32,10 +30,8 @@ final class RecordedEventsTest extends TestCase
 
     public function testCanRecordNewEventsAfterReleaseWithoutChangingTheReleasedList(): void
     {
-        $first = new class implements DomainEvent {
-        };
-        $second = new class implements DomainEvent {
-        };
+        $first = new class implements DomainEvent {};
+        $second = new class implements DomainEvent {};
         $events = new RecordedEvents();
         $events->record($first);
         $released = $events->release();
@@ -48,8 +44,7 @@ final class RecordedEventsTest extends TestCase
 
     public function testCollectionsHaveIndependentPendingEvents(): void
     {
-        $event = new class implements DomainEvent {
-        };
+        $event = new class implements DomainEvent {};
         $first = new RecordedEvents();
         $second = new RecordedEvents();
         $first->record($event);

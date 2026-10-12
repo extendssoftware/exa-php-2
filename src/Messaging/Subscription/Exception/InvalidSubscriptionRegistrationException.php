@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates malformed subscription registrations.
  */
-final class InvalidSubscriptionRegistrationException extends InvalidArgumentException implements MessagingException
-{
-}
+final class InvalidSubscriptionRegistrationException extends InvalidArgumentException implements MessagingException {}

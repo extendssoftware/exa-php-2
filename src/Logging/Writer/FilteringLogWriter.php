@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Logging\Writer;
 
-use Override;
 use Closure;
 use ExtendsSoftware\ExaPHP\Logging\LogRecord;
+use Override;
 use Throwable;
 
 /**

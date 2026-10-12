@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a requested service identifier is not registered.
  */
-final class ServiceNotFoundException extends RuntimeException implements ServiceLocatorException
-{
-}
+final class ServiceNotFoundException extends RuntimeException implements ServiceLocatorException {}

@@ -45,7 +45,7 @@ final class ApplicationTest extends TestCase
         yield 'missing class' => ['MissingApplicationModule'];
         yield 'unrelated class' => [stdClass::class];
         yield 'interface' => [Module::class];
-        $module = new class('required') implements Module {
+        $module = new class ('required') implements Module {
             public function __construct(string $value) {}
         };
         yield 'required argument' => [$module::class];

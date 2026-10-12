@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid subscriber identity or subscribed message types.
  */
-final class InvalidSubscriptionException extends InvalidArgumentException implements MessagingException
-{
-}
+final class InvalidSubscriptionException extends InvalidArgumentException implements MessagingException {}

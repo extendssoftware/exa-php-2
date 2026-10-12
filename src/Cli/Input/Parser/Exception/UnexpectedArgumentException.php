@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates excess positional arguments.
  */
-final class UnexpectedArgumentException extends InvalidArgumentException implements UsageException
-{
-}
+final class UnexpectedArgumentException extends InvalidArgumentException implements UsageException {}

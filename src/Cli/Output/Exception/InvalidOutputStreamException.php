@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that an output destination is not an open writable stream.
  */
-final class InvalidOutputStreamException extends InvalidArgumentException implements CliException
-{
-}
+final class InvalidOutputStreamException extends InvalidArgumentException implements CliException {}

@@ -25,9 +25,7 @@ final readonly class Configuration
      *
      * @param array<array-key, mixed> $values The configuration values.
      */
-    public function __construct(private array $values)
-    {
-    }
+    public function __construct(private array $values) {}
 
     /**
      * Returns the value at a dot-separated path.

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that authentication credentials were rejected.
  */
-final class InvalidCredentialsException extends RuntimeException implements AuthenticationException
-{
-}
+final class InvalidCredentialsException extends RuntimeException implements AuthenticationException {}

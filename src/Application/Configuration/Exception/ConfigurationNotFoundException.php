@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a requested configuration path does not exist.
  */
-final class ConfigurationNotFoundException extends RuntimeException implements ApplicationException
-{
-}
+final class ConfigurationNotFoundException extends RuntimeException implements ApplicationException {}

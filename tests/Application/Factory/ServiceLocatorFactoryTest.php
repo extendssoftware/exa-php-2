@@ -35,7 +35,7 @@ final class ServiceLocatorFactoryTest extends TestCase
     public function testSupportsAllBuiltInDefinitionsAndInjectsTheConfiguration(): void
     {
         $instance = new stdClass();
-        $prototype = new readonly class(new Configuration([])) {
+        $prototype = new readonly class (new Configuration([])) {
             public function __construct(public Configuration $configuration) {}
         };
         $configuration = new Configuration([
@@ -44,8 +44,8 @@ final class ServiceLocatorFactoryTest extends TestCase
                 'instance' => new InstanceDefinition($instance),
                 'alias' => new AliasDefinition('instance'),
                 'factory' => new FactoryDefinition(
-                    static fn(ServiceLocator $services): object =>
-                        (object) ['timeout' => $services->get(Configuration::class)->get('timeout')],
+                    static fn(ServiceLocator $services): object
+                        => (object) ['timeout' => $services->get(Configuration::class)->get('timeout')],
                 ),
                 'invokable' => new InvokableDefinition(ArrayObject::class),
                 'reflection' => new ReflectionDefinition($prototype::class),

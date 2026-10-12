@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a processing claim no longer owns its message.
  */
-final class LostClaimException extends RuntimeException implements OutboxException
-{
-}
+final class LostClaimException extends RuntimeException implements OutboxException {}

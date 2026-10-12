@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a subscriber identifier could not be resolved.
  */
-final class SubscriberResolutionException extends RuntimeException implements MessagingException
-{
-}
+final class SubscriberResolutionException extends RuntimeException implements MessagingException {}

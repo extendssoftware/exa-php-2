@@ -4,18 +4,18 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Authentication\Bearer;
 
+use Exception;
 use ExtendsSoftware\ExaPHP\Authentication\Bearer\BearerTokenCredentials;
 use ExtendsSoftware\ExaPHP\Authentication\Credentials;
 use ExtendsSoftware\ExaPHP\Authentication\Exception\InvalidCredentialsException;
-use Exception;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 use function ob_get_clean;
 use function ob_start;
-use function var_dump;
 use function print_r;
 use function serialize;
+use function var_dump;
 
 final class BearerTokenCredentialsTest extends TestCase
 {

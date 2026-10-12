@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that no handler is registered for a command's exact class.
  */
-final class CommandHandlerNotFoundException extends RuntimeException implements CqrsException
-{
-}
+final class CommandHandlerNotFoundException extends RuntimeException implements CqrsException {}

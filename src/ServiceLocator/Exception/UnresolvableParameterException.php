@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a constructor parameter cannot be supplied by reflection-based service resolution.
  */
-final class UnresolvableParameterException extends RuntimeException implements ServiceLocatorException
-{
-}
+final class UnresolvableParameterException extends RuntimeException implements ServiceLocatorException {}

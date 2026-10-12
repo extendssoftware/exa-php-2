@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Server;
 
 use ExtendsSoftware\ExaPHP\Http\Message\Body\Body;
-use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
 use ExtendsSoftware\ExaPHP\Http\Message\Headers;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
-use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
+use ExtendsSoftware\ExaPHP\Http\Server\Exception\ResponseEmissionException;
+use ExtendsSoftware\ExaPHP\Http\Server\PhpResponseEmitter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +20,7 @@ final class PhpResponseEmitterTest extends TestCase
     public function testRejectsUnsupportedEmissionWithoutReadingBody(StatusCode $status, Method $method): void
     {
         $body = $this->createMock(Body::class);
-        $body->expects($this->never())->method('chunks');
+        $body->expects(self::never())->method('chunks');
         $this->expectException(ResponseEmissionException::class);
         new PhpResponseEmitter()->emit(new Response($status, body: $body), $method);
     }

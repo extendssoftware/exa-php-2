@@ -14,10 +14,10 @@ final class HeadersTest extends TestCase
     public function testCaseInsensitiveLookupPreservesFirstSpellingAndSeparateValues(): void
     {
         $headers = new Headers(['Set-Cookie' => ['a=1', 'b=2'], 'set-cookie' => 'c=3', 'X-Empty' => '']);
-        $this->assertTrue($headers->has('SET-COOKIE'));
-        $this->assertSame(['a=1', 'b=2', 'c=3'], $headers->get('set-cookie'));
-        $this->assertSame(['Set-Cookie' => ['a=1', 'b=2', 'c=3'], 'X-Empty' => ['']], $headers->all());
-        $this->assertSame([], $headers->get('absent'));
+        self::assertTrue($headers->has('SET-COOKIE'));
+        self::assertSame(['a=1', 'b=2', 'c=3'], $headers->get('set-cookie'));
+        self::assertSame(['Set-Cookie' => ['a=1', 'b=2', 'c=3'], 'X-Empty' => ['']], $headers->all());
+        self::assertSame([], $headers->get('absent'));
     }
 
     public function testReplacementAppendAndRemovalAreImmutable(): void
@@ -26,19 +26,19 @@ final class HeadersTest extends TestCase
         $added = $headers->withAdded('x-test', 'second');
         $replaced = $added->with('X-TEST', 'third', 'fourth');
         $removed = $replaced->without('x-test');
-        $this->assertSame(['first'], $headers->get('x-test'));
-        $this->assertSame(['X-Test' => ['first', 'second']], $added->all());
-        $this->assertSame(['X-TEST' => ['third', 'fourth']], $replaced->all());
-        $this->assertSame([], $removed->all());
-        $this->assertSame(['X-New' => ['value']], $removed->withAdded('X-New', 'value')->all());
-        $this->assertSame($headers->all(), $headers->without('absent')->all());
+        self::assertSame(['first'], $headers->get('x-test'));
+        self::assertSame(['X-Test' => ['first', 'second']], $added->all());
+        self::assertSame(['X-TEST' => ['third', 'fourth']], $replaced->all());
+        self::assertSame([], $removed->all());
+        self::assertSame(['X-New' => ['value']], $removed->withAdded('X-New', 'value')->all());
+        self::assertSame($headers->all(), $headers->without('absent')->all());
     }
 
     public function testTrimsOnlySurroundingSpacesAndTabsAndAcceptsOpaqueBytes(): void
     {
         $headers = new Headers(['X-Test' => " \talpha\tbeta\x80 \t", 123 => 'numeric name']);
-        $this->assertSame(["alpha\tbeta\x80"], $headers->get('x-test'));
-        $this->assertSame(['numeric name'], $headers->get('123'));
+        self::assertSame(["alpha\tbeta\x80"], $headers->get('x-test'));
+        self::assertSame(['numeric name'], $headers->get('123'));
     }
 
     /**

@@ -54,7 +54,7 @@ final class ReflectionServiceResolverTest extends TestCase
     public function testRejectsRequiredUnionParameters(): void
     {
         $prototype = new readonly class (new stdClass()) {
-            public function __construct(public stdClass|ServiceLocator $dependency) {}
+            public function __construct(public ServiceLocator|stdClass $dependency) {}
         };
 
         $this->expectException(UnresolvableParameterException::class);
@@ -64,7 +64,7 @@ final class ReflectionServiceResolverTest extends TestCase
 
         new ReflectionServiceResolver()->resolve(
             new ReflectionDefinition($prototype::class),
-            $this->createStub(ServiceLocator::class),
+            self::createStub(ServiceLocator::class),
         );
     }
 
@@ -93,7 +93,7 @@ final class ReflectionServiceResolverTest extends TestCase
 
     public function testResolvesRequiredInterfaceDependenciesThroughTheLocator(): void
     {
-        $dependency = $this->createStub(ServiceLocator::class);
+        $dependency = self::createStub(ServiceLocator::class);
         $prototype = new readonly class ($dependency) {
             public function __construct(public ServiceLocator $dependency) {}
         };
@@ -183,7 +183,7 @@ final class ReflectionServiceResolverTest extends TestCase
 
         new ReflectionServiceResolver()->resolve(
             new ReflectionDefinition(AliasDefinition::class),
-            $this->createStub(ServiceLocator::class),
+            self::createStub(ServiceLocator::class),
         );
     }
 
@@ -200,7 +200,7 @@ final class ReflectionServiceResolverTest extends TestCase
 
         new ReflectionServiceResolver()->resolve(
             new ReflectionDefinition($prototype::class),
-            $this->createStub(ServiceLocator::class),
+            self::createStub(ServiceLocator::class),
         );
     }
 
@@ -225,7 +225,7 @@ final class ReflectionServiceResolverTest extends TestCase
         $definition = new ReflectionDefinition('ExaPHP\\MissingService');
 
         try {
-            new ReflectionServiceResolver()->resolve($definition, $this->createStub(ServiceLocator::class));
+            new ReflectionServiceResolver()->resolve($definition, self::createStub(ServiceLocator::class));
             self::fail('Expected a service resolution failure.');
         } catch (ServiceResolutionException $exception) {
             self::assertStringContainsString($definition->className, $exception->getMessage());
@@ -240,7 +240,7 @@ final class ReflectionServiceResolverTest extends TestCase
 
         new ReflectionServiceResolver()->resolve(
             new ReflectionDefinition(ServiceLocator::class),
-            $this->createStub(ServiceLocator::class),
+            self::createStub(ServiceLocator::class),
         );
     }
 
@@ -249,7 +249,7 @@ final class ReflectionServiceResolverTest extends TestCase
         $resolver = new ReflectionServiceResolver();
 
         self::assertTrue($resolver->supports(new ReflectionDefinition(stdClass::class)));
-        self::assertFalse($resolver->supports($this->createStub(ServiceDefinition::class)));
+        self::assertFalse($resolver->supports(self::createStub(ServiceDefinition::class)));
     }
 
     public function testRejectsUnsupportedDefinitionsWithoutConsultingTheLocator(): void
@@ -260,6 +260,6 @@ final class ReflectionServiceResolverTest extends TestCase
 
         $this->expectException(UnsupportedDefinitionException::class);
 
-        new ReflectionServiceResolver()->resolve($this->createStub(ServiceDefinition::class), $locator);
+        new ReflectionServiceResolver()->resolve(self::createStub(ServiceDefinition::class), $locator);
     }
 }

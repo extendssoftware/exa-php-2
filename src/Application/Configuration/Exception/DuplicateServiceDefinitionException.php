@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates that multiple modules define the same service identifier.
  */
-final class DuplicateServiceDefinitionException extends LogicException implements ApplicationException
-{
-}
+final class DuplicateServiceDefinitionException extends LogicException implements ApplicationException {}

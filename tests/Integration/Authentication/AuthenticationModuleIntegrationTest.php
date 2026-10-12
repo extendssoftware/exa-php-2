@@ -48,7 +48,7 @@ final class AuthenticationModuleIntegrationTest extends TestCase
         $actor = new Actor('verified', 'user');
         $untrusted = new Actor('untrusted', 'user');
         $authenticator = $this->createMock(Authenticator::class);
-        $authenticator->expects($this->once())->method('authenticate')->willReturnCallback(
+        $authenticator->expects(self::once())->method('authenticate')->willReturnCallback(
             static function (BearerTokenCredentials $credentials) use ($actor): Actor {
                 self::assertSame('Secret+/._~-==', $credentials->token());
 
@@ -56,7 +56,7 @@ final class AuthenticationModuleIntegrationTest extends TestCase
             },
         );
         $handler = $this->createMock(RequestHandler::class);
-        $handler->expects($this->once())->method('handle')->willReturnCallback(
+        $handler->expects(self::once())->method('handle')->willReturnCallback(
             static function (Request $request) use ($actor): Response {
                 self::assertSame($actor, $request->attributes->get(Actor::class));
                 self::assertSame('42', $request->attributes->get(RouteMatch::class)->parameter('id'));
@@ -75,7 +75,7 @@ final class AuthenticationModuleIntegrationTest extends TestCase
         self::assertSame($untrusted, $request->attributes->get(Actor::class));
     }
 
-    /** @param array<string, string|list<string>> $headers */
+    /** @param array<string, list<string>|string> $headers */
     #[DataProvider('clientFailures')]
     public function testRejectsClientFailuresWithoutResolvingTheHandler(
         array $headers,
@@ -84,11 +84,13 @@ final class AuthenticationModuleIntegrationTest extends TestCase
         string $challenge,
     ): void {
         $authenticator = $this->createMock(Authenticator::class);
-        $authenticator->expects($verify ? $this->once() : $this->never())->method('authenticate')
+        $authenticator->expects($verify ? self::once() : self::never())->method('authenticate')
             ->willThrowException(new InvalidCredentialsException('Private verification details.'));
         $services = $this->services([Authenticator::class => new InstanceDefinition($authenticator)]);
         $request = new Request(
-            Method::Get, new Uri('/private/42?access_token=ignored'), new Headers($headers),
+            Method::Get,
+            new Uri('/private/42?access_token=ignored'),
+            new Headers($headers),
             protocolVersion: ProtocolVersion::Http2,
         )->withAttribute(new Actor('untrusted', 'user'));
         $response = $services->get(RequestHandler::class)->handle($request);
@@ -104,7 +106,7 @@ final class AuthenticationModuleIntegrationTest extends TestCase
         ], json_decode(implode('', iterator_to_array($response->body->chunks())), true, flags: JSON_THROW_ON_ERROR));
     }
 
-    /** @return iterable<string, array{array<string, string|list<string>>, bool, StatusCode, string}> */
+    /** @return iterable<string, array{array<string, list<string>|string>, bool, StatusCode, string}> */
     public static function clientFailures(): iterable
     {
         yield 'missing' => [[], false, StatusCode::Unauthorized, 'Bearer realm="api"'];
@@ -131,12 +133,14 @@ final class AuthenticationModuleIntegrationTest extends TestCase
     #[DataProvider('verificationFailures')]
     public function testVerificationFailuresPropagateUnchanged(Throwable $failure): void
     {
-        $authenticator = $this->createStub(Authenticator::class);
+        $authenticator = self::createStub(Authenticator::class);
         $authenticator->method('authenticate')->willThrowException($failure);
         $next = $this->createMock(RequestHandler::class);
-        $next->expects($this->never())->method('handle');
+        $next->expects(self::never())->method('handle');
         $middleware = new AuthenticationMiddleware(
-            new BearerTokenCredentialsExtractor(), $authenticator, new BearerAuthenticationResponseFactory(),
+            new BearerTokenCredentialsExtractor(),
+            $authenticator,
+            new BearerAuthenticationResponseFactory(),
         );
         try {
             $middleware->process(new Request(Method::Get, new Uri('/'), new Headers([
@@ -158,16 +162,18 @@ final class AuthenticationModuleIntegrationTest extends TestCase
 
     public function testDownstreamCredentialExceptionIsNotTreatedAsAuthenticationRejection(): void
     {
-        $authenticator = $this->createStub(Authenticator::class);
+        $authenticator = self::createStub(Authenticator::class);
         $authenticator->method('authenticate')->willReturn(new Actor('42', 'user'));
-        $handler = $this->createStub(RequestHandler::class);
+        $handler = self::createStub(RequestHandler::class);
         $handler->method('handle')->willThrowException(new InvalidCredentialsException('Downstream failure.'));
         $services = $this->services([
             Authenticator::class => new InstanceDefinition($authenticator),
             'handler' => new InstanceDefinition($handler),
         ]);
         $response = $services->get(RequestHandler::class)->handle(new Request(
-            Method::Get, new Uri('/private/42'), new Headers(['Authorization' => 'Bearer token']),
+            Method::Get,
+            new Uri('/private/42'),
+            new Headers(['Authorization' => 'Bearer token']),
         ));
         self::assertSame(StatusCode::InternalServerError, $response->statusCode);
         self::assertSame([], $response->headers->get('WWW-Authenticate'));
@@ -175,7 +181,7 @@ final class AuthenticationModuleIntegrationTest extends TestCase
 
     public function testPublicRouteDoesNotRequireAnAuthenticatorService(): void
     {
-        $handler = $this->createStub(RequestHandler::class);
+        $handler = self::createStub(RequestHandler::class);
         $handler->method('handle')->willReturn(new Response(StatusCode::Accepted));
         $services = $this->services(['handler' => new InstanceDefinition($handler)]);
         self::assertFalse($services->has(Authenticator::class));

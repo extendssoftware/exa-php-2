@@ -21,9 +21,7 @@ final readonly class TransactionalCommandMiddleware implements CommandMiddleware
      *
      * @param TransactionManager $transactionManager The manager controlling transaction execution.
      */
-    public function __construct(private TransactionManager $transactionManager)
-    {
-    }
+    public function __construct(private TransactionManager $transactionManager) {}
 
     /**
      * {@inheritDoc}

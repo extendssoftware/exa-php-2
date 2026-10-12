@@ -33,32 +33,32 @@ final class PhpServerE2ETest extends TestCase
         $process = proc_open([
             PHP_BINARY, '-d', 'output_buffering=0', '-S', $address, __DIR__ . '/Fixture/server.php',
         ], [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
-        $this->assertIsResource($process);
+        self::assertIsResource($process);
         try {
             stream_set_timeout($pipes[2], 5);
             $startup = fgets($pipes[2]);
-            $this->assertIsString($startup);
-            $this->assertStringContainsString('started', $startup);
+            self::assertIsString($startup);
+            self::assertStringContainsString('started', $startup);
             $response = $this->request($address, 'POST', '/echo?q=%2F', 'payload');
-            $this->assertStringContainsString('200 OK', $response);
-            $this->assertStringContainsString("Set-Cookie: a=1\r\n", $response);
-            $this->assertStringContainsString("Set-Cookie: b=2\r\n", $response);
-            $this->assertStringEndsWith('/echo?q=%2F|value|payload', $response);
-            $this->assertStringEndsWith('streamed response', $this->request($address, 'GET', '/'));
-            $this->assertStringContainsString('200 OK', $this->request($address, 'GET', '/location'));
+            self::assertStringContainsString('200 OK', $response);
+            self::assertStringContainsString("Set-Cookie: a=1\r\n", $response);
+            self::assertStringContainsString("Set-Cookie: b=2\r\n", $response);
+            self::assertStringEndsWith('/echo?q=%2F|value|payload', $response);
+            self::assertStringEndsWith('streamed response', $this->request($address, 'GET', '/'));
+            self::assertStringContainsString('200 OK', $this->request($address, 'GET', '/location'));
             foreach (['/204', '/205', '/304', '/head'] as $path) {
                 $response = $this->request($address, $path === '/head' ? 'HEAD' : 'GET', $path);
                 $expectedStatus = $path === '/head' ? '200' : substr($path, 1);
-                $this->assertStringStartsWith('HTTP/1.1 ' . $expectedStatus . ' ', $response);
-                $this->assertSame('', explode("\r\n\r\n", $response, 2)[1]);
+                self::assertStringStartsWith('HTTP/1.1 ' . $expectedStatus . ' ', $response);
+                self::assertSame('', explode("\r\n\r\n", $response, 2)[1]);
                 if ($path === '/204') {
-                    $this->assertStringNotContainsString('Content-Length:', $response);
+                    self::assertStringNotContainsString('Content-Length:', $response);
                 }
                 if ($path === '/205') {
-                    $this->assertStringContainsString('Content-Length: 0', $response);
+                    self::assertStringContainsString('Content-Length: 0', $response);
                 }
             }
-            $this->assertStringEndsWith('already sent|emission rejected', $this->request($address, 'GET', '/sent'));
+            self::assertStringEndsWith('already sent|emission rejected', $this->request($address, 'GET', '/sent'));
         } finally {
             proc_terminate($process);
             foreach ($pipes as $pipe) {

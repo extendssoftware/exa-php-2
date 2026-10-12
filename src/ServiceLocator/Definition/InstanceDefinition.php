@@ -14,7 +14,5 @@ final readonly class InstanceDefinition implements ServiceDefinition
      *
      * @param object $instance The existing service instance.
      */
-    public function __construct(public object $instance)
-    {
-    }
+    public function __construct(public object $instance) {}
 }

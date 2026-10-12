@@ -30,8 +30,7 @@ final readonly class ConsumeCommand implements CommandHandler
         private MessageProcessor $processor,
         private WorkerSettings $settings,
         private WorkerControl $control,
-    ) {
-    }
+    ) {}
 
     /**
      * {@inheritDoc}

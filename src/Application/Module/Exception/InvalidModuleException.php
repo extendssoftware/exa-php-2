@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a class cannot be registered as an application module.
  */
-final class InvalidModuleException extends InvalidArgumentException implements ApplicationException
-{
-}
+final class InvalidModuleException extends InvalidArgumentException implements ApplicationException {}

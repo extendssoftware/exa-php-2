@@ -24,9 +24,7 @@ final readonly class PublishingMessageDelivery implements MessageDelivery
      *
      * @param MessagePublisher $publisher The destination accepting messages for durable distribution.
      */
-    public function __construct(private MessagePublisher $publisher)
-    {
-    }
+    public function __construct(private MessagePublisher $publisher) {}
 
     /**
      * {@inheritDoc}

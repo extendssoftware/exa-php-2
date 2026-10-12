@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates a repeated command name in a registry.
  */
-final class DuplicateCommandException extends LogicException implements CliException
-{
-}
+final class DuplicateCommandException extends LogicException implements CliException {}

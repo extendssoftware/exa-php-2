@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that an operational failure prevented credential verification.
  */
-final class AuthenticationFailedException extends RuntimeException implements AuthenticationException
-{
-}
+final class AuthenticationFailedException extends RuntimeException implements AuthenticationException {}

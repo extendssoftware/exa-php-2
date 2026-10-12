@@ -8,9 +8,9 @@ use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use ExtendsSoftware\ExaPHP\Http\Server\ResponseEmitter;
 use ExtendsSoftware\ExaPHP\Http\Server\ServerRequestFactory;
-use ExtendsSoftware\ExaPHP\Http\Message\Uri;
 use TypeError;
 
 /**
@@ -30,9 +30,7 @@ final class RunnerServices implements ServerRequestFactory, RequestHandler, Resp
      *
      * @param string $failureStage The operation that should fail, or an empty string.
      */
-    public function __construct(private readonly string $failureStage = '')
-    {
-    }
+    public function __construct(private readonly string $failureStage = '') {}
 
     /**
      * Creates a HEAD request.

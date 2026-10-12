@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a logging destination could not be opened.
  */
-final class LogStreamOpenException extends RuntimeException implements LoggingException
-{
-}
+final class LogStreamOpenException extends RuntimeException implements LoggingException {}

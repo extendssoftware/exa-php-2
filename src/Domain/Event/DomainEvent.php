@@ -9,6 +9,4 @@ use ExtendsSoftware\ExaPHP\Event\Event;
 /**
  * Describes a fact that occurred in the domain.
  */
-interface DomainEvent extends Event
-{
-}
+interface DomainEvent extends Event {}

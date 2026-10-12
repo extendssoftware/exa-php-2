@@ -29,7 +29,7 @@ final readonly class Headers
     /**
      * Creates headers, merging repeated names case-insensitively without joining their values.
      *
-     * @param array<array-key, string|non-empty-list<string>> $headers Names mapped to one or more field values.
+     * @param array<array-key, non-empty-list<string>|string> $headers Names mapped to one or more field values.
      *
      * @throws InvalidHeaderException When a name or value is invalid or a value list is empty or not a list.
      */

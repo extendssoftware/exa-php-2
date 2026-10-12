@@ -20,7 +20,7 @@ final class ExceptionMappingFactoryTest extends TestCase
     #[DataProvider('invalidConfiguration')]
     public function testRejectsMalformedRegistrationConfiguration(array $values): void
     {
-        $services = $this->createStub(ServiceLocator::class);
+        $services = self::createStub(ServiceLocator::class);
         $services->method('get')->willReturn(new Configuration($values));
         $this->expectException(InvalidHttpConfigurationException::class);
         new ExceptionMappingFactory()->create($services);
@@ -39,7 +39,7 @@ final class ExceptionMappingFactoryTest extends TestCase
 
     public function testRejectsIncompatibleMapperServices(): void
     {
-        $services = $this->createStub(ServiceLocator::class);
+        $services = self::createStub(ServiceLocator::class);
         $services->method('get')->willReturnMap([
             [Configuration::class, new Configuration(['http' => ['exceptionMappers' => ['name' => 'mapper']]])],
             [ProblemDetailsResponseFactory::class, new ProblemDetailsResponseFactory()],

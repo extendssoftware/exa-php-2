@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates an invalid mapping from subscriber identifiers to services.
  */
-final class InvalidSubscriberMappingException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidSubscriberMappingException extends InvalidArgumentException implements IntegrationException {}

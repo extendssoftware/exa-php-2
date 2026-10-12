@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid logging integration configuration.
  */
-final class InvalidLoggingConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidLoggingConfigurationException extends InvalidArgumentException implements IntegrationException {}

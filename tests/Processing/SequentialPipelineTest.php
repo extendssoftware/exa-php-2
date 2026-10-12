@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Processing;
 
-use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
-use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Exception\AmbiguousPipelineStepException;
-use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
+use ExtendsSoftware\ExaPHP\Processing\FailedProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\ProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\SequentialPipeline;
+use ExtendsSoftware\ExaPHP\Processing\SuccessfulProcessingResult;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\String\StringToInteger;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\String\TrimString;
 use ExtendsSoftware\ExaPHP\Processing\Transformation\Transformer;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidIntegerRangeException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Number\IntegerRange;
 use ExtendsSoftware\ExaPHP\Processing\Validation\String\NotBlank;
 use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
@@ -30,10 +30,10 @@ final class SequentialPipelineTest extends TestCase
     {
         $pipeline = new SequentialPipeline();
         $object = new stdClass();
-        $this->assertSame($object, $pipeline->process($object)->value());
+        self::assertSame($object, $pipeline->process($object)->value());
         $result = $pipeline->process(null);
-        $this->assertTrue($result->isValid());
-        $this->assertNull($result->value());
+        self::assertTrue($result->isValid());
+        self::assertNull($result->value());
     }
 
     #[DataProvider('inputs')]
@@ -45,11 +45,11 @@ final class SequentialPipelineTest extends TestCase
         $pipeline->append(new StringToInteger());
         $pipeline->append(new IntegerRange(1, 100));
         $result = $pipeline->process($input);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code === null) {
-            $this->assertSame(42, $result->value());
+            self::assertSame(42, $result->value());
         } else {
-            $this->assertSame($code, $result->violations()[0]->code());
+            self::assertSame($code, $result->violations()[0]->code());
         }
     }
 
@@ -69,13 +69,13 @@ final class SequentialPipelineTest extends TestCase
     {
         $failure = new FailedProcessingResult(new Violation('invalid', 'Invalid'));
         $transformer = $this->createMock(Transformer::class);
-        $transformer->expects($this->once())->method('transform')->willReturn($failure);
+        $transformer->expects(self::once())->method('transform')->willReturn($failure);
         $later = $this->createMock(Validator::class);
-        $later->expects($this->never())->method('validate');
+        $later->expects(self::never())->method('validate');
         $pipeline = new SequentialPipeline();
         $pipeline->append($transformer);
         $pipeline->append($later);
-        $this->assertSame($failure, $pipeline->process('input'));
+        self::assertSame($failure, $pipeline->process('input'));
     }
 
     public function testFailedValidationStopsAndPreservesAllViolations(): void
@@ -83,65 +83,65 @@ final class SequentialPipelineTest extends TestCase
         $first = new Violation('first', 'First', ['field']);
         $second = new Violation('second', 'Second');
         $validator = $this->createMock(Validator::class);
-        $validator->expects($this->once())->method('validate')->willReturn(new ValidationResult($first, $second));
+        $validator->expects(self::once())->method('validate')->willReturn(new ValidationResult($first, $second));
         $later = $this->createMock(Transformer::class);
-        $later->expects($this->never())->method('transform');
+        $later->expects(self::never())->method('transform');
         $pipeline = new SequentialPipeline();
         $pipeline->append($validator);
         $pipeline->append($later);
-        $this->assertSame([$first, $second], $pipeline->process('input')->violations());
+        self::assertSame([$first, $second], $pipeline->process('input')->violations());
     }
 
     public function testRepeatedStepsAndCallsUseCurrentValue(): void
     {
         $step = $this->createMock(Transformer::class);
-        $step->expects($this->exactly(4))->method('transform')->willReturnCallback(
+        $step->expects(self::exactly(4))->method('transform')->willReturnCallback(
             static fn(int $value): ProcessingResult => new SuccessfulProcessingResult($value + 1),
         );
         $pipeline = new SequentialPipeline();
         $pipeline->append($step);
         $pipeline->append($step);
-        $this->assertSame(3, $pipeline->process(1)->value());
-        $this->assertSame(12, $pipeline->process(10)->value());
+        self::assertSame(3, $pipeline->process(1)->value());
+        self::assertSame(12, $pipeline->process(10)->value());
     }
 
     public function testRejectsAmbiguousStepWithoutExecutingItOrChangingRegistrations(): void
     {
         $step = $this->createMockForIntersectionOfInterfaces([Transformer::class, Validator::class]);
-        $step->expects($this->never())->method('transform');
-        $step->expects($this->never())->method('validate');
+        $step->expects(self::never())->method('transform');
+        $step->expects(self::never())->method('validate');
         $pipeline = new SequentialPipeline();
         $pipeline->append(new TrimString());
 
         try {
             $pipeline->append($step);
-            $this->fail('Expected ambiguous step rejection.');
+            self::fail('Expected ambiguous step rejection.');
         } catch (AmbiguousPipelineStepException $exception) {
-            $this->assertSame(
+            self::assertSame(
                 'A pipeline step must implement either Transformer or Validator, not both.',
                 $exception->getMessage(),
             );
         }
 
         $pipeline->append(new StringToInteger());
-        $this->assertSame(42, $pipeline->process(' 42 ')->value());
+        self::assertSame(42, $pipeline->process(' 42 ')->value());
     }
 
     #[DataProvider('failures')]
     public function testExceptionsStopExecutionAndPropagateUnchanged(Throwable $failure): void
     {
         $step = $this->createMock(Validator::class);
-        $step->expects($this->once())->method('validate')->willThrowException($failure);
+        $step->expects(self::once())->method('validate')->willThrowException($failure);
         $later = $this->createMock(Transformer::class);
-        $later->expects($this->never())->method('transform');
+        $later->expects(self::never())->method('transform');
         $pipeline = new SequentialPipeline();
         $pipeline->append($step);
         $pipeline->append($later);
         try {
             $pipeline->process('input');
-            $this->fail('Expected a failure.');
+            self::fail('Expected a failure.');
         } catch (Throwable $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 

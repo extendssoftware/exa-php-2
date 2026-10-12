@@ -22,8 +22,8 @@ use ExtendsSoftware\ExaPHP\Outbox\Processing\OutboxStore;
 use ExtendsSoftware\ExaPHP\Outbox\Retry\FixedDelayRetryPolicy;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use TypeError;
 use Throwable;
+use TypeError;
 
 final class WorkCommandTest extends TestCase
 {
@@ -32,17 +32,18 @@ final class WorkCommandTest extends TestCase
     {
         $claim = $available ? $this->claim() : null;
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($claim);
-        $store->expects($available ? $this->once() : $this->never())->method('complete');
+        $store->expects(self::once())->method('claim')->willReturn($claim);
+        $store->expects($available ? self::once() : self::never())->method('complete');
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->never())->method('start');
-        $control->expects($this->never())->method('wait');
-        $control->expects($this->never())->method('finish');
+        $control->expects(self::never())->method('start');
+        $control->expects(self::never())->method('wait');
+        $control->expects(self::never())->method('finish');
 
         $command = $this->command($store, $control);
 
         self::assertSame(0, $command->handle(
-            new Input('outbox:work', options: ['once' => true]), $this->createStub(Output::class),
+            new Input('outbox:work', options: ['once' => true]),
+            self::createStub(Output::class),
         ));
     }
 
@@ -58,23 +59,24 @@ final class WorkCommandTest extends TestCase
         $claim = $this->claim();
         $stopped = false;
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->exactly(3))->method('claim')->willReturn($claim, $claim, null);
-        $store->expects($this->exactly(2))->method('complete')->with($claim);
+        $store->expects(self::exactly(3))->method('claim')->willReturn($claim, $claim, null);
+        $store->expects(self::exactly(2))->method('complete')->with($claim);
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start');
+        $control->expects(self::once())->method('start');
         // Capture by reference so a stop during the wait is visible to the next loop check.
         $control->method('stopRequested')->willReturnCallback(static function () use (&$stopped): bool {
             return $stopped;
         });
-        $control->expects($this->once())->method('wait')->with(2)->willReturnCallback(
+        $control->expects(self::once())->method('wait')->with(2)->willReturnCallback(
             static function () use (&$stopped): void {
                 $stopped = true;
             },
         );
-        $control->expects($this->once())->method('finish');
+        $control->expects(self::once())->method('finish');
 
         self::assertSame(0, $this->command($store, $control)->handle(
-            new Input('outbox:work'), $this->createStub(Output::class),
+            new Input('outbox:work'),
+            self::createStub(Output::class),
         ));
     }
 
@@ -83,43 +85,46 @@ final class WorkCommandTest extends TestCase
         $claim = $this->claim();
         $stopped = false;
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start');
+        $control->expects(self::once())->method('start');
         $control->method('stopRequested')->willReturnCallback(static function () use (&$stopped): bool {
             return $stopped;
         });
-        $control->expects($this->never())->method('wait');
-        $control->expects($this->once())->method('finish');
+        $control->expects(self::never())->method('wait');
+        $control->expects(self::once())->method('finish');
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willReturn($claim);
-        $store->expects($this->once())->method('complete')->with($claim)->willReturnCallback(
+        $store->expects(self::once())->method('claim')->willReturn($claim);
+        $store->expects(self::once())->method('complete')->with($claim)->willReturnCallback(
             static function () use (&$stopped): void {
                 self::assertTrue($stopped);
             },
         );
-        $delivery = $this->createStub(MessageDelivery::class);
+        $delivery = self::createStub(MessageDelivery::class);
         $delivery->method('deliver')->willReturnCallback(static function () use (&$stopped): void {
             $stopped = true;
         });
         $processor = new OutboxProcessor(
-            $store, $delivery, new FixedDelayRetryPolicy(1, 3), new FrozenClock($claim->message->createdAt),
+            $store,
+            $delivery,
+            new FixedDelayRetryPolicy(1, 3),
+            new FrozenClock($claim->message->createdAt),
         );
         $command = new WorkCommand($processor, new WorkerSettings(), $control);
 
-        self::assertSame(0, $command->handle(new Input('outbox:work'), $this->createStub(Output::class)));
+        self::assertSame(0, $command->handle(new Input('outbox:work'), self::createStub(Output::class)));
     }
 
     #[DataProvider('failures')]
     public function testFailuresStopPollingAndRestoreControl(Throwable $failure): void
     {
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->once())->method('claim')->willThrowException($failure);
+        $store->expects(self::once())->method('claim')->willThrowException($failure);
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start');
+        $control->expects(self::once())->method('start');
         $control->method('stopRequested')->willReturn(false);
-        $control->expects($this->never())->method('wait');
-        $control->expects($this->once())->method('finish');
+        $control->expects(self::never())->method('wait');
+        $control->expects(self::once())->method('finish');
         try {
-            $this->command($store, $control)->handle(new Input('outbox:work'), $this->createStub(Output::class));
+            $this->command($store, $control)->handle(new Input('outbox:work'), self::createStub(Output::class));
             self::fail('Expected processing failure.');
         } catch (Throwable $exception) {
             self::assertSame($failure, $exception);
@@ -137,13 +142,13 @@ final class WorkCommandTest extends TestCase
     {
         $failure = new OutboxStoreException('Database unavailable.');
         $cleanup = new WorkerControlException('Signal cleanup failed.');
-        $store = $this->createStub(OutboxStore::class);
+        $store = self::createStub(OutboxStore::class);
         $store->method('claim')->willThrowException($failure);
-        $control = $this->createStub(WorkerControl::class);
+        $control = self::createStub(WorkerControl::class);
         $control->method('stopRequested')->willReturn(false);
         $control->method('finish')->willThrowException($cleanup);
         try {
-            $this->command($store, $control)->handle(new Input('outbox:work'), $this->createStub(Output::class));
+            $this->command($store, $control)->handle(new Input('outbox:work'), self::createStub(Output::class));
             self::fail('Expected combined failure.');
         } catch (WorkerRunException $exception) {
             self::assertSame($failure, $exception->getPrevious());
@@ -154,21 +159,21 @@ final class WorkCommandTest extends TestCase
     public function testStartupFailureDoesNotClaimAMessage(): void
     {
         $store = $this->createMock(OutboxStore::class);
-        $store->expects($this->never())->method('claim');
+        $store->expects(self::never())->method('claim');
         $control = $this->createMock(WorkerControl::class);
-        $control->expects($this->once())->method('start')
+        $control->expects(self::once())->method('start')
             ->willThrowException(new WorkerControlException('PCNTL unavailable.'));
-        $control->expects($this->never())->method('finish');
+        $control->expects(self::never())->method('finish');
         $this->expectException(WorkerControlException::class);
 
-        $this->command($store, $control)->handle(new Input('outbox:work'), $this->createStub(Output::class));
+        $this->command($store, $control)->handle(new Input('outbox:work'), self::createStub(Output::class));
     }
 
     private function command(OutboxStore $store, WorkerControl $control): WorkCommand
     {
         $processor = new OutboxProcessor(
             $store,
-            $this->createStub(MessageDelivery::class),
+            self::createStub(MessageDelivery::class),
             new FixedDelayRetryPolicy(60, 3),
             new FrozenClock(new DateTimeImmutable('2026-10-07T12:00:00Z')),
         );

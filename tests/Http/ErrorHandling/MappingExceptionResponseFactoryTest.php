@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\ErrorHandling;
 
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\Exception\InvalidExceptionProblemDetailsMapperException;
-use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ExceptionResponseFactory;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\MappingExceptionResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\Exception\InvalidExceptionProblemDetailsMapperException;
+use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ExceptionProblemDetailsMapper;
 use ExtendsSoftware\ExaPHP\Http\ErrorHandling\ProblemDetails\ProblemDetails;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
@@ -32,28 +32,28 @@ final class MappingExceptionResponseFactoryTest extends TestCase
         $request = new Request(Method::Get, new Uri('/'), protocolVersion: ProtocolVersion::Http2);
         $calls = [];
         $first = $this->createMock(ExceptionProblemDetailsMapper::class);
-        $first->expects($this->once())->method('map')->with($this->identicalTo($exception), $this->identicalTo($request))
+        $first->expects(self::once())->method('map')->with(self::identicalTo($exception), self::identicalTo($request))
             ->willReturnCallback(static function () use (&$calls): ?ProblemDetails {
                 $calls[] = 'first';
 
                 return null;
             });
         $second = $this->createMock(ExceptionProblemDetailsMapper::class);
-        $second->expects($this->once())->method('map')->with($this->identicalTo($exception), $this->identicalTo($request))
+        $second->expects(self::once())->method('map')->with(self::identicalTo($exception), self::identicalTo($request))
             ->willReturnCallback(static function () use (&$calls): ProblemDetails {
                 $calls[] = 'second';
 
                 return new ProblemDetails(StatusCode::Conflict, 'Conflict', extensions: ['id' => 42]);
             });
         $third = $this->createMock(ExceptionProblemDetailsMapper::class);
-        $third->expects($this->never())->method('map');
+        $third->expects(self::never())->method('map');
         $fallback = $this->createMock(ExceptionResponseFactory::class);
-        $fallback->expects($this->never())->method('create');
+        $fallback->expects(self::never())->method('create');
         $response = new MappingExceptionResponseFactory([$first, $second, $third], $fallback)->create($exception, $request);
-        $this->assertSame(['first', 'second'], $calls);
-        $this->assertSame(StatusCode::Conflict, $response->statusCode);
-        $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
-        $this->assertSame(42, json_decode(implode('', iterator_to_array($response->body->chunks())), true)['id']);
+        self::assertSame(['first', 'second'], $calls);
+        self::assertSame(StatusCode::Conflict, $response->statusCode);
+        self::assertSame(ProtocolVersion::Http2, $response->protocolVersion);
+        self::assertSame(42, json_decode(implode('', iterator_to_array($response->body->chunks())), true)['id']);
     }
 
     public function testUnmatchedFailureReachesFallbackUnchanged(): void
@@ -61,30 +61,31 @@ final class MappingExceptionResponseFactoryTest extends TestCase
         $exception = new TypeError('original');
         $request = new Request(Method::Get, new Uri('/'));
         $response = new Response();
-        $mapper = $this->createStub(ExceptionProblemDetailsMapper::class);
+        $mapper = self::createStub(ExceptionProblemDetailsMapper::class);
         $mapper->method('map')->willReturn(null);
         $fallback = $this->createMock(ExceptionResponseFactory::class);
-        $fallback->expects($this->once())->method('create')
-            ->with($this->identicalTo($exception), $this->identicalTo($request))->willReturn($response);
-        $this->assertSame($response, new MappingExceptionResponseFactory([$mapper], $fallback)->create($exception, $request));
+        $fallback->expects(self::once())->method('create')
+            ->with(self::identicalTo($exception), self::identicalTo($request))->willReturn($response);
+        self::assertSame($response, new MappingExceptionResponseFactory([$mapper], $fallback)->create($exception, $request));
     }
 
     public function testMapperFailurePropagatesWithoutContinuing(): void
     {
         $failure = new TypeError('mapping failed');
-        $mapper = $this->createStub(ExceptionProblemDetailsMapper::class);
+        $mapper = self::createStub(ExceptionProblemDetailsMapper::class);
         $mapper->method('map')->willThrowException($failure);
         $later = $this->createMock(ExceptionProblemDetailsMapper::class);
-        $later->expects($this->never())->method('map');
+        $later->expects(self::never())->method('map');
         $fallback = $this->createMock(ExceptionResponseFactory::class);
-        $fallback->expects($this->never())->method('create');
+        $fallback->expects(self::never())->method('create');
         try {
             new MappingExceptionResponseFactory([$mapper, $later], $fallback)->create(
-                new TypeError('original'), new Request(Method::Get, new Uri('/')),
+                new TypeError('original'),
+                new Request(Method::Get, new Uri('/')),
             );
-            $this->fail('Expected mapper failure.');
+            self::fail('Expected mapper failure.');
         } catch (TypeError $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 
@@ -93,7 +94,7 @@ final class MappingExceptionResponseFactoryTest extends TestCase
     public function testRejectsInvalidMappers(array $mappers): void
     {
         $this->expectException(InvalidExceptionProblemDetailsMapperException::class);
-        new MappingExceptionResponseFactory($mappers, $this->createStub(ExceptionResponseFactory::class));
+        new MappingExceptionResponseFactory($mappers, self::createStub(ExceptionResponseFactory::class));
     }
 
     /** @return iterable<array{array<array-key, mixed>}> */

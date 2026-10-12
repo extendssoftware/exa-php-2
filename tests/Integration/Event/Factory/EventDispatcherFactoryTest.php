@@ -7,8 +7,8 @@ namespace ExtendsSoftware\ExaPHP\Tests\Integration\Event\Factory;
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
 use ExtendsSoftware\ExaPHP\Application\Configuration\ConfigurationMerger;
 use ExtendsSoftware\ExaPHP\Application\Factory\ServiceLocatorFactory;
-use ExtendsSoftware\ExaPHP\Event\Listener\EventListener;
 use ExtendsSoftware\ExaPHP\Event\Exception\InvalidEventRegistrationException;
+use ExtendsSoftware\ExaPHP\Event\Listener\EventListener;
 use ExtendsSoftware\ExaPHP\Integration\Event\Exception\InvalidEventConfigurationException;
 use ExtendsSoftware\ExaPHP\Integration\Event\Factory\EventDispatcherFactory;
 use ExtendsSoftware\ExaPHP\ServiceLocator\Definition\FactoryDefinition;
@@ -121,7 +121,7 @@ final class EventDispatcherFactoryTest extends TestCase
 
     public function testRejectsAnIncorrectConfigurationService(): void
     {
-        $locator = $this->createStub(ServiceLocator::class);
+        $locator = self::createStub(ServiceLocator::class);
         $locator->method('get')->willReturn(new stdClass());
         $this->expectException(InvalidEventConfigurationException::class);
         new EventDispatcherFactory()->create($locator);

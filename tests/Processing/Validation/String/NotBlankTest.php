@@ -12,21 +12,21 @@ final class NotBlankTest extends TestCase
 {
     public function testViolationCodesRemainStable(): void
     {
-        $this->assertSame('not_string', NotBlank::CODE_NOT_STRING);
-        $this->assertSame('blank_string', NotBlank::CODE_BLANK_STRING);
+        self::assertSame('not_string', NotBlank::CODE_NOT_STRING);
+        self::assertSame('blank_string', NotBlank::CODE_BLANK_STRING);
     }
 
     #[DataProvider('inputs')]
     public function testInput(mixed $input, ?string $code): void
     {
         $result = new NotBlank()->validate($input);
-        $this->assertSame($code === null, $result->isValid());
+        self::assertSame($code === null, $result->isValid());
         if ($code !== null) {
-            $this->assertCount(1, $result->violations());
-            $this->assertSame($code, $result->violations()[0]->code());
-            $this->assertSame([], $result->violations()[0]->path());
+            self::assertCount(1, $result->violations());
+            self::assertSame($code, $result->violations()[0]->code());
+            self::assertSame([], $result->violations()[0]->path());
         } else {
-            $this->assertSame([], $result->violations());
+            self::assertSame([], $result->violations());
 
         }
     }

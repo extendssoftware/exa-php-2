@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that a delivery receipt does not identify a valid outstanding attempt for the consumer.
  */
-final class UnavailableDeliveryException extends RuntimeException implements MessagingException
-{
-}
+final class UnavailableDeliveryException extends RuntimeException implements MessagingException {}

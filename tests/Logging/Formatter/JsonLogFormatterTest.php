@@ -92,8 +92,8 @@ final class JsonLogFormatterTest extends TestCase
         $setting = ini_get('zend.exception_ignore_args');
         ini_set('zend.exception_ignore_args', '0');
         try {
-            $factory = static fn(string $secret): RuntimeException =>
-                new RuntimeException('Failure', 42, new TypeError('Cause'));
+            $factory = static fn(string $secret): RuntimeException
+                => new RuntimeException('Failure', 42, new TypeError('Cause'));
             $exception = $factory('sensitive-argument');
             self::assertArrayHasKey('args', $exception->getTrace()[0]);
             $line = new JsonLogFormatter()->format($this->record(['exception' => $exception]));

@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates that a module class has already been registered.
  */
-final class DuplicateModuleException extends LogicException implements ApplicationException
-{
-}
+final class DuplicateModuleException extends LogicException implements ApplicationException {}

@@ -28,7 +28,7 @@ final class FactoryDefinitionTest extends TestCase
         $service = new stdClass();
         $locator = $this->createMock(ServiceLocator::class);
         $locator->expects(self::once())->method('get')->with('service')->willReturn($service);
-        $factory = static fn (ServiceLocator $locator): object => $locator->get('service');
+        $factory = static fn(ServiceLocator $locator): object => $locator->get('service');
 
         $definition = new FactoryDefinition([$factory, '__invoke']);
 

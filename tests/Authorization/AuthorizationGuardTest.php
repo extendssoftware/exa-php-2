@@ -22,7 +22,7 @@ final class AuthorizationGuardTest extends TestCase
     {
         $request = new AuthorizationRequest(new Actor('42', 'user'), 'article.create');
         $authorizer = $this->createMock(Authorizer::class);
-        $authorizer->expects($this->once())->method('isGranted')->with($this->identicalTo($request))->willReturn(true);
+        $authorizer->expects(self::once())->method('isGranted')->with(self::identicalTo($request))->willReturn(true);
 
         new AuthorizationGuard($authorizer)->assertGranted($request);
     }
@@ -31,7 +31,7 @@ final class AuthorizationGuardTest extends TestCase
     {
         $request = new AuthorizationRequest(new Actor('42', 'user'), 'article.create');
         $authorizer = $this->createMock(Authorizer::class);
-        $authorizer->expects($this->once())->method('isGranted')->with($this->identicalTo($request))->willReturn(false);
+        $authorizer->expects(self::once())->method('isGranted')->with(self::identicalTo($request))->willReturn(false);
 
         try {
             new AuthorizationGuard($authorizer)->assertGranted($request);
@@ -48,7 +48,7 @@ final class AuthorizationGuardTest extends TestCase
     {
         $request = new AuthorizationRequest(new Actor('42', 'user'), 'article.create');
         $authorizer = $this->createMock(Authorizer::class);
-        $authorizer->expects($this->once())->method('isGranted')->with($this->identicalTo($request))
+        $authorizer->expects(self::once())->method('isGranted')->with(self::identicalTo($request))
             ->willThrowException($failure);
 
         try {

@@ -25,8 +25,7 @@ final readonly class Response
         public Headers $headers = new Headers(),
         public Body $body = new StringBody(),
         public ProtocolVersion $protocolVersion = ProtocolVersion::Http11,
-    ) {
-    }
+    ) {}
 
     /**
      * Returns a response with a replacement status code.

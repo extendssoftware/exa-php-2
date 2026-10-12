@@ -10,6 +10,4 @@ use LogicException;
 /**
  * Indicates a route pattern that cannot produce a path-only URL.
  */
-final class UnsupportedRouteUrlException extends LogicException implements HttpException
-{
-}
+final class UnsupportedRouteUrlException extends LogicException implements HttpException {}

@@ -30,9 +30,9 @@ final class CommandDispatcherTest extends TestCase
             new CommandDefinition('unused', 'unused'),
             new CommandDefinition('greet', 'greeting', arguments: [new ArgumentDefinition('name')]),
         ]);
-        $output = $this->createStub(Output::class);
+        $output = self::createStub(Output::class);
         $handler = $this->createMock(CommandHandler::class);
-        $handler->expects($this->once())->method('handle')->willReturnCallback(
+        $handler->expects(self::once())->method('handle')->willReturnCallback(
             function (Input $input, Output $actualOutput) use ($output): int {
                 $this->assertSame('greet', $input->command);
                 $this->assertSame(['name' => 'Ada'], $input->arguments);
@@ -42,20 +42,20 @@ final class CommandDispatcherTest extends TestCase
             },
         );
         $resolver = $this->createMock(HandlerResolver::class);
-        $resolver->expects($this->once())->method('resolve')->with('greeting')->willReturn($handler);
+        $resolver->expects(self::once())->method('resolve')->with('greeting')->willReturn($handler);
         $dispatcher = new CommandDispatcher($registry, new ArgvInputParser(), $resolver);
-        $this->assertSame(17, $dispatcher->dispatch('greet', ['Ada'], $output));
+        self::assertSame(17, $dispatcher->dispatch('greet', ['Ada'], $output));
     }
 
     public function testUnknownCommandDoesNotParseOrResolve(): void
     {
         $parser = $this->createMock(InputParser::class);
-        $parser->expects($this->never())->method('parse');
+        $parser->expects(self::never())->method('parse');
         $resolver = $this->createMock(HandlerResolver::class);
-        $resolver->expects($this->never())->method('resolve');
+        $resolver->expects(self::never())->method('resolve');
         $dispatcher = new CommandDispatcher(new RegisteredCommands(), $parser, $resolver);
         $this->expectException(CommandNotFoundException::class);
-        $dispatcher->dispatch('missing', [], $this->createStub(Output::class));
+        $dispatcher->dispatch('missing', [], self::createStub(Output::class));
     }
 
     public function testInvalidInputDoesNotResolveHandler(): void
@@ -64,35 +64,36 @@ final class CommandDispatcherTest extends TestCase
             new CommandDefinition('greet', 'handler', arguments: [new ArgumentDefinition('name')]),
         ]);
         $resolver = $this->createMock(HandlerResolver::class);
-        $resolver->expects($this->never())->method('resolve');
+        $resolver->expects(self::never())->method('resolve');
         $dispatcher = new CommandDispatcher($registry, new ArgvInputParser(), $resolver);
         $this->expectException(MissingArgumentException::class);
-        $dispatcher->dispatch('greet', [], $this->createStub(Output::class));
+        $dispatcher->dispatch('greet', [], self::createStub(Output::class));
     }
 
     #[DataProvider('failures')]
     public function testResolutionAndExecutionFailuresPropagateUnchanged(
         Throwable $failure,
         bool $duringResolution,
-    ): void
-    {
+    ): void {
         $handler = $this->createMock(CommandHandler::class);
         $resolver = $this->createMock(HandlerResolver::class);
         if ($duringResolution) {
-            $resolver->expects($this->once())->method('resolve')->willThrowException($failure);
-            $handler->expects($this->never())->method('handle');
+            $resolver->expects(self::once())->method('resolve')->willThrowException($failure);
+            $handler->expects(self::never())->method('handle');
         } else {
-            $resolver->expects($this->once())->method('resolve')->willReturn($handler);
-            $handler->expects($this->once())->method('handle')->willThrowException($failure);
+            $resolver->expects(self::once())->method('resolve')->willReturn($handler);
+            $handler->expects(self::once())->method('handle')->willThrowException($failure);
         }
         $dispatcher = new CommandDispatcher(
-            new RegisteredCommands([new CommandDefinition('run', 'handler')]), new ArgvInputParser(), $resolver,
+            new RegisteredCommands([new CommandDefinition('run', 'handler')]),
+            new ArgvInputParser(),
+            $resolver,
         );
         try {
-            $dispatcher->dispatch('run', [], $this->createStub(Output::class));
-            $this->fail('Expected dispatch failure.');
+            $dispatcher->dispatch('run', [], self::createStub(Output::class));
+            self::fail('Expected dispatch failure.');
         } catch (Throwable $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 

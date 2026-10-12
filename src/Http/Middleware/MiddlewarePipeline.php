@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Http\Middleware;
 
-use Override;
-use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\InvalidMiddlewareException;
 use ExtendsSoftware\ExaPHP\Http\Handler\RequestHandler;
 use ExtendsSoftware\ExaPHP\Http\Message\Request;
 use ExtendsSoftware\ExaPHP\Http\Message\Response;
+use ExtendsSoftware\ExaPHP\Http\Middleware\Exception\InvalidMiddlewareException;
+use Override;
 use SensitiveParameter;
 
 use function array_is_list;

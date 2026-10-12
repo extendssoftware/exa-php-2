@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that writing CLI output failed before all bytes were delivered.
  */
-final class OutputWriteException extends RuntimeException implements CliException
-{
-}
+final class OutputWriteException extends RuntimeException implements CliException {}

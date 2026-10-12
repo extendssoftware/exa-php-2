@@ -17,16 +17,16 @@ final class TransactionalCommandMiddlewareIntegrationTest extends TestCase
     public function testCommandBusRunsHandlerWithinTransactionalOperation(): void
     {
         $calls = [];
-        $command = $this->createStub(Command::class);
+        $command = self::createStub(Command::class);
         $context = new DispatchContext();
         $handler = $this->createMock(CommandHandler::class);
-        $handler->expects($this->once())->method('handle')->with($command)->willReturnCallback(
+        $handler->expects(self::once())->method('handle')->with($command)->willReturnCallback(
             static function () use (&$calls): void {
                 $calls[] = 'handle';
             },
         );
         $manager = $this->createMock(TransactionManager::class);
-        $manager->expects($this->once())->method('transactional')->willReturnCallback(
+        $manager->expects(self::once())->method('transactional')->willReturnCallback(
             static function (callable $operation) use (&$calls): mixed {
                 $calls[] = 'enter';
                 $result = $operation();
@@ -40,6 +40,6 @@ final class TransactionalCommandMiddlewareIntegrationTest extends TestCase
             [new TransactionalCommandMiddleware($manager)],
         );
         $bus->dispatch($command, $context);
-        $this->assertSame(['enter', 'handle', 'leave'], $calls);
+        self::assertSame(['enter', 'handle', 'leave'], $calls);
     }
 }

@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that durable acceptance of a published message could not be acknowledged.
  */
-final class MessagePublishException extends RuntimeException implements MessagingException
-{
-}
+final class MessagePublishException extends RuntimeException implements MessagingException {}

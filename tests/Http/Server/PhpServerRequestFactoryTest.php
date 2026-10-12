@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Tests\Http\Server;
 
-use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\HttpException;
+use ExtendsSoftware\ExaPHP\Http\Message\Body\StringBody;
 use ExtendsSoftware\ExaPHP\Http\Message\Method;
 use ExtendsSoftware\ExaPHP\Http\Message\ProtocolVersion;
 use ExtendsSoftware\ExaPHP\Http\Server\PhpServerRequestFactory;
@@ -28,17 +28,17 @@ final class PhpServerRequestFactoryTest extends TestCase
             'CONTENT_TYPE' => 'application/json',
             'CONTENT_LENGTH' => '5',
         ], $body);
-        $this->assertSame(Method::Post, $request->method);
-        $this->assertSame(ProtocolVersion::Http2, $request->protocolVersion);
-        $this->assertSame('/a%2Fb?x=1&x=2', $request->target());
-        $this->assertSame('example.test', $request->uri->host());
-        $this->assertSame('http', $request->uri->scheme());
-        $this->assertSame(['example.test'], $request->headers->get('Host'));
-        $this->assertSame(['Bearer token'], $request->headers->get('Authorization'));
-        $this->assertSame([''], $request->headers->get('X-Empty'));
-        $this->assertSame(['application/json'], $request->headers->get('Content-Type'));
-        $this->assertSame(['5'], $request->headers->get('Content-Length'));
-        $this->assertSame($body, $request->body);
+        self::assertSame(Method::Post, $request->method);
+        self::assertSame(ProtocolVersion::Http2, $request->protocolVersion);
+        self::assertSame('/a%2Fb?x=1&x=2', $request->target());
+        self::assertSame('example.test', $request->uri->host());
+        self::assertSame('http', $request->uri->scheme());
+        self::assertSame(['example.test'], $request->headers->get('Host'));
+        self::assertSame(['Bearer token'], $request->headers->get('Authorization'));
+        self::assertSame([''], $request->headers->get('X-Empty'));
+        self::assertSame(['application/json'], $request->headers->get('Content-Type'));
+        self::assertSame(['5'], $request->headers->get('Content-Length'));
+        self::assertSame($body, $request->body);
     }
 
     public function testPreservesDoubleSlashPathsAndUsesDirectHttpsFlag(): void
@@ -47,8 +47,8 @@ final class PhpServerRequestFactoryTest extends TestCase
             'REQUEST_METHOD' => 'GET', 'REQUEST_URI' => '//a/%2F?x', 'SERVER_PROTOCOL' => 'HTTP/1.0',
             'HTTP_HOST' => '[::1]:8443', 'HTTPS' => 'on', 'HTTP_X_FORWARDED_PROTO' => 'http',
         ], new StringBody());
-        $this->assertSame('https://[::1]:8443//a/%2F?x', $request->uri->toString());
-        $this->assertSame('//a/%2F?x', $request->target());
+        self::assertSame('https://[::1]:8443//a/%2F?x', $request->uri->toString());
+        self::assertSame('//a/%2F?x', $request->target());
     }
 
     #[DataProvider('targets')]
@@ -57,7 +57,7 @@ final class PhpServerRequestFactoryTest extends TestCase
         $request = new PhpServerRequestFactory()->fromServer([
             'REQUEST_METHOD' => $method, 'REQUEST_URI' => $target, 'SERVER_PROTOCOL' => 'HTTP/1.1',
         ], new StringBody());
-        $this->assertSame($expected, $request->target());
+        self::assertSame($expected, $request->target());
     }
 
     /** @return iterable<array{string, string, string}> */

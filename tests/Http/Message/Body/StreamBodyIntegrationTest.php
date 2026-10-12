@@ -11,8 +11,8 @@ use PHPUnit\Framework\TestCase;
 
 use function fclose;
 use function fopen;
-use function fwrite;
 use function fread;
+use function fwrite;
 use function implode;
 use function is_resource;
 use function iterator_to_array;
@@ -29,11 +29,11 @@ final class StreamBodyIntegrationTest extends TestCase
             rewind($stream);
             fread($stream, 4);
             $body = new StreamBody($stream);
-            $this->assertNull($body->size());
+            self::assertNull($body->size());
             $chunks = iterator_to_array($body->chunks());
-            $this->assertCount(3, $chunks);
-            $this->assertSame(str_repeat('x', 20000), implode('', $chunks));
-            $this->assertTrue(is_resource($stream));
+            self::assertCount(3, $chunks);
+            self::assertSame(str_repeat('x', 20000), implode('', $chunks));
+            self::assertTrue(is_resource($stream));
             $this->expectException(BodyReadException::class);
             iterator_to_array($body->chunks());
         } finally {
@@ -49,7 +49,7 @@ final class StreamBodyIntegrationTest extends TestCase
             rewind($stream);
             $body = new StreamBody($stream);
             $first = $body->chunks();
-            $this->assertSame('body', $first->current());
+            self::assertSame('body', $first->current());
             $this->expectException(BodyReadException::class);
             iterator_to_array($body->chunks());
         } finally {
@@ -76,7 +76,7 @@ final class StreamBodyIntegrationTest extends TestCase
     {
         $stream = fopen('php://memory', 'r');
         try {
-            $this->assertSame([], iterator_to_array(new StreamBody($stream)->chunks()));
+            self::assertSame([], iterator_to_array(new StreamBody($stream)->chunks()));
         } finally {
             fclose($stream);
         }

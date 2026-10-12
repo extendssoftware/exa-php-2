@@ -11,8 +11,8 @@ use ExtendsSoftware\ExaPHP\Http\Message\Response;
 use ExtendsSoftware\ExaPHP\Http\Message\StatusCode;
 use ExtendsSoftware\ExaPHP\Http\Representation\Exception\ResponseEncodingException;
 use Override;
-use Throwable;
 use SensitiveParameter;
+use Throwable;
 
 /**
  * Represents every failure as a generic Problem Details 500 response without exception details.

@@ -22,10 +22,13 @@ final class PublishingMessageDeliveryTest extends TestCase
     public function testPreservesTheCompleteEnvelopeAcrossRepeatedDeliveryAttempts(): void
     {
         $message = new OutboxMessage(
-            'message-1', 'example.v1', '{ "value": 1 }', new DateTimeImmutable('2026-10-07T12:34:56.123456+02:00'),
+            'message-1',
+            'example.v1',
+            '{ "value": 1 }',
+            new DateTimeImmutable('2026-10-07T12:34:56.123456+02:00'),
         );
         $publisher = $this->createMock(MessagePublisher::class);
-        $publisher->expects($this->exactly(2))->method('publish')->willReturnCallback(
+        $publisher->expects(self::exactly(2))->method('publish')->willReturnCallback(
             static function (Message $published) use ($message): void {
                 self::assertSame($message->id, $published->id);
                 self::assertSame($message->type, $published->type);
@@ -43,7 +46,7 @@ final class PublishingMessageDeliveryTest extends TestCase
     {
         $failure = new MessagePublishException('Destination unavailable.', 0, new RuntimeException('Connection lost.'));
         $publisher = $this->createMock(MessagePublisher::class);
-        $publisher->expects($this->once())->method('publish')->willThrowException($failure);
+        $publisher->expects(self::once())->method('publish')->willThrowException($failure);
         $message = new OutboxMessage('message-1', 'example.v1', '{}', new DateTimeImmutable('2026-10-07'));
 
         try {
@@ -58,7 +61,7 @@ final class PublishingMessageDeliveryTest extends TestCase
     #[DataProvider('unexpectedFailures')]
     public function testUnexpectedFailuresPropagateUnchanged(Throwable $failure): void
     {
-        $publisher = $this->createStub(MessagePublisher::class);
+        $publisher = self::createStub(MessagePublisher::class);
         $publisher->method('publish')->willThrowException($failure);
         $message = new OutboxMessage('message-1', 'example.v1', '{}', new DateTimeImmutable('2026-10-07'));
 

@@ -23,13 +23,13 @@ final class DefaultExceptionResponseFactoryTest extends TestCase
         $request = new Request(Method::Get, new Uri('/'), protocolVersion: ProtocolVersion::Http2);
         $exception = new RuntimeException('Secret credentials', 404, new RuntimeException('Private cause'));
         $response = new DefaultExceptionResponseFactory()->create($exception, $request);
-        $this->assertSame(StatusCode::InternalServerError, $response->statusCode);
-        $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
-        $this->assertSame([
+        self::assertSame(StatusCode::InternalServerError, $response->statusCode);
+        self::assertSame(ProtocolVersion::Http2, $response->protocolVersion);
+        self::assertSame([
             'Content-Type' => ['application/problem+json'],
             'Cache-Control' => ['no-store'],
         ], $response->headers->all());
-        $this->assertSame(
+        self::assertSame(
             '{"type":"about:blank","title":"Internal Server Error","status":500}',
             implode('', iterator_to_array($response->body->chunks())),
         );

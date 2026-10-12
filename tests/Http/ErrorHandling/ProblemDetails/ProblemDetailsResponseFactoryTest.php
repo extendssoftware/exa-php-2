@@ -26,15 +26,17 @@ final class ProblemDetailsResponseFactoryTest extends TestCase
                 'Transfer-Encoding' => 'chunked']),
             ProtocolVersion::Http2,
         );
-        $this->assertSame(StatusCode::MethodNotAllowed, $response->statusCode);
-        $this->assertSame(ProtocolVersion::Http2, $response->protocolVersion);
-        $this->assertSame(['GET'], $response->headers->get('Allow'));
-        $this->assertSame(['application/problem+json'], $response->headers->get('Content-Type'));
-        $this->assertSame(['no-store'], $response->headers->get('Cache-Control'));
-        $this->assertSame([], $response->headers->get('Content-Length'));
-        $this->assertSame([], $response->headers->get('Transfer-Encoding'));
-        $this->assertSame(['type' => 'about:blank', 'title' => 'Method Not Allowed', 'status' => 405],
-            json_decode(implode('', iterator_to_array($response->body->chunks())), true));
+        self::assertSame(StatusCode::MethodNotAllowed, $response->statusCode);
+        self::assertSame(ProtocolVersion::Http2, $response->protocolVersion);
+        self::assertSame(['GET'], $response->headers->get('Allow'));
+        self::assertSame(['application/problem+json'], $response->headers->get('Content-Type'));
+        self::assertSame(['no-store'], $response->headers->get('Cache-Control'));
+        self::assertSame([], $response->headers->get('Content-Length'));
+        self::assertSame([], $response->headers->get('Transfer-Encoding'));
+        self::assertSame(
+            ['type' => 'about:blank', 'title' => 'Method Not Allowed', 'status' => 405],
+            json_decode(implode('', iterator_to_array($response->body->chunks())), true)
+        );
     }
 
     public function testInvalidUtf8FailsWithoutPartialResponse(): void

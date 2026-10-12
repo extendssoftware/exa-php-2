@@ -10,6 +10,4 @@ use RuntimeException;
 /**
  * Indicates that no handler is registered for a query's exact class.
  */
-final class QueryHandlerNotFoundException extends RuntimeException implements CqrsException
-{
-}
+final class QueryHandlerNotFoundException extends RuntimeException implements CqrsException {}

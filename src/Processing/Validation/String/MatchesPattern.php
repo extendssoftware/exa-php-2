@@ -4,20 +4,20 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Processing\Validation\String;
 
-use Override;
-use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
-use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
-use ExtendsSoftware\ExaPHP\Processing\Violation;
 use ErrorException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\InvalidPatternException;
 use ExtendsSoftware\ExaPHP\Processing\Validation\Exception\PatternExecutionException;
+use ExtendsSoftware\ExaPHP\Processing\Validation\ValidationResult;
+use ExtendsSoftware\ExaPHP\Processing\Validation\Validator;
+use ExtendsSoftware\ExaPHP\Processing\Violation;
+use Override;
 
 use function is_string;
-use function preg_match;
 use function preg_last_error;
 use function preg_last_error_msg;
-use function set_error_handler;
+use function preg_match;
 use function restore_error_handler;
+use function set_error_handler;
 
 use const E_WARNING;
 use const PREG_BAD_UTF8_ERROR;

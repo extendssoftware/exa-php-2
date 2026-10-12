@@ -20,17 +20,17 @@ final class TransactionalCommandMiddlewareTest extends TestCase
 {
     public function testExecutesDownstreamOnlyInsideManagerCallbackWithOriginalInputs(): void
     {
-        $command = $this->createStub(Command::class);
+        $command = self::createStub(Command::class);
         $context = new DispatchContext();
         $inside = false;
         $next = $this->createMock(CommandExecution::class);
-        $next->expects($this->once())->method('execute')->with($command, $context)->willReturnCallback(
+        $next->expects(self::once())->method('execute')->with($command, $context)->willReturnCallback(
             function () use (&$inside): void {
                 $this->assertTrue($inside);
             },
         );
         $manager = $this->createMock(TransactionManager::class);
-        $manager->expects($this->once())->method('transactional')->willReturnCallback(
+        $manager->expects(self::once())->method('transactional')->willReturnCallback(
             static function (callable $operation) use (&$inside): mixed {
                 $inside = true;
                 try {
@@ -41,25 +41,25 @@ final class TransactionalCommandMiddlewareTest extends TestCase
             },
         );
         new TransactionalCommandMiddleware($manager)->process($command, $context, $next);
-        $this->assertFalse($inside);
+        self::assertFalse($inside);
     }
 
     #[DataProvider('managerFailures')]
     public function testManagerFailureDoesNotExecuteDownstream(Throwable $failure): void
     {
         $manager = $this->createMock(TransactionManager::class);
-        $manager->expects($this->once())->method('transactional')->willThrowException($failure);
+        $manager->expects(self::once())->method('transactional')->willThrowException($failure);
         $next = $this->createMock(CommandExecution::class);
-        $next->expects($this->never())->method('execute');
+        $next->expects(self::never())->method('execute');
         try {
             new TransactionalCommandMiddleware($manager)->process(
-                $this->createStub(Command::class),
+                self::createStub(Command::class),
                 new DispatchContext(),
                 $next,
             );
-            $this->fail('Expected transaction failure.');
+            self::fail('Expected transaction failure.');
         } catch (Throwable $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 
@@ -73,10 +73,10 @@ final class TransactionalCommandMiddlewareTest extends TestCase
     public function testDownstreamEngineFailureReachesManagerAndCallerUnchanged(): void
     {
         $failure = new TypeError('handler failed');
-        $next = $this->createStub(CommandExecution::class);
+        $next = self::createStub(CommandExecution::class);
         $next->method('execute')->willThrowException($failure);
         $manager = $this->createMock(TransactionManager::class);
-        $manager->expects($this->once())->method('transactional')->willReturnCallback(
+        $manager->expects(self::once())->method('transactional')->willReturnCallback(
             function (callable $operation) use ($failure): mixed {
                 try {
                     return $operation();
@@ -88,13 +88,13 @@ final class TransactionalCommandMiddlewareTest extends TestCase
         );
         try {
             new TransactionalCommandMiddleware($manager)->process(
-                $this->createStub(Command::class),
+                self::createStub(Command::class),
                 new DispatchContext(),
                 $next,
             );
-            $this->fail('Expected handler failure.');
+            self::fail('Expected handler failure.');
         } catch (TypeError $exception) {
-            $this->assertSame($failure, $exception);
+            self::assertSame($failure, $exception);
         }
     }
 }

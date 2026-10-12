@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace ExtendsSoftware\ExaPHP\Integration\Http\Factory;
 
 use ExtendsSoftware\ExaPHP\Application\Configuration\Configuration;
-use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
 use ExtendsSoftware\ExaPHP\Http\Representation\ContentNegotiatingResponseFactory;
+use ExtendsSoftware\ExaPHP\Http\Representation\Exception\InvalidResponseFactoryException;
 use ExtendsSoftware\ExaPHP\Http\Representation\JsonResponseFactory;
 use ExtendsSoftware\ExaPHP\Integration\Http\Exception\InvalidHttpConfigurationException;
 use ExtendsSoftware\ExaPHP\ServiceLocator\ServiceLocator;

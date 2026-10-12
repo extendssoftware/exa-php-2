@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid exception problem mapper registrations.
  */
-final class InvalidExceptionProblemDetailsMapperException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidExceptionProblemDetailsMapperException extends InvalidArgumentException implements HttpException {}

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+// @php-cs-fixer-ignore final_class
+
 namespace ExtendsSoftware\ExaPHP\Tests\Cqrs\Query\Fixture;
 
 use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
@@ -11,6 +13,4 @@ use ExtendsSoftware\ExaPHP\Cqrs\Query\Query;
  *
  * @implements Query<mixed>
  */
-class ParentQuery implements Query
-{
-}
+class ParentQuery implements Query {}

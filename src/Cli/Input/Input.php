@@ -22,7 +22,7 @@ final readonly class Input
      *
      * @param non-empty-string $command The selected command name.
      * @param array<non-empty-string, string> $arguments Named positional argument values.
-     * @param array<non-empty-string, string|bool> $options Named option values and flags.
+     * @param array<non-empty-string, bool|string> $options Named option values and flags.
      *
      * @throws InvalidInputException When the command or an entry name is empty, or an entry has an invalid type.
      */

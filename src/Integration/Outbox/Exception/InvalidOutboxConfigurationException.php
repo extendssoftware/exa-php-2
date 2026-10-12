@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates invalid outbox worker configuration.
  */
-final class InvalidOutboxConfigurationException extends InvalidArgumentException implements IntegrationException
-{
-}
+final class InvalidOutboxConfigurationException extends InvalidArgumentException implements IntegrationException {}

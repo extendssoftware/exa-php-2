@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace ExtendsSoftware\ExaPHP\Integration\Http;
 
-use Override;
 use ExtendsSoftware\ExaPHP\Application\Module\ConfigurableModule;
 use ExtendsSoftware\ExaPHP\Application\Module\Module;
+use Override;
 
 /**
  * Provides HTTP routing, middleware, and PHP server service configuration.

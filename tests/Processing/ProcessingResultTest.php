@@ -18,18 +18,18 @@ final class ProcessingResultTest extends TestCase
     {
         $value = new stdClass();
         $result = new SuccessfulProcessingResult($value);
-        $this->assertTrue($result->isValid());
-        $this->assertSame([], $result->violations());
-        $this->assertSame($value, $result->value());
+        self::assertTrue($result->isValid());
+        self::assertSame([], $result->violations());
+        self::assertSame($value, $result->value());
     }
 
     #[DataProvider('emptyValues')]
     public function testEmptyValuesAreValidSuccessfulValues(mixed $value): void
     {
         $result = new SuccessfulProcessingResult($value);
-        $this->assertTrue($result->isValid());
-        $this->assertSame([], $result->violations());
-        $this->assertSame($value, $result->value());
+        self::assertTrue($result->isValid());
+        self::assertSame([], $result->violations());
+        self::assertSame($value, $result->value());
     }
 
     /** @return iterable<string, array{mixed}> */
@@ -47,8 +47,8 @@ final class ProcessingResultTest extends TestCase
         $first = new Violation('required', 'Required');
         $second = new Violation('invalid', 'Invalid');
         $result = new FailedProcessingResult($first, $second);
-        $this->assertFalse($result->isValid());
-        $this->assertSame([$first, $second], $result->violations());
+        self::assertFalse($result->isValid());
+        self::assertSame([$first, $second], $result->violations());
         $this->expectException(ProcessingValueUnavailableException::class);
         $result->value();
     }

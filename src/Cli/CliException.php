@@ -9,6 +9,4 @@ use Throwable;
 /**
  * Identifies CLI component failures.
  */
-interface CliException extends Throwable
-{
-}
+interface CliException extends Throwable {}

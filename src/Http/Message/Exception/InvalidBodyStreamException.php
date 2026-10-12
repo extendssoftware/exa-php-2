@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a body stream is not an open readable stream.
  */
-final class InvalidBodyStreamException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidBodyStreamException extends InvalidArgumentException implements HttpException {}

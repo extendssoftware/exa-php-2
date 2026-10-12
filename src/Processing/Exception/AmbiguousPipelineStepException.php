@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates a pipeline step implementing both transformation and validation contracts.
  */
-final class AmbiguousPipelineStepException extends InvalidArgumentException implements ProcessingException
-{
-}
+final class AmbiguousPipelineStepException extends InvalidArgumentException implements ProcessingException {}

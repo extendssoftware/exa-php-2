@@ -26,15 +26,19 @@ final class CommandDefinitionTest extends TestCase
             new OptionDefinition('author', mode: OptionMode::RequiredValue, shortAlias: 'a'),
         ];
         $command = new CommandDefinition(
-            'articles:create', 'unregistered-handler', 'Create an article', $arguments, $options,
+            'articles:create',
+            'unregistered-handler',
+            'Create an article',
+            $arguments,
+            $options,
         );
-        $this->assertSame('articles:create', $command->name);
-        $this->assertSame('unregistered-handler', $command->handlerId);
-        $this->assertSame('Create an article', $command->description);
-        $this->assertSame($arguments, $command->arguments);
-        $this->assertSame($options, $command->options);
-        $this->assertSame(OptionMode::Flag, $options[0]->mode);
-        $this->assertSame('a', $options[1]->shortAlias);
+        self::assertSame('articles:create', $command->name);
+        self::assertSame('unregistered-handler', $command->handlerId);
+        self::assertSame('Create an article', $command->description);
+        self::assertSame($arguments, $command->arguments);
+        self::assertSame($options, $command->options);
+        self::assertSame(OptionMode::Flag, $options[0]->mode);
+        self::assertSame('a', $options[1]->shortAlias);
     }
 
     /**

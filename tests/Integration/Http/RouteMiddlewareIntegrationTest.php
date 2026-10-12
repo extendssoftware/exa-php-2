@@ -37,7 +37,7 @@ final class RouteMiddlewareIntegrationTest extends TestCase
         $metadata = new stdClass();
         $definitions = [];
         foreach (['outer', 'inner', 'route'] as $id) {
-            $middleware = $this->createStub(Middleware::class);
+            $middleware = self::createStub(Middleware::class);
             $middleware->method('process')->willReturnCallback(
                 static function (Request $request, RequestHandler $next) use (&$calls, $id, $metadata): Response {
                     self::assertSame('42', $request->attributes->get(RouteMatch::class)->parameter('id'));
@@ -50,7 +50,7 @@ final class RouteMiddlewareIntegrationTest extends TestCase
             );
             $definitions[$id] = new InstanceDefinition($middleware);
         }
-        $handler = $this->createStub(RequestHandler::class);
+        $handler = self::createStub(RequestHandler::class);
         $handler->method('handle')->willReturnCallback(
             static function (Request $request) use (&$calls, $metadata): Response {
                 self::assertSame($metadata, $request->attributes->get(stdClass::class));
@@ -82,7 +82,7 @@ final class RouteMiddlewareIntegrationTest extends TestCase
     public function testShortCircuitDoesNotResolveHandlerAndUnmatchedRoutesDoNotResolveMiddleware(): void
     {
         $middleware = $this->createMock(Middleware::class);
-        $middleware->expects($this->once())->method('process')->willReturn(new Response(StatusCode::Forbidden));
+        $middleware->expects(self::once())->method('process')->willReturn(new Response(StatusCode::Forbidden));
         $services = $this->services([
             'protected' => new Route('protected', Method::Get, '/protected', 'missing-handler', ['deny']),
             'unused' => new Route('unused', Method::Get, '/unused', 'missing-handler', ['missing-middleware']),
@@ -101,7 +101,7 @@ final class RouteMiddlewareIntegrationTest extends TestCase
 
     public function testRouteFailuresReachTheGlobalExceptionBoundary(): void
     {
-        $middleware = $this->createStub(Middleware::class);
+        $middleware = self::createStub(Middleware::class);
         $middleware->method('process')->willThrowException(new TypeError('Private failure.'));
         $services = $this->services([
             'failure' => new Route('failure', Method::Get, '/failure', 'missing', ['failure']),
@@ -117,7 +117,7 @@ final class RouteMiddlewareIntegrationTest extends TestCase
     public function testMissingResolverNeverBypassesRouteMiddleware(): void
     {
         $resolver = $this->createMock(HandlerResolver::class);
-        $resolver->expects($this->never())->method('resolve');
+        $resolver->expects(self::never())->method('resolve');
         $route = new Route('protected', Method::Get, '/', 'handler', ['auth']);
         $routing = new RoutingRequestHandler(new SimpleRouter(new RouteCollection([$route])), $resolver);
         $this->expectException(MiddlewareResolutionException::class);

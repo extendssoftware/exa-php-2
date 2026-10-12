@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates route parameters inconsistent with the matched route.
  */
-final class InvalidRouteMatchException extends InvalidArgumentException implements HttpException
-{
-}
+final class InvalidRouteMatchException extends InvalidArgumentException implements HttpException {}

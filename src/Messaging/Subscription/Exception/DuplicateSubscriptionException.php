@@ -10,6 +10,4 @@ use InvalidArgumentException;
 /**
  * Indicates that a subscriber identifier is registered more than once.
  */
-final class DuplicateSubscriptionException extends InvalidArgumentException implements MessagingException
-{
-}
+final class DuplicateSubscriptionException extends InvalidArgumentException implements MessagingException {}
