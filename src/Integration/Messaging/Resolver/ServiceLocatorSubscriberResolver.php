@@ -21,6 +21,13 @@ use function sprintf;
 final readonly class ServiceLocatorSubscriberResolver implements SubscriberResolver
 {
     /**
+     * Validated subscriber-to-service mappings.
+     *
+     * @var array<array-key, string>
+     */
+    private array $services;
+
+    /**
      * Creates a resolver without resolving any mapped service.
      *
      * Subscriber identifiers and service identifiers are preserved without normalization. PHP integer array keys
@@ -28,19 +35,22 @@ final readonly class ServiceLocatorSubscriberResolver implements SubscriberResol
      * Duplicate array keys are overwritten by PHP before construction and cannot be detected here.
      *
      * @param ServiceLocator $serviceLocator The locator supplying subscriber services.
-     * @param array<non-empty-string|int, non-empty-string> $services Subscriber-to-service mappings.
+     * @param array<array-key, mixed> $services Subscriber-to-service mappings.
      *
      * @throws InvalidSubscriberMappingException When a subscriber identifier or service identifier is empty or invalid.
      */
-    public function __construct(private ServiceLocator $serviceLocator, private array $services)
+    public function __construct(private ServiceLocator $serviceLocator, array $services)
     {
+        $validatedServices = [];
         foreach ($services as $subscriberId => $serviceId) {
             if ($subscriberId === '' || !is_string($serviceId) || $serviceId === '') {
                 throw new InvalidSubscriberMappingException(
                     'Subscriber mappings require non-empty subscriber identifiers and non-empty service strings.',
                 );
             }
+            $validatedServices[$subscriberId] = $serviceId;
         }
+        $this->services = $validatedServices;
     }
 
     /**
