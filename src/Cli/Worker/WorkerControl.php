@@ -30,7 +30,7 @@ interface WorkerControl
     /**
      * Waits while idle, returning early when shutdown is requested.
      *
-     * @param positive-int $seconds The maximum wait in seconds.
+     * @param int $seconds The maximum wait in seconds.
      *
      * @return void
      *

@@ -88,10 +88,18 @@ final class PcntlWorkerControl implements WorkerControl
 
     /**
      * {@inheritDoc}
+     *
+     * @param int $seconds The maximum wait in seconds; must be positive.
+     *
+     * @throws WorkerControlException When the duration is not positive.
      */
     #[Override]
     public function wait(int $seconds): void
     {
+        if ($seconds < 1) {
+            throw new WorkerControlException('Worker wait duration must be positive seconds.');
+        }
+
         for ($second = 0 ; $second < $seconds && !$this->stopped ; ++$second) {
             for ($tick = 0 ; $tick < 10 ; ++$tick) {
                 usleep(100_000);

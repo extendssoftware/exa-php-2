@@ -40,7 +40,7 @@ All notable changes to ExaPHP will be documented in this file.
 - CLI component with command definitions, argument and option parsing, lazy handler dispatch, stream output, named exit
   codes, command listings, definition-based usage help, and customizable error presentation with usage and failure
   codes. Includes reusable worker control for cooperative shutdown and idle waiting, a PCNTL signal implementation,
-  and a shared control service registered by the CLI integration module.
+  rejection of non-positive PCNTL wait durations, and a shared control service registered by the CLI integration module.
 - HTTP component with immutable request, response, header, and URI values, named method and status enums, repeatable
   string bodies, body and handler contracts, ordered middleware execution, and method/path routing with typed matches,
   immutable request attributes, required unique route names, an explicit shared route collection for router

@@ -229,8 +229,8 @@ Configure timeouts for blocking work so it can finish within the supervisor's sh
 
 The PCNTL extension is required when starting this implementation, not when constructing it or listing command help.
 `Worker\Exception\WorkerControlException` implements `CliException` and reports unavailable signal support, invalid
-lifecycle use, or signal registration and restoration failures. Provide another `WorkerControl` implementation for a
-different runtime.
+lifecycle use, non-positive wait durations, or signal registration and restoration failures.
+Provide another `WorkerControl` implementation for a different runtime.
 
 `Integration\Cli\CliModule` registers a shared `WorkerControl` backed by `PcntlWorkerControl`; applications can override
 that service in their configuration. The control manages signals and waiting, while the handler owns its processing

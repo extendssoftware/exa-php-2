@@ -12,24 +12,16 @@ use ExtendsSoftware\ExaPHP\Integration\Messaging\Exception\InvalidMessagingConfi
 final readonly class WorkerSettings
 {
     /**
-     * The wait after an empty poll, in seconds.
-     *
-     * @var positive-int
-     */
-    public int $idleDelaySeconds;
-
-    /**
      * Creates settings expressed in whole seconds.
      *
      * @param int $idleDelaySeconds The wait after an empty poll.
      *
      * @throws InvalidMessagingConfigurationException When a duration is not positive.
      */
-    public function __construct(int $idleDelaySeconds = 1)
+    public function __construct(public int $idleDelaySeconds = 1)
     {
         if ($idleDelaySeconds < 1) {
             throw new InvalidMessagingConfigurationException('Messaging idle delay must be positive seconds.');
         }
-        $this->idleDelaySeconds = $idleDelaySeconds;
     }
 }

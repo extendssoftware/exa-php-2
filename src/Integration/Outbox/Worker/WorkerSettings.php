@@ -14,8 +14,8 @@ final readonly class WorkerSettings
     /**
      * Creates settings expressed in whole seconds.
      *
-     * @param positive-int $leaseSeconds The duration of each claim.
-     * @param positive-int $idleDelaySeconds The wait after an empty poll.
+     * @param int $leaseSeconds The duration of each claim.
+     * @param int $idleDelaySeconds The wait after an empty poll.
      *
      * @throws InvalidOutboxConfigurationException When a duration is not positive.
      */
