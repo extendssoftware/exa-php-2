@@ -12,7 +12,8 @@
     "ext-pcntl": "*",
     "ext-posix": "*",
     "phpunit/phpunit": "^13.4",
-    "phpstan/phpstan": "^2.3"
+    "phpstan/phpstan": "^2.3",
+    "friendsofphp/php-cs-fixer": "^3.95"
   },
   "suggest": {
     "ext-pcntl": "Enables graceful SIGTERM/SIGINT shutdown for persistent CLI workers."

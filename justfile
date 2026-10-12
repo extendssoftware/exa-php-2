@@ -22,3 +22,11 @@ test *args:
 # Run static analysis or pass additional PHPStan arguments.
 analyse *args:
     docker compose run --build --rm php vendor/bin/phpstan analyse "$@"
+
+# Fix code style or pass additional PHP-CS-Fixer arguments.
+fix *args:
+    docker compose run --build --rm php vendor/bin/php-cs-fixer fix "$@"
+
+# Check code style without modifying files, showing required changes.
+check-style *args:
+    @just fix --dry-run --diff "$@"
