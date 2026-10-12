@@ -45,7 +45,9 @@
 
 ## Code Style
 
-- Follow PSR-12 unless this document defines a stricter rule.
+- Follow PER Coding Style 3.0 and the project's PHP-CS-Fixer configuration unless this document defines a stricter rule.
+- Keep formatter configuration consistent with these conventions. Resolve conflicts explicitly rather than weakening
+  public contracts or removing intentional inheritance to satisfy a fixer.
 - Use one class, interface, trait, or enum per file.
 - Use explicit and descriptive names.
 - Name classes, interfaces, traits, and enums after their intent rather than their language construct. Do not use
@@ -307,9 +309,13 @@ public function id(): string
 
 ### Verification
 
-- New and modified PHP code must pass the PHPUnit suite and PHPStan analysis using the project's configuration.
-- Run both checks before completing a code change; focused checks during development do not replace the final checks.
-- Use `just test` and `just analyse`, or the native equivalents `vendor/bin/phpunit` and `vendor/bin/phpstan analyse`.
+- New and modified PHP code must pass PHPUnit, PHPStan, and the PHP-CS-Fixer style check using the project's
+  configuration.
+- Run all three checks before completing a code change; focused checks during development do not replace final checks.
+- Use `just test`, `just analyse`, and `just check-style`. Native equivalents are `vendor/bin/phpunit`,
+  `vendor/bin/phpstan analyse`, and `vendor/bin/php-cs-fixer fix --dry-run --diff`.
+- Use `just fix` to apply `.php-cs-fixer.dist.php`, restricting paths when needed to keep changes focused. Review the
+  resulting diff before running the final checks; the configuration includes rules that can change behavior.
 - Fix failures introduced by the change. Do not weaken types, remove runtime validation, lower the analysis level, or
   exclude files merely to make the checks pass.
 - For a confirmed analysis limitation or deliberately invalid test input, use a narrowly scoped `@phpstan-ignore`
