@@ -35,7 +35,7 @@ final readonly class CliRunner
      * Help bypasses input parsing and handler resolution. Bootstrap failure cleanup belongs to Application. Failures propagate without printing or exiting the process.
      *
      * @param Application $application The configured application, stopped after this run.
-     * @param list<string> $argv Process arguments including script path and optional command name and tokens.
+     * @param array<array-key, mixed> $argv Process arguments including script path and optional command name and tokens.
      *
      * @return int The handler's exit code, including application-specific codes.
      *

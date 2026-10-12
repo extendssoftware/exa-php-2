@@ -35,7 +35,7 @@ final readonly class ExceptionHandlingCliRunner
      * rather than being presented recursively. Neither this boundary nor its default presenter terminates the process.
      *
      * @param Application $application The application with its modules already registered.
-     * @param list<string> $argv The complete process arguments, including the script path.
+     * @param array<array-key, mixed> $argv The complete process arguments, including the script path.
      * @param Output $errorOutput The output available independently of application bootstrap.
      *
      * @return int The command's exit code or the presenter's failure exit code.
