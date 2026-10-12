@@ -85,7 +85,7 @@ final readonly class StreamLogWriter implements LogWriter
     {
         $data = $this->formatter->format($record);
         $owned = is_string($this->destination);
-        $stream = $owned ? $this->openStream() : $this->destination;
+        $stream = $owned ? $this->openStream($this->destination) : $this->destination;
         $locked = false;
         $failure = null;
 
@@ -144,14 +144,16 @@ final readonly class StreamLogWriter implements LogWriter
     /**
      * Opens a destination in binary append mode.
      *
+     * @param string $destination The path or stream URI.
+     *
      * @return resource The owned stream.
      *
      * @throws LogStreamOpenException When opening fails.
      */
-    private function openStream(): mixed
+    private function openStream(string $destination): mixed
     {
         try {
-            $stream = $this->io(fn() => fopen($this->destination, 'ab'));
+            $stream = $this->io(fn() => fopen($destination, 'ab'));
         } catch (LogStreamWriteException $exception) {
             throw new LogStreamOpenException(
                 'Could not open log destination.',
@@ -186,9 +188,11 @@ final readonly class StreamLogWriter implements LogWriter
     /**
      * Converts stream warnings, notices, and invalid-operation errors into logging failures.
      *
-     * @param Closure(): mixed $operation The stream operation.
+     * @template T
      *
-     * @return mixed The operation result.
+     * @param Closure(): T $operation The stream operation.
+     *
+     * @return T The operation result.
      *
      * @throws LogStreamWriteException When an operation raises a warning, notice, or value error.
      */
