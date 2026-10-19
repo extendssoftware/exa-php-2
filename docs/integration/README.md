@@ -253,6 +253,15 @@ return ['services' => [
 ]];
 ```
 
+## Register the JSON-RPC module
+
+`Integration\JsonRpc\JsonRpcModule` registers shared `JsonRpcServer`, `MessageDecoder`, `MessageEncoder`, and
+`RegisteredMethodDispatcher` services. Configure `jsonRpc.methods` as a map from literal method names to handler service
+identifiers. Handlers are resolved when the dispatcher is first requested; methods execute only when dispatched.
+Missing configuration produces an empty dispatcher. Register the module independently and inject `JsonRpcServer` into
+an application transport adapter. See the [JSON-RPC application guide](../json-rpc/README.md#register-the-application-module)
+for configuration, overrides, and factory error behavior.
+
 ## Register the Logging module
 
 Register `Integration\Logging\LoggingModule` and [ClockModule](#register-the-clock-module) before bootstrap, or supply

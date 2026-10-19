@@ -38,7 +38,9 @@ Tests belong in `tests/` under the `ExtendsSoftware\ExaPHP\Tests` namespace.
   response negotiation, Problem Details, route groups and middleware, and PHP server adapters.
 - [Identity](docs/identity/README.md): immutable actors identifying the principal performing an operation.
 - [Integration](docs/integration/README.md): application wiring for CQRS, events, logging, HTTP pipelines, and CLI
-  command execution.
+  command execution, plus JSON-RPC server and method registration services.
+- [JSON-RPC](docs/json-rpc/README.md): a transport-independent JSON-RPC 2.0 server with typed messages, method handlers,
+  notifications, batches, standard and application error responses, and opt-in application wiring.
 - [Logging](docs/logging/README.md): stream logging, log records, NDJSON formatting, severity levels, and exceptions.
 - [Messaging](docs/messaging/README.md): immutable JSON messages, durable publishing, subscription lookup, subscriber processing and retries,
   consumer delivery contracts, a CLI consumer worker, and an Outbox bridge.

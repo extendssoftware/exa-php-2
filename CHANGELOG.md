@@ -6,6 +6,12 @@ All notable changes to ExaPHP will be documented in this file.
 
 ### Added
 
+- JSON-RPC component with validated request, notification, result, and error envelopes, and a transport-independent
+  JSON-RPC 2.0 server composed from an injected message decoder, registered method dispatcher, and response encoder.
+  Supports callable handlers, positional and named parameters, notification execution, batch processing, and typed
+  error factories with optional public data. Method handlers can return public application errors; unexpected execution
+  and serialization failures produce generic internal errors without exposing exception details or retrying serializers.
+  An opt-in integration module registers shared services and resolves configured handler services from `jsonRpc.methods`.
 - Authentication component with credential and authenticator contracts returning an Identity actor, and distinct
   exceptions for rejected credentials, unsupported credential types, and operational verification failures. Includes
   Bearer credentials with debug redaction and serialization prevention, plus opt-in HTTP integration for protected
