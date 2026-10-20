@@ -122,7 +122,8 @@ Use `just fix` to apply formatting with `.php-cs-fixer.dist.php`; additional arg
 Run `just` to list recipes or `just build` to build the image explicitly. Install, test, analysis, and formatting recipes
 build the image as needed and remove their containers afterward.
 The repository, including `vendor/`, is mounted into the container. Recipes use your host user and group IDs so generated
-files retain your ownership. The native PHP workflow remains available.
+files retain your ownership. The bind mount uses the shared SELinux label (`:z`) so containers can access the checkout
+on SELinux hosts, including when multiple development commands run concurrently. The native PHP workflow remains available.
 
 Without just, use `docker compose run --build --rm php composer install` and
 `docker compose run --build --rm php vendor/bin/phpunit`. Compose defaults to UID/GID 1000; set `LOCAL_UID` and `LOCAL_GID`
